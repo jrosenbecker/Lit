@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:myapp="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/item_menu_ok"
+        android:title="tab 1"
+        myapp:showAsAction="ifRoom"></item>
+    <item android:id="@+id/item_menu_cancel"
+        android:title="tab 2"
+        myapp:showAsAction="ifRoom"></item>
+</menu>
