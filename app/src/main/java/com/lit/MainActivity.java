@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity
         tabLayout.addTab(tabLayout.newTab().setText("Status").setTag(TabConstants.STATUS_TAB));
         tabLayout.addTab(tabLayout.newTab().setText("Power Save").setTag(TabConstants.POWER_SAVE_TAB));
         tabLayout.addTab(tabLayout.newTab().setText("Customize").setTag(TabConstants.CUSTOMIZE_TAB));
+        tabLayout.setSelectedTabIndicatorHeight(20);
         tabLayout.setOnTabSelectedListener(onTabSelected);
 
         // Open the status fragment when first created
