@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.lit.MainActivity">
+    <item android:id = "@+id/configure_option"
+        android:title="@string/configure"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <item android:id = "@+id/add_effect_option"
+        android:title="@string/add_effect"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+</menu>

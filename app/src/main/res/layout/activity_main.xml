@@ -6,6 +6,15 @@
     android:orientation="vertical"
     tools:context="com.lit.MainActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/main_activity_toolbar"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
+
 
     <FrameLayout
         android:layout_width="match_parent"
