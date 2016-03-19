@@ -35,7 +35,6 @@ public class PowerSaveFragment extends Fragment {
      * this fragment using the provided parameters.
      * @return A new instance of fragment PowerSaveFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static PowerSaveFragment newInstance() {
         PowerSaveFragment fragment = new PowerSaveFragment();
         return fragment;
@@ -53,7 +52,7 @@ public class PowerSaveFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_power_save, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
+
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -88,7 +87,6 @@ public class PowerSaveFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 }
