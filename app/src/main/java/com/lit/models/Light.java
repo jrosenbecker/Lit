@@ -7,11 +7,13 @@ public class Light {
     private boolean lightOn;
     private String lightName;
     private long id;
+    private boolean connectionStatus;
 
-    public Light(long id, String name, boolean status) {
+    public Light(long id, String name, boolean lightOn, boolean connectionStatus) {
         lightName = name;
-        lightOn = status;
+        this.lightOn = lightOn;
         this.id = id;
+        this.connectionStatus = connectionStatus;
     }
 
     public boolean isLightOn() {
@@ -24,5 +26,10 @@ public class Light {
 
     public long getId() {
         return id;
+    }
+
+    public boolean getConnectionStatus()
+    {
+        return connectionStatus;
     }
 }

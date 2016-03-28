@@ -2,6 +2,7 @@ package com.lit.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,10 +73,23 @@ public class StatusAdapter extends BaseAdapter {
         convertView =  inflater.inflate(R.layout.status_single_line, parent, false);
         Switch lightSwitch = (Switch) convertView.findViewById(R.id.status_light_switch);
         TextView lightName = (TextView) convertView.findViewById(R.id.status_light_name);
-
+        TextView connection = (TextView) convertView.findViewById(R.id.status_connection_text);
         Light statusLine = statusList.get(position);
         lightSwitch.setChecked(statusLine.isLightOn());
         lightName.setText(statusLine.getLightName());
+        String connectionStatusString;
+
+        if(statusLine.getConnectionStatus())
+            connectionStatusString = "Connected";
+        else
+            connectionStatusString = "Disconnected";
+
+        connection.setText("Status: " + connectionStatusString);
+
+        if(!statusLine.getConnectionStatus())
+            connection.setTextColor(Color.RED);
+
+        
         return convertView;
     }
 }

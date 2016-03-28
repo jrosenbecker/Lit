@@ -73,16 +73,16 @@ public class StatusFragment extends Fragment {
         statusListView.setAdapter(adapter);
 
         // TODO: Remove these additions, used currently for testing purposes
-        statusList.add(new Light(1, "Kitchen Bulb", false));
-        statusList.add(new Light(2, "Bathroom bulb", false));
-        statusList.add(new Light(3, "Living Room", false));
-        statusList.add(new Light(4, "Family Room", false));
-        statusList.add(new Light(5, "Bed Room", false));
-        statusList.add(new Light(6, "Basement", false));
-        statusList.add(new Light(7, "Attic", false));
-        statusList.add(new Light(3, "Garage", false));
-        statusList.add(new Light(3, "Shed", false));
-        statusList.add(new Light(3, "Pool", false));
+        statusList.add(new Light(1, "Kitchen Bulb", false, true));
+        statusList.add(new Light(2, "Bathroom bulb", false, true));
+        statusList.add(new Light(3, "Living Room", false, true));
+        statusList.add(new Light(4, "Family Room", false, true));
+        statusList.add(new Light(5, "Bed Room", false, true));
+        statusList.add(new Light(6, "Basement", false, true));
+        statusList.add(new Light(7, "Attic", false, true));
+        statusList.add(new Light(3, "Garage", false, true));
+        statusList.add(new Light(3, "Shed", false, false));
+        statusList.add(new Light(3, "Pool", false, false));
         adapter.notifyDataSetChanged();
     }
 
@@ -100,6 +100,8 @@ public class StatusFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+
+
     }
 
 
