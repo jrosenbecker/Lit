@@ -1,16 +1,14 @@
-package com.lit;
+package com.lit.activities;
 
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
 
-import com.lit.Constants.TabConstants;
+import com.lit.R;
+import com.lit.constants.TabConstants;
 import com.lit.fragments.CustomizeFragment;
 import com.lit.fragments.PowerSaveFragment;
 import com.lit.fragments.StatusFragment;
@@ -22,6 +20,12 @@ public class MainActivity extends AppCompatActivity
 
     private TabLayout tabLayout;
     private Menu menu;
+
+
+    /**
+     * Sets up the activity by initializing the first fragment and setting up the toolbars
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +48,9 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    /**
+     * Listener for when the tabs change
+     */
     private TabLayout.OnTabSelectedListener onTabSelected = new TabLayout.OnTabSelectedListener() {
         // TODO: Figure out how onTabSelected is different than reselected and don't always create a new instance
         @Override
@@ -90,6 +97,11 @@ public class MainActivity extends AppCompatActivity
         }
     };
 
+
+    /**
+     * Required blank listener
+     * @param uri - uri
+     */
     @Override
     public void onFragmentInteraction(Uri uri) {
         // Blank listener

@@ -4,17 +4,17 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.ListView;
 
-import com.lit.MainActivity;
 import com.lit.R;
+import com.lit.adapters.StatusAdapter;
+import com.lit.models.Light;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,6 +28,9 @@ public class StatusFragment extends Fragment {
 
 
     private OnFragmentInteractionListener fragmentInteractionListener;
+    private ListView statusListView;
+    private StatusAdapter adapter;
+    private List<Light> statusList;
 
     public StatusFragment() {
         // Required empty public constructor
@@ -44,13 +47,13 @@ public class StatusFragment extends Fragment {
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-
-    }
-
+    /**
+     * Inflates the fragment
+     * @param inflater - inflater to be used
+     * @param container - View container
+     * @param savedInstanceState - saved Instance
+     * @return View after the inflate
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -58,12 +61,36 @@ public class StatusFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_status, container, false);
     }
 
-    public void onButtonPressed(Uri uri) {
-        if (fragmentInteractionListener != null) {
-            fragmentInteractionListener.onFragmentInteraction(uri);
-        }
+    /**
+     * Sets the adapter when the fragment starts
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        statusListView = (ListView) getActivity().findViewById(R.id.status_list_view);
+        statusList = new ArrayList<Light>();
+        adapter = new StatusAdapter(getContext(), statusList);
+        statusListView.setAdapter(adapter);
+
+        // TODO: Remove these additions, used currently for testing purposes
+        statusList.add(new Light(1, "Kitchen Bulb", false));
+        statusList.add(new Light(2, "Bathroom bulb", false));
+        statusList.add(new Light(3, "Living Room", false));
+        statusList.add(new Light(4, "Family Room", false));
+        statusList.add(new Light(5, "Bed Room", false));
+        statusList.add(new Light(6, "Basement", false));
+        statusList.add(new Light(7, "Attic", false));
+        statusList.add(new Light(3, "Garage", false));
+        statusList.add(new Light(3, "Shed", false));
+        statusList.add(new Light(3, "Pool", false));
+        adapter.notifyDataSetChanged();
     }
 
+
+    /**
+     * Generated onAttach method
+     * @param context - current context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -75,6 +102,10 @@ public class StatusFragment extends Fragment {
         }
     }
 
+
+    /**
+     * Generated onDetach method
+     */
     @Override
     public void onDetach() {
         super.onDetach();
