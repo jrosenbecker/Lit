@@ -9,10 +9,11 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView android:layout_width="wrap_content"
+        <ListView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="customize fragment" />
-
+            android:id="@+id/customize_list_view"
+            android:overScrollMode="never" />
     </LinearLayout>
 
 </FrameLayout>

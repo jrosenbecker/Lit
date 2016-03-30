@@ -5,7 +5,6 @@
     tools:context="com.lit.fragments.StatusFragment"
     android:scrollIndicators="top|bottom">
 
-    <!-- TODO: Update blank fragment layout -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

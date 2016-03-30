@@ -10,8 +10,15 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import com.lit.R;
+import com.lit.adapters.CustomizeAdapter;
+import com.lit.models.Effect;
+import com.lit.models.Light;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,6 +31,9 @@ import com.lit.R;
 public class CustomizeFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
+    private CustomizeAdapter listViewAdapter;
+    private List<Light> lights;
+    private ListView customizeListView;
 
     public CustomizeFragment() {
         // Required empty public constructor
@@ -72,6 +82,22 @@ public class CustomizeFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        customizeListView = (ListView) getActivity().findViewById(R.id.customize_list_view);
+        lights = new ArrayList<Light>();
+        listViewAdapter = new CustomizeAdapter(getContext(), lights);
+        customizeListView.setAdapter(listViewAdapter);
+        lights.add(new Light(1, "Kitchen Bulb", false, true, Effect.STROBE));
+        lights.add(new Light(2, "Bathroom bulb", false, true, Effect.BREATHE));
+        lights.add(new Light(3, "Living Room", false, true, Effect.COLOR_CYCLE));
+        lights.add(new Light(4, "Family Room", false, true));
+        listViewAdapter.notifyDataSetChanged();
+
     }
 
     /**
