@@ -12,6 +12,7 @@ import android.widget.Button;
 
 import com.lit.R;
 import com.lit.Constants.TabConstants;
+import com.lit.fragments.AddEffectFragment;
 import com.lit.fragments.ConfigureFragment;
 import com.lit.fragments.CustomizeFragment;
 import com.lit.fragments.PowerSaveFragment;
@@ -20,7 +21,7 @@ import com.lit.fragments.StatusFragment;
 public class MainActivity extends AppCompatActivity
         implements CustomizeFragment.OnFragmentInteractionListener,
         PowerSaveFragment.OnFragmentInteractionListener,
-        StatusFragment.OnFragmentInteractionListener, ConfigureFragment.OnFragmentInteractionListener {
+        StatusFragment.OnFragmentInteractionListener, ConfigureFragment.OnFragmentInteractionListener, AddEffectFragment.OnFragmentInteractionListener {
 
     private TabLayout tabLayout;
     private Menu menu;
@@ -153,7 +154,7 @@ public class MainActivity extends AppCompatActivity
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, ConfigureFragment.newInstance()).commit();
                 return true;
             case R.id.add_effect_option:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, PowerSaveFragment.newInstance()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, AddEffectFragment.newInstance()).commit();
             default:
                 return super.onOptionsItemSelected(item);
         }
