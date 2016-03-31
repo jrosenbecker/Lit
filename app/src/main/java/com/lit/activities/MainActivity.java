@@ -6,9 +6,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import com.lit.R;
-import com.lit.constants.TabConstants;
+import com.lit.Constants.TabConstants;
+import com.lit.fragments.ConfigureFragment;
 import com.lit.fragments.CustomizeFragment;
 import com.lit.fragments.PowerSaveFragment;
 import com.lit.fragments.StatusFragment;
@@ -16,10 +20,11 @@ import com.lit.fragments.StatusFragment;
 public class MainActivity extends AppCompatActivity
         implements CustomizeFragment.OnFragmentInteractionListener,
         PowerSaveFragment.OnFragmentInteractionListener,
-        StatusFragment.OnFragmentInteractionListener {
+        StatusFragment.OnFragmentInteractionListener, ConfigureFragment.OnFragmentInteractionListener {
 
     private TabLayout tabLayout;
     private Menu menu;
+    private Button configureButton;
 
 
     /**
@@ -43,11 +48,30 @@ public class MainActivity extends AppCompatActivity
         tabLayout.setSelectedTabIndicatorHeight(20);
         tabLayout.setOnTabSelectedListener(onTabSelected);
 
+
+        /*configureButton = (Button) findViewById(R.id.configure_option);
+        configureButton.setOnClickListener(onConfigureSelected);*/
+
+     /*   findViewById(R.id.configure_option).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                //Do something
+            }
+        });*/
+
         // Open the status fragment when first created
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_frame, StatusFragment.newInstance()).commit();
 
     }
 
+ /*   private Button.OnClickListener onConfigureSelected = new Button.OnClickListener() {
+        @Override
+            public void onClick(View v) {
+                //Do something
+            }
+        };
+*/
     /**
      * Listener for when the tabs change
      */
@@ -98,6 +122,7 @@ public class MainActivity extends AppCompatActivity
     };
 
 
+
     /**
      * Required blank listener
      * @param uri - uri
@@ -118,6 +143,20 @@ public class MainActivity extends AppCompatActivity
         this.menu = menu;
         updateToolbar(tabLayout.getTabAt(tabLayout.getSelectedTabPosition()));
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.configure_option:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, ConfigureFragment.newInstance()).commit();
+                return true;
+            case R.id.add_effect_option:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, PowerSaveFragment.newInstance()).commit();
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 
