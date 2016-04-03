@@ -11,7 +11,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 
 import com.lit.R;
-import com.lit.Constants.TabConstants;
+import com.lit.constantfiles.TabConstants;
 import com.lit.fragments.AddEffectFragment;
 import com.lit.fragments.CustomizeFragment;
 import com.lit.fragments.PowerSaveFragment;

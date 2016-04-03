@@ -1,4 +1,4 @@
-package com.lit.Constants;
+package com.lit.constantfiles;
 
 /**
  * Created by JoeLaptop on 3/19/2016.
