@@ -8,10 +8,9 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 
 import com.lit.R;
-import com.lit.Constants.TabConstants;
+import com.lit.constants.TabConstants;
 import com.lit.fragments.AddEffectFragment;
 import com.lit.fragments.CustomizeFragment;
 import com.lit.fragments.PowerSaveFragment;
