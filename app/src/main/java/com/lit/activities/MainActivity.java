@@ -149,12 +149,10 @@ public class MainActivity extends AppCompatActivity
         Intent intent;
         switch (item.getItemId()) {
             case R.id.configure_option:
-//                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, ConfigureFragment.newInstance()).commit();
                 intent = new Intent(getApplicationContext(), ConfigureActivity.class);
                 startActivity(intent);
                 return true;
             case R.id.add_effect_option:
-//                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, AddEffectFragment.newInstance()).commit();
                 intent = new Intent(getApplicationContext(), AddEffectActivity.class);
                 startActivity(intent);
                 return true;
@@ -162,6 +160,8 @@ public class MainActivity extends AppCompatActivity
                 return super.onOptionsItemSelected(item);
         }
     }
+
+
 
 
     /**

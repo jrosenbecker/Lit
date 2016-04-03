@@ -25,6 +25,7 @@ public class AddEffectActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_effect);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.add_effect_activity_toolbar);
+        toolbar.setTitle("Add Effect");
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);

@@ -27,6 +27,7 @@ public class ConfigureActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configure);
         Toolbar toolbar = (Toolbar) findViewById(R.id.configure_activity_toolbar);
+        toolbar.setTitle("Configure");
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
