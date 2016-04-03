@@ -28,9 +28,7 @@ import java.util.List;
  */
 public class AddEffectFragment extends Fragment {
     private OnFragmentInteractionListener fragmentInteractionListener;
-    private ListView addEffectListView;
-    private AddEffectAdapter adapter;
-    private List<Light> addEffectList;
+
 
     public AddEffectFragment() {
         // Required empty public constructor
@@ -67,23 +65,6 @@ public class AddEffectFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        addEffectListView = (ListView) getActivity().findViewById(R.id.addEffect_list_view);
-        addEffectList = new ArrayList<Light>();
-        adapter = new AddEffectAdapter(getContext(), addEffectList);
-        addEffectListView.setAdapter(adapter);
-
-        // TODO: Remove these additions, used currently for testing purposes
-        addEffectList.add(new Light(1, "Light 1", false, true, 0));
-        addEffectList.add(new Light(2, "Light 2", false, true, 1));
-        addEffectList.add(new Light(3, "Light 3", false, true, 2));
-        addEffectList.add(new Light(4, "Light 4", false, true, 3));
-        addEffectList.add(new Light(5, "Light 5", false, true, 3));
-        addEffectList.add(new Light(6, "Light 6", false, true, 2));
-        addEffectList.add(new Light(7, "Light 7", false, true, 1));
-        addEffectList.add(new Light(3, "Light 8", false, true, 0));
-        addEffectList.add(new Light(3, "Light 9", false, false, 1));
-        addEffectList.add(new Light(3, "Light 10", false, false, 2));
-        adapter.notifyDataSetChanged();
     }
 
 
