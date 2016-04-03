@@ -1,5 +1,6 @@
 package com.lit.activities;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -7,13 +8,11 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 
 import com.lit.R;
 import com.lit.Constants.TabConstants;
 import com.lit.fragments.AddEffectFragment;
-import com.lit.fragments.ConfigureFragment;
 import com.lit.fragments.CustomizeFragment;
 import com.lit.fragments.PowerSaveFragment;
 import com.lit.fragments.StatusFragment;
@@ -21,11 +20,10 @@ import com.lit.fragments.StatusFragment;
 public class MainActivity extends AppCompatActivity
         implements CustomizeFragment.OnFragmentInteractionListener,
         PowerSaveFragment.OnFragmentInteractionListener,
-        StatusFragment.OnFragmentInteractionListener, ConfigureFragment.OnFragmentInteractionListener, AddEffectFragment.OnFragmentInteractionListener {
+        StatusFragment.OnFragmentInteractionListener, AddEffectFragment.OnFragmentInteractionListener {
 
     private TabLayout tabLayout;
     private Menu menu;
-    private Button configureButton;
 
 
     /**
@@ -149,12 +147,18 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
+        Intent intent;
         switch (item.getItemId()) {
             case R.id.configure_option:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, ConfigureFragment.newInstance()).commit();
+//                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, ConfigureFragment.newInstance()).commit();
+                intent = new Intent(getApplicationContext(), ConfigureActivity.class);
+                startActivity(intent);
                 return true;
             case R.id.add_effect_option:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, AddEffectFragment.newInstance()).commit();
+//                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, AddEffectFragment.newInstance()).commit();
+                intent = new Intent(getApplicationContext(), AddEffectActivity.class);
+                startActivity(intent);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
