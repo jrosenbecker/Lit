@@ -10,7 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.lit.R;
-import com.lit.constants.TabConstants;
+import com.lit.constantfiles.TabConstants;
 import com.lit.fragments.AddEffectFragment;
 import com.lit.fragments.CustomizeFragment;
 import com.lit.fragments.PowerSaveFragment;
