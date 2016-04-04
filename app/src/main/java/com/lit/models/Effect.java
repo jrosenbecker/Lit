@@ -11,10 +11,13 @@ public class Effect {
 
 
     private int effectID;
+    private long lightId;
     private boolean effectOn;
 
-    public Effect(int effectID, boolean b)
+
+    public Effect(long lightId, int effectID, boolean effectOn)
     {
+        this.lightId = lightId;
         this.effectID = effectID;
         this.effectOn = effectOn;
     }
@@ -24,6 +27,9 @@ public class Effect {
         return effectID;
     }
 
+    public long getLightId() {
+        return lightId;
+    }
 
     public boolean isEffectOn()
     {

@@ -29,6 +29,12 @@
             android:parentActivityName=".activities.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".activities.ModifyEffectActivity"
+            android:label="@string/title_activity_modify_effect"
+            android:parentActivityName=".activities.AddEffectActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
     </application>
 
 </manifest>

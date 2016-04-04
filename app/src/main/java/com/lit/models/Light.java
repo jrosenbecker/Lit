@@ -25,7 +25,7 @@ public class Light {
         this.lightOn = lightOn;
         this.id = id;
         this.connectionStatus = connectionStatus;
-        effect = new Effect(effectID, false);
+        effect = new Effect(this.id, effectID, false);
         this.activeSensor = activeSensor;
     }
 

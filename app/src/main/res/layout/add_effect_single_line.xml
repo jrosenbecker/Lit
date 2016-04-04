@@ -32,7 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Modify\nEffect"
-        android:id="@+id/button"
+        android:id="@+id/modify_effect_button"
         android:layout_gravity="center_vertical"
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp" />

@@ -7,8 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lit.R;
 import com.lit.models.Light;
@@ -72,7 +74,7 @@ public class ConfigureAdapter extends BaseAdapter {
         //Switch lightSwitch = (Switch) convertView.findViewById(R.id.configure_light_switch);
         TextView lightName = (TextView) convertView.findViewById(R.id.configure_light_name);
         TextView connection = (TextView) convertView.findViewById(R.id.configure_connection_text);
-        Light configureLine = configureList.get(position);
+        final Light configureLine = configureList.get(position);
        // lightSwitch.setChecked(configureLine.isLightOn());
         lightName.setText(configureLine.getLightName());
         String connectionConfigureString;
@@ -84,8 +86,25 @@ public class ConfigureAdapter extends BaseAdapter {
 
         connection.setText("Status: " + connectionConfigureString);
 
+        Button attemptConnection = (Button) convertView.findViewById(R.id.attempt_connection_button);
+
         if(!configureLine.getConnectionStatus())
+        {
             connection.setTextColor(Color.RED);
+            attemptConnection.setText("Attempt\nConnection");
+        }
+
+        attemptConnection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(configureLine.getConnectionStatus()) {
+                    Toast.makeText(context, "Reconnected to " + configureLine.getLightName() + " successfully", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "Error: " + configureLine.getLightName() + " is not connected on this Wi-Fi network", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
 
 
         return convertView;
