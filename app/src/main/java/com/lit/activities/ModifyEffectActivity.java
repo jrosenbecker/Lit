@@ -12,6 +12,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.lit.R;
+import com.philips.lighting.hue.sdk.PHHueSDK;
 
 public class ModifyEffectActivity extends AppCompatActivity implements ModifyEffectFragment.OnFragmentInteractionListener {
 

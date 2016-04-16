@@ -16,6 +16,9 @@ import com.lit.R;
 import com.lit.adapters.CustomizeAdapter;
 import com.lit.models.Effect;
 import com.lit.models.Light;
+import com.philips.lighting.hue.sdk.PHHueSDK;
+import com.philips.lighting.model.PHBackup;
+import com.philips.lighting.model.PHBridge;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +35,12 @@ public class CustomizeFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private CustomizeAdapter listViewAdapter;
-    private List<Light> lights;
+
+    private PHHueSDK phHueSDK;
+
+    //TODO: private List<Light> lights;
+    private List<PHBridge> bridges;
+
     private ListView customizeListView;
 
     public CustomizeFragment() {
@@ -52,6 +60,7 @@ public class CustomizeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        phHueSDK = PHHueSDK.create();
     }
 
     @Override
@@ -89,13 +98,23 @@ public class CustomizeFragment extends Fragment {
     public void onStart() {
         super.onStart();
         customizeListView = (ListView) getActivity().findViewById(R.id.customize_list_view);
-        lights = new ArrayList<Light>();
-        listViewAdapter = new CustomizeAdapter(getContext(), lights);
+
+        List<PHBridge> savedBridges = new ArrayList<PHBridge>();
+
+        //TODO: listViewAdapter = new CustomizeAdapter(getContext(), lights);
+        bridges = phHueSDK.getAllBridges();
+        listViewAdapter = new CustomizeAdapter(getContext(), savedBridges);
+
         customizeListView.setAdapter(listViewAdapter);
-        lights.add(new Light(1, "Kitchen Bulb", false, true, Effect.STROBE));
-        lights.add(new Light(2, "Bathroom bulb", false, true, Effect.BREATHE));
-        lights.add(new Light(3, "Living Room", false, true, Effect.COLOR_CYCLE));
-        lights.add(new Light(4, "Family Room", false, true));
+
+        for (PHBridge bridge : bridges) {
+            savedBridges.add(bridge);
+        }
+
+//        lights.add(new Light(1, "Kitchen Bulb", false, true, Effect.STROBE));
+//        lights.add(new Light(2, "Bathroom bulb", false, true, Effect.BREATHE));
+//        lights.add(new Light(3, "Living Room", false, true, Effect.COLOR_CYCLE));
+//        lights.add(new Light(4, "Family Room", false, true));
         listViewAdapter.notifyDataSetChanged();
 
     }

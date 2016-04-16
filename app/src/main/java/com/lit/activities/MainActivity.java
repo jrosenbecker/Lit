@@ -8,19 +8,32 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.lit.R;
+import com.lit.api.PH_ConfigureBridge;
 import com.lit.constants.TabConstants;
 import com.lit.fragments.AddEffectFragment;
 import com.lit.fragments.CustomizeFragment;
 import com.lit.fragments.PowerSaveFragment;
 import com.lit.fragments.StatusFragment;
+import com.philips.lighting.hue.sdk.PHHueSDK;
 
 public class MainActivity extends AppCompatActivity
         implements CustomizeFragment.OnFragmentInteractionListener,
         PowerSaveFragment.OnFragmentInteractionListener,
         StatusFragment.OnFragmentInteractionListener, AddEffectFragment.OnFragmentInteractionListener {
 
+    /**
+     * Philips Hue SDK interface variables
+     */
+    private PHHueSDK phHueSDK;
+    private static final int MAX_HUE=65535;
+    public static final String TAG = "Lit";
+
+    /**
+     * Our stuff
+     */
     private TabLayout tabLayout;
     private Menu menu;
 
@@ -33,6 +46,10 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Set up the Philips Hue interface handler
+        phHueSDK = PHHueSDK.create();
+
         // Set up the toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_activity_toolbar);
         setSupportActionBar(toolbar);
@@ -149,20 +166,24 @@ public class MainActivity extends AppCompatActivity
         Intent intent;
         switch (item.getItemId()) {
             case R.id.configure_option:
-                intent = new Intent(getApplicationContext(), ConfigureActivity.class);
+                // TODO: intent = new Intent(getApplicationContext(), ConfigureActivity.class);
+                intent = new Intent(getApplicationContext(), PH_ConfigureBridge.class);
                 startActivity(intent);
                 return true;
             case R.id.add_effect_option:
-                intent = new Intent(getApplicationContext(), AddEffectActivity.class);
-                startActivity(intent);
+
+                // If there are no bridges, make sure to prompt the user to connect
+                if (phHueSDK.getAllBridges().size() > 0) {
+                    intent = new Intent(getApplicationContext(), AddEffectActivity.class);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(this, "Please connect to a bridge using the Status/Configure utility", Toast.LENGTH_LONG).show();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-
-
-
 
     /**
      * Updates the options available in the action bar based on which tab is selected
