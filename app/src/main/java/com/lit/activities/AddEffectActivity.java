@@ -1,16 +1,14 @@
 package com.lit.activities;
 
 import android.os.Bundle;
-import android.app.Activity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.ListView;
 
 import com.lit.R;
-import com.lit.adapters.AddEffectAdapter;
+import com.lit.adapters.EffectListAdapter;
 import com.lit.models.Light;
-import com.philips.lighting.annotations.Bridge;
 import com.philips.lighting.hue.listener.PHLightListener;
 import com.philips.lighting.hue.sdk.PHHueSDK;
 import com.philips.lighting.model.PHBridge;
@@ -26,9 +24,9 @@ import com.philips.lighting.model.PHHueError;
 public class AddEffectActivity extends AppCompatActivity {
 
     private ListView addEffectListView;
-    private AddEffectAdapter adapter;
+    private EffectListAdapter adapter;
     //TODO: private List<Light> addEffectList;
-    private List<PHLight> addEffectList;
+    private List<Light> addEffectList;
 
     private PHHueSDK phHueSDK;
     public static final String TAG = "Lit";
@@ -54,18 +52,18 @@ public class AddEffectActivity extends AppCompatActivity {
         // the lights connected to those bridges. When we get another PH light
         // we can then figure out how to discern between the light on a bridge
 
-        addEffectList = new ArrayList<PHLight>();
-        adapter = new AddEffectAdapter(this, addEffectList);
+        addEffectList = new ArrayList<Light>();
+        adapter = new EffectListAdapter(this, addEffectList);
         addEffectListView.setAdapter(adapter);
 
-        // TODO: Remove these additions, used currently for testing purposes
+
         PHBridge bridge = phHueSDK.getSelectedBridge();
         List<PHLight> allLights = bridge.getResourceCache().getAllLights();
 
         for (PHLight light : allLights) {
-            addEffectList.add(light);
+            addEffectList.add(new Light(light.getName(), light, phHueSDK));
         }
-
+        // TODO: Remove these additions, used currently for testing purposes
 //        addEffectList.add(new Light(1, "Light 1", false, true, 0));
 //        addEffectList.add(new Light(2, "Light 2", false, true, 1));
 //        addEffectList.add(new Light(3, "Light 3", false, true, 2));

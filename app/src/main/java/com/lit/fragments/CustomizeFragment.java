@@ -14,11 +14,13 @@ import android.widget.ListView;
 
 import com.lit.R;
 import com.lit.adapters.CustomizeAdapter;
+import com.lit.adapters.EffectListAdapter;
 import com.lit.models.Effect;
 import com.lit.models.Light;
 import com.philips.lighting.hue.sdk.PHHueSDK;
 import com.philips.lighting.model.PHBackup;
 import com.philips.lighting.model.PHBridge;
+import com.philips.lighting.model.PHLight;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,13 +36,13 @@ import java.util.List;
 public class CustomizeFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
-    private CustomizeAdapter listViewAdapter;
-
+    private EffectListAdapter listViewAdapter;
+    //
     private PHHueSDK phHueSDK;
-
-    //TODO: private List<Light> lights;
-    private List<PHBridge> bridges;
-
+    //
+//    //TODO: private List<Light> lights;
+    private List<Light> lights;
+    //
     private ListView customizeListView;
 
     public CustomizeFragment() {
@@ -50,6 +52,7 @@ public class CustomizeFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
+     *
      * @return A new instance of fragment CustomizeFragment.
      */
     public static CustomizeFragment newInstance() {
@@ -100,22 +103,27 @@ public class CustomizeFragment extends Fragment {
         customizeListView = (ListView) getActivity().findViewById(R.id.customize_list_view);
 
         List<PHBridge> savedBridges = new ArrayList<PHBridge>();
-
-        //TODO: listViewAdapter = new CustomizeAdapter(getContext(), lights);
-        bridges = phHueSDK.getAllBridges();
-        listViewAdapter = new CustomizeAdapter(getContext(), savedBridges);
-
+//
+//        //TODO: listViewAdapter = new CustomizeAdapter(getContext(), lights);
+        lights = new ArrayList<Light>();
+        listViewAdapter = new EffectListAdapter(getContext(), lights);
+//
         customizeListView.setAdapter(listViewAdapter);
-
-        for (PHBridge bridge : bridges) {
-            savedBridges.add(bridge);
+//
+        for (PHLight light : phHueSDK.getSelectedBridge().getResourceCache().getAllLights()) {
+            lights.add(new Light(light.getName(), light, phHueSDK));
         }
+
+        listViewAdapter.notifyDataSetChanged();
+//        for (PHBridge bridge : bridges) {
+//            savedBridges.add(bridge);
+//        }
 
 //        lights.add(new Light(1, "Kitchen Bulb", false, true, Effect.STROBE));
 //        lights.add(new Light(2, "Bathroom bulb", false, true, Effect.BREATHE));
 //        lights.add(new Light(3, "Living Room", false, true, Effect.COLOR_CYCLE));
 //        lights.add(new Light(4, "Family Room", false, true));
-        listViewAdapter.notifyDataSetChanged();
+//        listViewAdapter.notifyDataSetChanged();
 
     }
 

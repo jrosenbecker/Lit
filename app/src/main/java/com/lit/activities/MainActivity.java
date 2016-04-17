@@ -13,7 +13,6 @@ import android.widget.Toast;
 import com.lit.R;
 import com.lit.api.PH_ConfigureBridge;
 import com.lit.constants.TabConstants;
-import com.lit.fragments.AddEffectFragment;
 import com.lit.fragments.CustomizeFragment;
 import com.lit.fragments.PowerSaveFragment;
 import com.lit.fragments.StatusFragment;
@@ -22,7 +21,7 @@ import com.philips.lighting.hue.sdk.PHHueSDK;
 public class MainActivity extends AppCompatActivity
         implements CustomizeFragment.OnFragmentInteractionListener,
         PowerSaveFragment.OnFragmentInteractionListener,
-        StatusFragment.OnFragmentInteractionListener, AddEffectFragment.OnFragmentInteractionListener {
+        StatusFragment.OnFragmentInteractionListener {
 
     /**
      * Philips Hue SDK interface variables

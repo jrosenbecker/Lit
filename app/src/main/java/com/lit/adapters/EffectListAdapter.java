@@ -2,9 +2,6 @@ package com.lit.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,14 +11,9 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.lit.R;
-import com.lit.activities.MainActivity;
-import com.lit.activities.ModifyEffectActivity;
-import com.lit.fragments.AddEffectFragment;
 import com.lit.models.Light;
-import com.philips.lighting.annotations.Bridge;
 import com.philips.lighting.hue.listener.PHLightListener;
 import com.philips.lighting.hue.sdk.PHHueSDK;
 import com.philips.lighting.model.PHBridge;
@@ -30,13 +22,12 @@ import com.philips.lighting.model.PHHueError;
 import com.philips.lighting.model.PHLight;
 import com.philips.lighting.model.PHLightState;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 
-public class AddEffectAdapter extends BaseAdapter {
+public class EffectListAdapter extends BaseAdapter {
 
     /**
      * Global variable from the Philips Hue API
@@ -47,10 +38,10 @@ public class AddEffectAdapter extends BaseAdapter {
 
     private Context context;
     //TODO: private List<Light> addEffectList;
-    private List<PHLight> addEffectList;
+    private List<Light> addEffectList;
 
-    //TODO: public AddEffectAdapter(Context context, List<Light> addEffectList)
-    public AddEffectAdapter(Context context, List<PHLight> addEffectList)
+    //TODO: public EffectListAdapter(Context context, List<Light> addEffectList)
+    public EffectListAdapter(Context context, List<Light> addEffectList)
     {
         this.context = context;
         this.addEffectList = addEffectList;
@@ -83,7 +74,7 @@ public class AddEffectAdapter extends BaseAdapter {
      */
     @Override
     //TODO: public long getItemId(int position) {return addEffectList.get(position).getId();}
-    public long getItemId(int position) {return 1;}
+    public long getItemId(int position) {return addEffectList.get(position).getId();}
 
     /**
      * Gets the view. Used to initialize the view variables
@@ -104,10 +95,10 @@ public class AddEffectAdapter extends BaseAdapter {
         TextView lightName = (TextView) convertView.findViewById(R.id.addEffect_light_name);
 
         //TODO: Light addEffectLine = addEffectList.get(position);
-        PHLight addEffectLine = addEffectList.get(position);
+        Light addEffectLine = addEffectList.get(position);
 
         //TODO: lightName.setText(addEffectLine.getLightName());
-        lightName.setText(addEffectLine.getName());
+        lightName.setText(addEffectLine.getLightName());
 
         Spinner spinner = (Spinner) convertView.findViewById(R.id.addEffect_spinner);
 
