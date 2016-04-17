@@ -1,29 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="15dp"
     android:paddingLeft="20dp"
     android:paddingRight="20dp"
-    android:paddingTop="15dp"
-    android:paddingBottom="15dp" >
+    android:paddingTop="15dp">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Medium Text"
-        android:id="@+id/power_save_light_name"
-        android:layout_weight="1"
-        android:layout_marginLeft="10dp"
-        android:textSize="16pt" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Medium Text"
-        android:id="@+id/power_save_active_sensor"
-        android:layout_weight="1"
-        android:layout_marginLeft="10dp"
-        android:textSize="8pt" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical" >
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/status_light_switch"
+            android:layout_weight="0"
+            android:textSize="16pt" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/power_save_light_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:text="Medium Text"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/colorPrimary"
+                android:textSize="16pt" />
+
+            <TextView
+                android:id="@+id/power_save_active_sensor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:text="Medium Text"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/colorPrimary"
+                android:textSize="8pt" />
+        </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

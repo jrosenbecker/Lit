@@ -8,10 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.lit.R;
 import com.lit.adapters.StatusAdapter;
 import com.lit.models.Light;
+import com.philips.lighting.hue.sdk.PHHueSDK;
+import com.philips.lighting.model.PHBridge;
+import com.philips.lighting.model.PHLight;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +32,7 @@ public class StatusFragment extends Fragment {
 
 
     private OnFragmentInteractionListener fragmentInteractionListener;
+    private PHHueSDK phHueSDK;
     private ListView statusListView;
     private StatusAdapter adapter;
     private List<Light> statusList;
@@ -49,8 +54,9 @@ public class StatusFragment extends Fragment {
 
     /**
      * Inflates the fragment
-     * @param inflater - inflater to be used
-     * @param container - View container
+     *
+     * @param inflater           - inflater to be used
+     * @param container          - View container
      * @param savedInstanceState - saved Instance
      * @return View after the inflate
      */
@@ -72,23 +78,14 @@ public class StatusFragment extends Fragment {
         adapter = new StatusAdapter(getContext(), statusList);
         statusListView.setAdapter(adapter);
 
-        // TODO: Remove these additions, used currently for testing purposes
-        statusList.add(new Light(1, "Kitchen Bulb", false, true));
-        statusList.add(new Light(2, "Bathroom bulb", false, true));
-        statusList.add(new Light(3, "Living Room", false, true));
-        statusList.add(new Light(4, "Family Room", false, true));
-        statusList.add(new Light(5, "Bed Room", false, true));
-        statusList.add(new Light(6, "Basement", false, true));
-        statusList.add(new Light(7, "Attic", false, true));
-        statusList.add(new Light(3, "Garage", false, true));
-        statusList.add(new Light(3, "Shed", false, false));
-        statusList.add(new Light(3, "Pool", false, false));
+        phHueSDK = PHHueSDK.create();
         adapter.notifyDataSetChanged();
     }
 
 
     /**
      * Generated onAttach method
+     *
      * @param context - current context
      */
     @Override
@@ -119,13 +116,37 @@ public class StatusFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
+     * <p/>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateList();
+    }
+
+    private void updateList() {
+        PHBridge bridge = phHueSDK.getSelectedBridge();
+        if(phHueSDK.getAllBridges().size() > 0) {
+            List<PHLight> allLights = bridge.getResourceCache().getAllLights();
+            for (int i = 0; i < allLights.size(); i++) {
+                Light tempLight = new Light("Light " + allLights.get(i), allLights.get(i), phHueSDK);
+                statusList.add(tempLight);
+            }
+
+            adapter.notifyDataSetChanged();
+        }
+        else
+        {
+            Toast.makeText(getActivity(), R.string.could_not_find_bridge, Toast.LENGTH_LONG);
+        }
     }
 
 }

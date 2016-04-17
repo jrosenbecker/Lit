@@ -79,31 +79,31 @@ public class ConfigureAdapter extends BaseAdapter {
         lightName.setText(configureLine.getLightName());
         String connectionConfigureString;
 
-        if(configureLine.getConnectionStatus())
-            connectionConfigureString = "Connected";
-        else
-            connectionConfigureString = "Disconnected";
-
-        connection.setText("Status: " + connectionConfigureString);
-
-        Button attemptConnection = (Button) convertView.findViewById(R.id.attempt_connection_button);
-
-        if(!configureLine.getConnectionStatus())
-        {
-            connection.setTextColor(Color.RED);
-            attemptConnection.setText("Attempt\nConnection");
-        }
-
-        attemptConnection.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(configureLine.getConnectionStatus()) {
-                    Toast.makeText(context, "Reconnected to " + configureLine.getLightName() + " successfully", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(context, "Error: " + configureLine.getLightName() + " is not connected on this Wi-Fi network", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+//        if(configureLine.getConnectionStatus())
+//            connectionConfigureString = "Connected";
+//        else
+//            connectionConfigureString = "Disconnected";
+//
+//        connection.setText("Status: " + connectionConfigureString);
+//
+//        Button attemptConnection = (Button) convertView.findViewById(R.id.attempt_connection_button);
+//
+//        if(!configureLine.getConnectionStatus())
+//        {
+//            connection.setTextColor(Color.RED);
+//            attemptConnection.setText("Attempt\nConnection");
+//        }
+//
+//        attemptConnection.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(configureLine.getConnectionStatus()) {
+//                    Toast.makeText(context, "Reconnected to " + configureLine.getLightName() + " successfully", Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Toast.makeText(context, "Error: " + configureLine.getLightName() + " is not connected on this Wi-Fi network", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
 
 
 

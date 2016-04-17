@@ -52,7 +52,7 @@ public class PowerSaveAdapter extends BaseAdapter {
         TextView activeSensor = (TextView) convertView.findViewById(R.id.power_save_active_sensor);
         Light light = powerSaveList.get(position);
         lightName.setText(light.getLightName());
-        activeSensor.setText(light.getActiveSensor());
+//        activeSensor.setText(light.getActiveSensor());
 
 
         return convertView;

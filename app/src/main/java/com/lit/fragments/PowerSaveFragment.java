@@ -93,10 +93,10 @@ public class PowerSaveFragment extends Fragment {
         lights = new ArrayList<Light>();
         listAdapter = new PowerSaveAdapter(getContext(), lights);
         powerSaveListView.setAdapter(listAdapter);
-        lights.add(new Light(1, "Kitchen Bulb", false, true, Effect.STROBE));
-        lights.add(new Light(2, "Bathroom bulb", false, true, Effect.BREATHE));
-        lights.add(new Light(3, "Living Room", false, true, Effect.COLOR_CYCLE, "Living Room Sensor"));
-        lights.add(new Light(4, "Family Room", false, true, Effect.NONE,  "Family Room Sensor"));
+//        lights.add(new Light(1, "Kitchen Bulb", false, true, Effect.STROBE));
+//        lights.add(new Light(2, "Bathroom bulb", false, true, Effect.BREATHE));
+//        lights.add(new Light(3, "Living Room", false, true, Effect.COLOR_CYCLE, "Living Room Sensor"));
+//        lights.add(new Light(4, "Family Room", false, true, Effect.NONE,  "Family Room Sensor"));
         listAdapter.notifyDataSetChanged();
     }
 

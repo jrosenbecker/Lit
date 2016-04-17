@@ -1,58 +1,65 @@
 package com.lit.models;
 
+import com.philips.lighting.hue.sdk.PHHueSDK;
+import com.philips.lighting.model.PHLight;
+import com.philips.lighting.model.PHLightState;
+
+import java.util.Random;
+
 /**
  * Created by JoeLaptop on 3/19/2016.
  */
 public class Light {
-    private boolean lightOn;
-    private String lightName;
-    private String activeSensor;
-    private Effect effect;
+    private PHLight phLight;
+    private PHHueSDK phHueSDK;
     private long id;
-    private boolean connectionStatus;
 
-    public Light(long id, String name, boolean lightOn, boolean connectionStatus) {
-        this(id, name, lightOn, connectionStatus, Effect.NONE, "Built In Light Sensor");
-    }
-
-    public Light(long id, String name, boolean lightOn, boolean connectionStatus, int effectID) {
-        this(id, name, lightOn, connectionStatus, effectID, "Built In Light Sensor");
-    }
-
-
-        public Light(long id, String name, boolean lightOn, boolean connectionStatus, int effectID, String activeSensor) {
-        lightName = name;
-        this.lightOn = lightOn;
-        this.id = id;
-        this.connectionStatus = connectionStatus;
-        effect = new Effect(this.id, effectID, false);
-        this.activeSensor = activeSensor;
+    public Light(String name, PHLight phLight, PHHueSDK phHueSDK) {
+        this.phLight = phLight;
+        this.phHueSDK = phHueSDK;
+        // TODO: Integrate this with the database
+        id = (new Random()).nextLong();
     }
 
     public boolean isLightOn() {
-        return lightOn;
+        return phLight.getLastKnownLightState().isOn();
     }
 
     public String getLightName() {
-        return lightName;
+        return phLight.getName();
+    }
+
+    public void setLightName(String name)
+    {
+        phLight.setName(name);
     }
 
     public long getId() {
         return id;
     }
 
-    public boolean getConnectionStatus()
+    public void setLightOn(Boolean lightOn)
     {
-        return connectionStatus;
+        PHLightState lightState = phLight.getLastKnownLightState();
+        lightState.setOn(lightOn);
+        phHueSDK.getSelectedBridge().updateLightState(phLight, lightState);
     }
 
-    public Effect getEffect()
+    public boolean isConnectedToBridge()
     {
-        return effect;
+//        phHueSDK.getSelectedBridge().getResourceCache().
+        return phLight.getLastKnownLightState().isReachable();
     }
-
-    public String getActiveSensor()
-    {
-        return activeSensor;
-    }
+//
+//    public boolean getConnectionStatus() {
+//        return connectionStatus;
+//    }
+//
+//    public Effect getEffect() {
+//        return effect;
+//    }
+//
+//    public String getActiveSensor() {
+//        return activeSensor;
+//    }
 }

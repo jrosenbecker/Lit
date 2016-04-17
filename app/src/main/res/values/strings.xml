@@ -8,6 +8,12 @@
         <item>Breathe</item>
         <item>Color Cycle</item>
     </string-array>
+    <string name="power_save_explanation">Power save mode will detect the amount of light in the room using
+        either the phone\'s built in sensor or an external light sensor and scale the light\'s
+        brightness. If power save mode is enabled for a light, it also will disable any effects and
+        set the color to white
+    </string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_add_effect">AddEffectActivity</string>

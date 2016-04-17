@@ -19,17 +19,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Power Save Mode"
+                android:text="@string/power_save_explanation"
+                android:textColor="@color/colorPrimaryDark"
                 android:id="@+id/power_save_text"
                 android:layout_weight="1"
-                android:layout_margin="20dp" />
-
-            <Switch
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/power_save_enabled"
-                android:layout_gravity="center_vertical"
-                android:layout_margin="20dp" />
+                android:layout_margin="20dp"
+                android:textAlignment="center"
+                android:textSize="7pt" />
         </LinearLayout>
 
         <ListView

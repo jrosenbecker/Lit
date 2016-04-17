@@ -2,11 +2,16 @@ package com.lit.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -69,6 +74,7 @@ public class StatusAdapter extends BaseAdapter {
      */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        final int positionConstant = position;
         LayoutInflater inflater = ((Activity) context).getLayoutInflater();
         convertView =  inflater.inflate(R.layout.status_single_line, parent, false);
         Switch lightSwitch = (Switch) convertView.findViewById(R.id.status_light_switch);
@@ -77,16 +83,53 @@ public class StatusAdapter extends BaseAdapter {
         Light statusLine = statusList.get(position);
         lightSwitch.setChecked(statusLine.isLightOn());
         lightName.setText(statusLine.getLightName());
+        lightName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("Rename " + statusList.get(positionConstant).getLightName());
+                final EditText newNameInput = new EditText(context);
+                int padding = 20;
+                newNameInput.setPadding(padding, padding, padding, padding);
+                newNameInput.setInputType(InputType.TYPE_CLASS_TEXT);
+                builder.setView(newNameInput);
+
+                builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        statusList.get(positionConstant).setLightName(newNameInput.getText().toString());
+                    }
+                });
+
+
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                    }
+                });
+
+                builder.show();
+            }
+        });
+
+        lightSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                statusList.get(positionConstant).setLightOn(b);
+            }
+        });
         String connectionStatusString;
 
-        if(statusLine.getConnectionStatus())
+
+        if(statusLine.isConnectedToBridge())
             connectionStatusString = "Connected";
         else
-            connectionStatusString = "Disconnected";
+            connectionStatusString = "Light is not reachable";
 
         connection.setText("Status: " + connectionStatusString);
 
-        if(!statusLine.getConnectionStatus())
+        if(!statusLine.isConnectedToBridge())
             connection.setTextColor(Color.RED);
 
         

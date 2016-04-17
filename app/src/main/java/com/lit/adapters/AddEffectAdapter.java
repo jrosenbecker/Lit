@@ -107,7 +107,7 @@ public class AddEffectAdapter extends BaseAdapter {
         PHLight addEffectLine = addEffectList.get(position);
 
         //TODO: lightName.setText(addEffectLine.getLightName());
-        lightName.setText(addEffectLine.toString());
+        lightName.setText(addEffectLine.getName());
 
         Spinner spinner = (Spinner) convertView.findViewById(R.id.addEffect_spinner);
 

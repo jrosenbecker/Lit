@@ -12,6 +12,7 @@ import com.lit.adapters.ConfigureAdapter;
 import com.lit.adapters.CustomizeAdapter;
 import com.lit.models.Effect;
 import com.lit.models.Light;
+import com.philips.lighting.model.PHLight;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,16 +40,16 @@ public class ConfigureActivity extends AppCompatActivity {
         configureListView.setAdapter(adapter);
 
         // TODO: Remove these additions, used currently for testing purposes
-        configureList.add(new Light(1, "Light 1", false, true));
-        configureList.add(new Light(2, "Light 2", false, true));
-        configureList.add(new Light(3, "Light 3", false, true));
-        configureList.add(new Light(4, "Light 4", false, true));
-        configureList.add(new Light(5, "Light 5", false, true));
-        configureList.add(new Light(6, "Light 6", false, true));
-        configureList.add(new Light(7, "Light 7", false, true));
-        configureList.add(new Light(3, "Light 8", false, true));
-        configureList.add(new Light(3, "Light 9", false, false));
-        configureList.add(new Light(3, "Light 10", false, false));
+//        configureList.add(new Light(1, "Light 1", false, true));
+//        configureList.add(new Light(2, "Light 2", false, true));
+//        configureList.add(new Light(3, "Light 3", false, true));
+//        configureList.add(new Light(4, "Light 4", false, true));
+//        configureList.add(new Light(5, "Light 5", false, true));
+//        configureList.add(new Light(6, "Light 6", false, true));
+//        configureList.add(new Light(7, "Light 7", false, true));
+//        configureList.add(new Light(3, "Light 8", false, true));
+//        configureList.add(new Light(3, "Light 9", false, false));
+//        configureList.add(new Light(3, "Light 10", false, false));
         adapter.notifyDataSetChanged();
     }
 
