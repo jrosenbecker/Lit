@@ -1,41 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:gravity="center_vertical"
     android:paddingLeft="20dp"
     android:paddingRight="20dp"
     android:paddingTop="15dp"
-    android:paddingBottom="15dp" >
+    android:paddingBottom="15dp">
 
-    <CheckBox
+    <Switch
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=""
-        android:id="@+id/effect_check_box"
-        android:textSize="16pt"
-        android:layout_gravity="center_vertical" />
+        android:id="@+id/customize_effect_switch"
+        android:textSize="16pt" />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="text"
+            android:id="@+id/addEffect_light_name"
+            android:textSize="16pt"
+            android:gravity="center_vertical"
+            android:layout_weight="1" />
+        <!--<Spinner
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medium Text"
-            android:id="@+id/customize_light_name"
+            android:id="@+id/addEffect_spinner"
             android:layout_weight="1"
-            android:layout_marginLeft="10dp"
-            android:textSize="16pt" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medium Text"
-            android:id="@+id/customize_effect_text"
-            android:layout_weight="1"
-            android:layout_marginLeft="10dp"
-            android:textSize="8pt" />
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="10dp" />-->
     </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Modify\nEffect"
+        android:id="@+id/modify_effect_button"
+        android:layout_gravity="center_vertical|right"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp" />
 </LinearLayout>

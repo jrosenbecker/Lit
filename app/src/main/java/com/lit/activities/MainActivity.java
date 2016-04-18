@@ -169,16 +169,6 @@ public class MainActivity extends AppCompatActivity
                 intent = new Intent(getApplicationContext(), PH_ConfigureBridge.class);
                 startActivity(intent);
                 return true;
-            case R.id.add_effect_option:
-
-                // If there are no bridges, make sure to prompt the user to connect
-                if (phHueSDK.getAllBridges().size() > 0) {
-                    intent = new Intent(getApplicationContext(), AddEffectActivity.class);
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(this, "Please connect to a bridge using the Status/Configure utility", Toast.LENGTH_LONG).show();
-                }
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -193,17 +183,14 @@ public class MainActivity extends AppCompatActivity
             case TabConstants.STATUS_TAB:
                 getSupportActionBar().setTitle("Status");
                 menu.findItem(R.id.configure_option).setVisible(true);
-                menu.findItem(R.id.add_effect_option).setVisible(false);
                 break;
             case TabConstants.POWER_SAVE_TAB:
                 getSupportActionBar().setTitle("Power Save");
                 menu.findItem(R.id.configure_option).setVisible(false);
-                menu.findItem(R.id.add_effect_option).setVisible(false);
                 break;
             case TabConstants.CUSTOMIZE_TAB:
                 getSupportActionBar().setTitle("Customize");
                 menu.findItem(R.id.configure_option).setVisible(false);
-                menu.findItem(R.id.add_effect_option).setVisible(true);
                 break;
             default:
                 break;

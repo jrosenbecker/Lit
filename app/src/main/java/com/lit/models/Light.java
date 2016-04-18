@@ -50,6 +50,17 @@ public class Light {
 //        phHueSDK.getSelectedBridge().getResourceCache().
         return phLight.getLastKnownLightState().isReachable();
     }
+
+    public PHLightState getLightState()
+    {
+        return phLight.getLastKnownLightState();
+    }
+
+
+    public PHLight getPhLight()
+    {
+        return phLight;
+    }
 //
 //    public boolean getConnectionStatus() {
 //        return connectionStatus;

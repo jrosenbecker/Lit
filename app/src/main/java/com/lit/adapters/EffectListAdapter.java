@@ -2,6 +2,8 @@ package com.lit.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,10 +11,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.lit.R;
+import com.lit.activities.ModifyEffectActivity;
 import com.lit.models.Light;
 import com.philips.lighting.hue.listener.PHLightListener;
 import com.philips.lighting.hue.sdk.PHHueSDK;
@@ -91,8 +96,19 @@ public class EffectListAdapter extends BaseAdapter {
         phHueSDK = PHHueSDK.create();
 
         LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-        convertView =  inflater.inflate(R.layout.add_effect_single_line, parent, false);
+        convertView =  inflater.inflate(R.layout.customize_single_line, parent, false);
         TextView lightName = (TextView) convertView.findViewById(R.id.addEffect_light_name);
+        Switch effectEnabledSwitch = (Switch) convertView.findViewById(R.id.customize_effect_switch);
+        effectEnabledSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b)
+                    colorCycle(positionConstant);
+                else
+                    killEffect(positionConstant);
+            }
+        });
+
 
         //TODO: Light addEffectLine = addEffectList.get(position);
         Light addEffectLine = addEffectList.get(position);
@@ -100,38 +116,37 @@ public class EffectListAdapter extends BaseAdapter {
         //TODO: lightName.setText(addEffectLine.getLightName());
         lightName.setText(addEffectLine.getLightName());
 
-        Spinner spinner = (Spinner) convertView.findViewById(R.id.addEffect_spinner);
+//        Spinner spinner = (Spinner) convertView.findViewById(R.id.addEffect_spinner);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(context,
-                R.array.effects_array, android.R.layout.simple_spinner_item);
+//        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(context,
+//                R.array.effects_array, android.R.layout.simple_spinner_item);
 
         // Specify the layout to use when the list of choices appears
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         // Apply the adapter to the spinner
-        spinner.setAdapter(spinnerAdapter);
+//        spinner.setAdapter(spinnerAdapter);
 
         Button modifyEffect = (Button) convertView.findViewById(R.id.modify_effect_button);
 
 //        TODO: Add a proper effect listener
-//        modifyEffect.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(context, ModifyEffectActivity.class);
-//                intent.putExtra("light", ((Light)getItem(positionConstant)).getLightName());
-//                intent.putExtra("effect", ((Light)getItem(positionConstant)).getEffect().getText());
-//                context.startActivity(intent);
-//            };
-//        });
         modifyEffect.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
-                randomLights();
+                Intent intent = new Intent(context, ModifyEffectActivity.class);
+                intent.putExtra("light", ((Light)getItem(positionConstant)).getLightName());
+                context.startActivity(intent);
             }
-
         });
+//        modifyEffect.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                randomLights();
+//            }
+//
+//        });
 
         // you need to have a list of data that you want the spinner to display
 
@@ -159,6 +174,26 @@ public class EffectListAdapter extends BaseAdapter {
             //  bridge.updateLightState(light, lightState);   // If no bridge response is required then use this simpler form.
         }
     }
+
+    private void colorCycle(int position)
+    {
+        Light tempLight = (Light) getItem(position);
+        PHLight phLight = tempLight.getPhLight();
+        PHLightState state = phLight.getLastKnownLightState();
+        state.setEffectMode(PHLight.PHLightEffectMode.EFFECT_COLORLOOP);
+        phHueSDK.getSelectedBridge().updateLightState(phLight, state);
+    }
+
+
+    private void killEffect(int position)
+    {
+        Light tempLight = (Light) getItem(position);
+        PHLight phLight = tempLight.getPhLight();
+        PHLightState state = phLight.getLastKnownLightState();
+        state.setEffectMode(PHLight.PHLightEffectMode.EFFECT_NONE);
+        phHueSDK.getSelectedBridge().updateLightState(phLight, state);
+    }
+
     // If you want to handle the response from the bridge, create a PHLightListener object.
     PHLightListener listener = new PHLightListener() {
 

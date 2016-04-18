@@ -1,6 +1,5 @@
 package com.lit.activities;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -9,10 +8,7 @@ import android.widget.ListView;
 
 import com.lit.R;
 import com.lit.adapters.ConfigureAdapter;
-import com.lit.adapters.CustomizeAdapter;
-import com.lit.models.Effect;
 import com.lit.models.Light;
-import com.philips.lighting.model.PHLight;
 
 import java.util.ArrayList;
 import java.util.List;

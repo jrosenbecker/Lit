@@ -4,21 +4,15 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.lit.R;
-import com.lit.adapters.CustomizeAdapter;
 import com.lit.adapters.EffectListAdapter;
-import com.lit.models.Effect;
 import com.lit.models.Light;
 import com.philips.lighting.hue.sdk.PHHueSDK;
-import com.philips.lighting.model.PHBackup;
 import com.philips.lighting.model.PHBridge;
 import com.philips.lighting.model.PHLight;
 

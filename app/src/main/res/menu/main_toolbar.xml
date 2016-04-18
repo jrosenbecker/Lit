@@ -8,11 +8,6 @@
         android:visible="false"
         app:showAsAction="ifRoom" />
 
-    <item android:id = "@+id/add_effect_option"
-        android:title="@string/add_effect"
-        android:visible="false"
-        app:showAsAction="ifRoom" />
-
     <item android:id="@+id/find_new_bridge"
         android:title="@string/menu_find_bridge"
         android:visible="false"
