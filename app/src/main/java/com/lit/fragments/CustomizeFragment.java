@@ -103,9 +103,10 @@ public class CustomizeFragment extends Fragment {
         listViewAdapter = new EffectListAdapter(getContext(), lights);
 //
         customizeListView.setAdapter(listViewAdapter);
-//
-        for (PHLight light : phHueSDK.getSelectedBridge().getResourceCache().getAllLights()) {
-            lights.add(new Light(light.getName(), light, phHueSDK));
+        if(phHueSDK.getAllBridges().size() > 0) {
+            for (PHLight light : phHueSDK.getSelectedBridge().getResourceCache().getAllLights()) {
+                lights.add(new Light(light.getName(), light, phHueSDK));
+            }
         }
 
         listViewAdapter.notifyDataSetChanged();

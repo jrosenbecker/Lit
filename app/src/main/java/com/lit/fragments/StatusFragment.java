@@ -7,12 +7,14 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.lit.R;
 import com.lit.adapters.StatusAdapter;
 import com.lit.models.Light;
+import com.lit.models.Room;
 import com.philips.lighting.hue.sdk.PHHueSDK;
 import com.philips.lighting.model.PHBridge;
 import com.philips.lighting.model.PHLight;
@@ -33,9 +35,9 @@ public class StatusFragment extends Fragment {
 
     private OnFragmentInteractionListener fragmentInteractionListener;
     private PHHueSDK phHueSDK;
-    private ListView statusListView;
+    private ExpandableListView statusListView;
     private StatusAdapter adapter;
-    private List<Light> statusList;
+    private List<Room> statusList;
 
     public StatusFragment() {
         // Required empty public constructor
@@ -73,8 +75,8 @@ public class StatusFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        statusListView = (ListView) getActivity().findViewById(R.id.status_list_view);
-        statusList = new ArrayList<Light>();
+        statusListView = (ExpandableListView) getActivity().findViewById(R.id.status_expandable_list_view);
+        statusList = new ArrayList<Room>();
         adapter = new StatusAdapter(getContext(), statusList);
         statusListView.setAdapter(adapter);
 
@@ -136,11 +138,15 @@ public class StatusFragment extends Fragment {
         PHBridge bridge = phHueSDK.getSelectedBridge();
         if(phHueSDK.getAllBridges().size() > 0) {
             List<PHLight> allLights = bridge.getResourceCache().getAllLights();
+            List<Light> lights = new ArrayList<Light>();
+
             for (int i = 0; i < allLights.size(); i++) {
                 Light tempLight = new Light("Light " + allLights.get(i), allLights.get(i), phHueSDK);
-                statusList.add(tempLight);
+                lights.add(tempLight);
             }
 
+            Room room = new Room("Bedroom", lights);
+            statusList.add(room);
             adapter.notifyDataSetChanged();
         }
         else

@@ -10,11 +10,18 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <ListView
+        <!--<ListView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/status_list_view"
-            android:overScrollMode="never"/>
+            android:overScrollMode="never"/>-->
+
+        <ExpandableListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/status_expandable_list_view"
+            android:overScrollMode="never"
+            />
     </LinearLayout>
 
 </FrameLayout>
