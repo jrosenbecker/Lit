@@ -1,24 +1,35 @@
 package com.lit.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.PopupMenu;
 import android.text.InputType;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lit.R;
 import com.lit.models.Light;
 import com.lit.models.Room;
+import com.philips.lighting.hue.sdk.utilities.PHUtilities;
+import com.philips.lighting.hue.sdk.utilities.impl.PHUtilitiesHelper;
+import com.philips.lighting.model.PHLightState;
 
 import java.util.List;
+import java.util.zip.Inflater;
 
 /**
  * Created by JoeLaptop on 3/19/2016.
@@ -185,8 +196,7 @@ public class StatusAdapter extends BaseExpandableListAdapter {
         final int constRoomIndex = roomIndex;
         final int constChildIndex = childIndex;
         View view = convertView;
-        if(view == null)
-        {
+        if (view == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.status_single_line, viewGroup, false);
         }
@@ -195,38 +205,45 @@ public class StatusAdapter extends BaseExpandableListAdapter {
         Switch lightSwitch = (Switch) view.findViewById(R.id.status_light_switch);
         TextView lightName = (TextView) view.findViewById(R.id.status_light_name);
         TextView connection = (TextView) view.findViewById(R.id.status_connection_text);
+        ImageButton menuButton = (ImageButton) view.findViewById(R.id.status_options_button);
 
-        lightSwitch.setChecked(light.isLightOn());
-        lightName.setText(light.getLightName());
-        lightName.setOnClickListener(new View.OnClickListener() {
+        menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle("Rename " + ((Light) getChild(constRoomIndex, constChildIndex)).getLightName());
-                final EditText newNameInput = new EditText(context);
-                int padding = 20;
-                newNameInput.setPadding(padding, padding, padding, padding);
-                newNameInput.setInputType(InputType.TYPE_CLASS_TEXT);
-                builder.setView(newNameInput);
-
-                builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                PopupMenu popup = new PopupMenu(context, view);
+                MenuInflater inflater = popup.getMenuInflater();
+                inflater.inflate(R.menu.status_context_menu, popup.getMenu());
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        ((Light) getChild(constRoomIndex, constChildIndex)).setLightName(newNameInput.getText().toString());
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch(item.getItemId())
+                        {
+                            case R.id.rename_light_option:
+                                renameLightDialog(constRoomIndex, constChildIndex);
+                                return true;
+                            case R.id.change_color:
+                                changeColorDialog(constRoomIndex, constChildIndex);
+                                return true;
+                            case R.id.brightness_option:
+                                changeBrightnessDialog(constRoomIndex, constChildIndex);
+                                return true;
+                            default:
+                                return false;
+                        }
+
                     }
                 });
+                popup.show();
 
-
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.cancel();
-                    }
-                });
-
-                builder.show();
             }
         });
+
+
+
+        // Need to set listener to null, otherwise setChecked will fire off the listener created below
+        lightSwitch.setOnCheckedChangeListener(null);
+        lightSwitch.setChecked(light.isLightOn());
+        lightName.setText(light.getLightName());
 
         lightSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -237,20 +254,165 @@ public class StatusAdapter extends BaseExpandableListAdapter {
         String connectionStatusString;
 
 
-        if(light.isConnectedToBridge())
+        if (light.isConnectedToBridge()) {
             connectionStatusString = "Connected";
-        else
+            connection.setTextColor(Color.GRAY);
+        } else {
             connectionStatusString = "Light is not reachable";
+            connection.setTextColor(Color.RED);
+        }
 
         connection.setText("Status: " + connectionStatusString);
 
-        if(!light.isConnectedToBridge())
-            connection.setTextColor(Color.RED);
         return view;
     }
 
     @Override
     public boolean isChildSelectable(int i, int i1) {
         return false;
+    }
+
+    private void renameLightDialog(final int roomIndex, final int childIndex)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Rename " + ((Light) getChild(roomIndex, childIndex)).getLightName());
+        final EditText newNameInput = new EditText(context);
+        int padding = 20;
+        newNameInput.setPadding(padding, padding, padding, padding);
+        newNameInput.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(newNameInput);
+
+        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                ((Light) getChild(roomIndex, childIndex)).setLightName(newNameInput.getText().toString());
+            }
+        });
+
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    public void changeBrightnessDialog(final int roomIndex, final int lightIndex)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        final Light light = (Light) getChild(roomIndex, lightIndex);
+        final PHLightState initialState = light.getLightState();
+        builder.setTitle("Change brightness of " + ((Light) getChild(roomIndex, lightIndex)).getLightName());
+        SeekBar slider = new SeekBar(context);
+        slider.setMax(Light.MAX_BRIGHTNESS);
+        slider.setProgress(light.getBrightness());
+        slider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                ((Light) getChild(roomIndex, lightIndex)).setBrightness(seekBar.getProgress());
+                Toast.makeText(context, "" + seekBar.getProgress(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        int padding = 20;
+
+        builder.setView(slider);
+
+        builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // Do nothing, brightness changes during the slider movement
+            }
+        });
+
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // Go back to the original brightness
+                ((Light) getChild(roomIndex, lightIndex)).setLightState(initialState);
+            }
+        });
+
+        builder.show();
+    }
+
+    public void changeColorDialog(final int roomIndex, final int lightIndex)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+        View view = inflater.inflate(R.layout.rgb_slider_layout, null);
+
+        final Light light = (Light) getChild(roomIndex, lightIndex);
+        final PHLightState initialState = light.getLightState();
+        builder.setTitle("Change color of " + ((Light) getChild(roomIndex, lightIndex)).getLightName());
+
+        final SeekBar redSlider = (SeekBar) view.findViewById(R.id.red_seekbar);
+        final SeekBar greenSlider = (SeekBar) view.findViewById(R.id.green_seekbar);
+        final SeekBar blueSlider = (SeekBar) view.findViewById(R.id.blue_seekbar);
+
+
+
+        redSlider.setMax(Light.MAX_COLOR_VALUE);
+        greenSlider.setMax(Light.MAX_COLOR_VALUE);
+        blueSlider.setMax(Light.MAX_COLOR_VALUE);
+
+        redSlider.setProgress(light.getRed());
+        greenSlider.setProgress(light.getGreen());
+        blueSlider.setProgress(light.getBlue());
+
+        SeekBar.OnSeekBarChangeListener seekBarListener = new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Light light = ((Light) getChild(roomIndex, lightIndex));
+                light.setColor(redSlider.getProgress(), greenSlider.getProgress(), blueSlider.getProgress());
+            }
+        };
+
+        redSlider.setOnSeekBarChangeListener(seekBarListener);
+        greenSlider.setOnSeekBarChangeListener(seekBarListener);
+        blueSlider.setOnSeekBarChangeListener(seekBarListener);
+
+        builder.setView(view);
+
+        builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // Do nothing, brightness changes during the slider movement
+            }
+        });
+
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // Go back to the original brightness
+                ((Light) getChild(roomIndex, lightIndex)).setLightState(initialState);
+            }
+        });
+
+        builder.show();
     }
 }

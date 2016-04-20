@@ -98,8 +98,10 @@ public class EffectListAdapter extends BaseAdapter {
         LayoutInflater inflater = ((Activity) context).getLayoutInflater();
         convertView =  inflater.inflate(R.layout.customize_single_line, parent, false);
         TextView lightName = (TextView) convertView.findViewById(R.id.addEffect_light_name);
-
         Switch effectEnabledSwitch = (Switch) convertView.findViewById(R.id.customize_effect_switch);
+        effectEnabledSwitch.setOnCheckedChangeListener(null);
+        effectEnabledSwitch.setChecked(addEffectList.get(position).isEffectOn());
+
         effectEnabledSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {

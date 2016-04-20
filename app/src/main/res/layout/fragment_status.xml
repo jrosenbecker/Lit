@@ -21,7 +21,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/status_expandable_list_view"
             android:overScrollMode="never"
-            />
+            android:animateLayoutChanges="true"
+            android:divider="@android:drawable/divider_horizontal_dim_dark"/>
     </LinearLayout>
 
 </FrameLayout>

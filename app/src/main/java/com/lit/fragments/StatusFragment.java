@@ -3,6 +3,7 @@ package com.lit.fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,8 @@ import com.philips.lighting.model.PHLight;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -136,12 +139,13 @@ public class StatusFragment extends Fragment {
 
     private void updateList() {
         PHBridge bridge = phHueSDK.getSelectedBridge();
+        statusList.clear();
         if(phHueSDK.getAllBridges().size() > 0) {
             List<PHLight> allLights = bridge.getResourceCache().getAllLights();
             List<Light> lights = new ArrayList<Light>();
 
             for (int i = 0; i < allLights.size(); i++) {
-                Light tempLight = new Light("Light " + allLights.get(i), allLights.get(i), phHueSDK);
+                Light tempLight = new Light(allLights.get(i).getName(), allLights.get(i), phHueSDK);
                 lights.add(tempLight);
             }
 
@@ -154,5 +158,7 @@ public class StatusFragment extends Fragment {
             Toast.makeText(getActivity(), R.string.could_not_find_bridge, Toast.LENGTH_LONG);
         }
     }
+
+
 
 }

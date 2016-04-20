@@ -13,6 +13,9 @@
         brightness. If power save mode is enabled for a light, it also will disable any effects and
         set the color to white
     </string>
+    <string name="rename_light">Rename Light</string>
+    <string name="change_brightness">Change Brightness</string>
+    <string name="change_color">Change Color</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
