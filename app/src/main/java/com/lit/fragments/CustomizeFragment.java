@@ -7,11 +7,14 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.lit.R;
-import com.lit.adapters.EffectListAdapter;
+import com.lit.adapters.CustomizeAdapter;
 import com.lit.models.Light;
+import com.lit.models.Room;
 import com.philips.lighting.hue.sdk.PHHueSDK;
 import com.philips.lighting.model.PHBridge;
 import com.philips.lighting.model.PHLight;
@@ -30,14 +33,14 @@ import java.util.List;
 public class CustomizeFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
-    private EffectListAdapter listViewAdapter;
+    private CustomizeAdapter listViewAdapter;
     //
     private PHHueSDK phHueSDK;
     //
 //    //TODO: private List<Light> lights;
-    private List<Light> lights;
+    private List<Room> rooms;
     //
-    private ListView customizeListView;
+    private ExpandableListView customizeListView;
 
     public CustomizeFragment() {
         // Required empty public constructor
@@ -94,20 +97,15 @@ public class CustomizeFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        customizeListView = (ListView) getActivity().findViewById(R.id.customize_list_view);
+        customizeListView = (ExpandableListView) getActivity().findViewById(R.id.customize_list_view);
 
         List<PHBridge> savedBridges = new ArrayList<PHBridge>();
-//
-//        //TODO: listViewAdapter = new CustomizeAdapter(getContext(), lights);
-        lights = new ArrayList<Light>();
-        listViewAdapter = new EffectListAdapter(getContext(), lights);
-//
+
+        rooms = new ArrayList<Room>();
+        listViewAdapter = new CustomizeAdapter(getContext(), rooms);
+
         customizeListView.setAdapter(listViewAdapter);
-        if(phHueSDK.getAllBridges().size() > 0) {
-            for (PHLight light : phHueSDK.getSelectedBridge().getResourceCache().getAllLights()) {
-                lights.add(new Light(light.getName(), light, phHueSDK));
-            }
-        }
+        updateList();
 
         listViewAdapter.notifyDataSetChanged();
 //        for (PHBridge bridge : bridges) {
@@ -134,5 +132,29 @@ public class CustomizeFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
+    }
+
+
+    public void updateList()
+    {
+        PHBridge bridge = phHueSDK.getSelectedBridge();
+        rooms.clear();
+        if(phHueSDK.getAllBridges().size() > 0) {
+            List<PHLight> allLights = bridge.getResourceCache().getAllLights();
+            List<Light> lights = new ArrayList<Light>();
+
+            for (int i = 0; i < allLights.size(); i++) {
+                Light tempLight = new Light(allLights.get(i).getName(), allLights.get(i), phHueSDK);
+                lights.add(tempLight);
+            }
+
+            Room room = new Room("Bedroom", lights);
+            rooms.add(room);
+            listViewAdapter.notifyDataSetChanged();
+        }
+        else
+        {
+            Toast.makeText(getActivity(), R.string.could_not_find_bridge, Toast.LENGTH_LONG).show();
+        }
     }
 }
