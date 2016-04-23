@@ -2,10 +2,12 @@ package com.lit.activities;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -13,6 +15,7 @@ import android.widget.Toast;
 import com.lit.R;
 import com.lit.api.PH_ConfigureBridge;
 import com.lit.constants.TabConstants;
+import com.lit.database.DatabaseUtility;
 import com.lit.fragments.CustomizeFragment;
 import com.lit.fragments.PowerSaveFragment;
 import com.lit.fragments.StatusFragment;
@@ -36,6 +39,7 @@ public class MainActivity extends AppCompatActivity
     private TabLayout tabLayout;
     private Menu menu;
 
+    private String myTag = "MainAcvitity";
 
     /**
      * Sets up the activity by initializing the first fragment and setting up the toolbars
@@ -43,6 +47,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -65,6 +70,15 @@ public class MainActivity extends AppCompatActivity
 
         tabLayout.setOnTabSelectedListener(onTabSelected);
 
+        // TODO: May be good to check more than just the rooms
+        try {
+            if (DatabaseUtility.getAllRooms().isEmpty()) {
+                DatabaseUtility.initDatabase(this);
+            }
+        } catch (Exception e) {
+            Log.v(myTag, "Error: DatabaseUtility has not be initialized");
+            DatabaseUtility.initDatabase(this);
+        }
 
         /*configureButton = (Button) findViewById(R.id.configure_option);
         configureButton.setOnClickListener(onConfigureSelected);*/

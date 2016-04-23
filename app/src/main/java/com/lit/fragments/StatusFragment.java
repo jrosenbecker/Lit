@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.lit.R;
 import com.lit.adapters.StatusAdapter;
+import com.lit.database.DatabaseUtility;
 import com.lit.models.Light;
 import com.lit.models.Room;
 import com.philips.lighting.hue.sdk.PHHueSDK;
@@ -141,16 +142,26 @@ public class StatusFragment extends Fragment {
         PHBridge bridge = phHueSDK.getSelectedBridge();
         statusList.clear();
         if(phHueSDK.getAllBridges().size() > 0) {
-            List<PHLight> allLights = bridge.getResourceCache().getAllLights();
-            List<Light> lights = new ArrayList<Light>();
 
-            for (int i = 0; i < allLights.size(); i++) {
-                Light tempLight = new Light(allLights.get(i).getName(), allLights.get(i), phHueSDK);
-                lights.add(tempLight);
+//            List<PHLight> allLights = bridge.getResourceCache().getAllLights();
+//            List<Light> lights = new ArrayList<Light>();
+
+            List<Room> rooms = DatabaseUtility.getAllRooms();
+
+//            for (int i = 0; i < allLights.size(); i++) {
+//                Light tempLight = new Light(allLights.get(i).getName(), allLights.get(i), phHueSDK);
+//                lights.add(tempLight);
+//            }
+
+            for (Room room : rooms) {
+                statusList.add(room);
             }
 
-            Room room = new Room("Bedroom", lights);
-            statusList.add(room);
+            Room unassigned = new Room("Unassigned",DatabaseUtility.getUnassignedLights());
+            statusList.add(unassigned);
+            //Room room = new Room("Bedroom", lights);
+
+            //statusList.add(room);
             adapter.notifyDataSetChanged();
         }
         else

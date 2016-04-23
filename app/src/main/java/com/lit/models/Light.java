@@ -24,6 +24,7 @@ public class Light {
     private PHLight phLight;
     private PHHueSDK phHueSDK;
     private long id;
+    private long roomId;
     private boolean isEffectOn;
 
     public Light(/*int id_in, */String name, PHLight phLight, PHHueSDK phHueSDK) {
@@ -50,6 +51,14 @@ public class Light {
     public void setLightName(String name)
     {
         phLight.setName(name);
+    }
+
+    public String getHueId() {
+        return this.phLight.getUniqueId();
+    }
+
+    public void setHueId(String hue_id) {
+        this.phLight.setUniqueId(hue_id);
     }
 
     public long getId() {
@@ -146,6 +155,15 @@ public class Light {
         state.setY(xy[1]);
         phHueSDK.getSelectedBridge().updateLightState(phLight, state);
     }
+
+    public long getRoomId() {
+        return this.roomId;
+    }
+
+    public void setRoomId(long room_id) {
+        this.roomId = room_id;
+    }
+
 //
 //    public boolean getConnectionStatus() {
 //        return connectionStatus;
