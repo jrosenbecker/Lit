@@ -7,6 +7,7 @@ import java.util.List;
  * Created by Joe on 4/18/2016.
  */
 public class Room {
+
     private long id;
     private String name;
     private List<Light> lights;

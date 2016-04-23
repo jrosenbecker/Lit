@@ -143,6 +143,8 @@ public class CustomizeFragment extends Fragment {
             List<PHLight> allLights = bridge.getResourceCache().getAllLights();
             List<Light> lights = new ArrayList<Light>();
 
+            //List<Room> rooms = db.getAllRooms();
+
             for (int i = 0; i < allLights.size(); i++) {
                 Light tempLight = new Light(allLights.get(i).getName(), allLights.get(i), phHueSDK);
                 lights.add(tempLight);

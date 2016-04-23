@@ -26,12 +26,15 @@ public class Light {
     private long id;
     private boolean isEffectOn;
 
-    public Light(String name, PHLight phLight, PHHueSDK phHueSDK) {
+    public Light(/*int id_in, */String name, PHLight phLight, PHHueSDK phHueSDK) {
         this.phLight = phLight;
         this.phHueSDK = phHueSDK;
         setLightName(name);
+
         // TODO: Integrate this with the database
         id = (new Random()).nextLong();
+
+        //id = id_in;
 
         isEffectOn = !this.phLight.getLastKnownLightState().getEffectMode().equals(PHLight.PHLightEffectMode.EFFECT_NONE);
     }

@@ -60,6 +60,9 @@ public class MainActivity extends AppCompatActivity
         tabLayout.addTab(tabLayout.newTab().setText("Power Save").setTag(TabConstants.POWER_SAVE_TAB));
         tabLayout.addTab(tabLayout.newTab().setText("Customize").setTag(TabConstants.CUSTOMIZE_TAB));
         tabLayout.setSelectedTabIndicatorHeight(20);
+
+        tabLayout.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+
         tabLayout.setOnTabSelectedListener(onTabSelected);
 
 

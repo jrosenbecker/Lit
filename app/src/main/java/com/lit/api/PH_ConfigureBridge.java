@@ -182,7 +182,7 @@ public class PH_ConfigureBridge extends Activity implements OnItemClickListener 
                 PH_ConfigureBridge.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        PH_AlertDialog.showErrorDialog(PH_ConfigureBridge.this, message, R.string.btn_ok);
+                        PH_AlertDialog.showErrorDialog(PH_ConfigureBridge.this, message + ":\n" + "Please check your bridge's internet connection and try again.", R.string.btn_ok);
                     }
                 }); 
 
