@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.lit.R;
 import com.lit.adapters.CustomizeAdapter;
+import com.lit.database.DatabaseUtility;
 import com.lit.models.Light;
 import com.lit.models.Room;
 import com.philips.lighting.hue.sdk.PHHueSDK;
@@ -38,7 +39,7 @@ public class CustomizeFragment extends Fragment {
     private PHHueSDK phHueSDK;
     //
 //    //TODO: private List<Light> lights;
-    private List<Room> rooms;
+    private List<Room> customizeList;
     //
     private ExpandableListView customizeListView;
 
@@ -101,8 +102,8 @@ public class CustomizeFragment extends Fragment {
 
         List<PHBridge> savedBridges = new ArrayList<PHBridge>();
 
-        rooms = new ArrayList<Room>();
-        listViewAdapter = new CustomizeAdapter(getContext(), rooms);
+        customizeList = new ArrayList<Room>();
+        listViewAdapter = new CustomizeAdapter(getContext(), customizeList);
 
         customizeListView.setAdapter(listViewAdapter);
         updateList();
@@ -138,20 +139,20 @@ public class CustomizeFragment extends Fragment {
     public void updateList()
     {
         PHBridge bridge = phHueSDK.getSelectedBridge();
-        rooms.clear();
+        customizeList.clear();
         if(phHueSDK.getAllBridges().size() > 0) {
-            List<PHLight> allLights = bridge.getResourceCache().getAllLights();
-            List<Light> lights = new ArrayList<Light>();
 
-            //List<Room> rooms = db.getAllRooms();
+            List<Room> rooms = DatabaseUtility.getAllRooms();
 
-            for (int i = 0; i < allLights.size(); i++) {
-                Light tempLight = new Light(allLights.get(i).getName(), allLights.get(i), phHueSDK);
-                lights.add(tempLight);
+            for (Room room : rooms) {
+                customizeList.add(room);
             }
 
-            Room room = new Room("Bedroom", lights);
-            rooms.add(room);
+            Room unassigned = new Room("Unassigned",DatabaseUtility.getUnassignedLights());
+            customizeList.add(unassigned);
+            //Room room = new Room("Bedroom", lights);
+
+            //statusList.add(room);
             listViewAdapter.notifyDataSetChanged();
         }
         else

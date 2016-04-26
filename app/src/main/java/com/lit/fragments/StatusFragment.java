@@ -42,6 +42,7 @@ public class StatusFragment extends Fragment {
     private ExpandableListView statusListView;
     private StatusAdapter adapter;
     private List<Room> statusList;
+    private boolean displayListItems;
 
     public StatusFragment() {
         // Required empty public constructor
@@ -69,8 +70,17 @@ public class StatusFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        phHueSDK = PHHueSDK.create();
+
+        displayListItems = !(phHueSDK.getAllBridges().isEmpty());
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_status, container, false);
+        if (displayListItems) {
+            return inflater.inflate(R.layout.fragment_status, container, false);
+        } else {
+            return inflater.inflate(R.layout.fragment_empty_status, container, false);
+        }
     }
 
     /**
@@ -78,14 +88,17 @@ public class StatusFragment extends Fragment {
      */
     @Override
     public void onStart() {
-        super.onStart();
-        statusListView = (ExpandableListView) getActivity().findViewById(R.id.status_expandable_list_view);
-        statusList = new ArrayList<Room>();
-        adapter = new StatusAdapter(getContext(), statusList);
-        statusListView.setAdapter(adapter);
 
-        phHueSDK = PHHueSDK.create();
-        adapter.notifyDataSetChanged();
+        super.onStart();
+
+        if (displayListItems) {
+
+            statusListView = (ExpandableListView) getActivity().findViewById(R.id.status_expandable_list_view);
+            statusList = new ArrayList<Room>();
+            adapter = new StatusAdapter(getContext(), statusList);
+            statusListView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        }
     }
 
 
@@ -135,7 +148,9 @@ public class StatusFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        updateList();
+        if (displayListItems) {
+            updateList();
+        }
     }
 
     private void updateList() {
@@ -143,15 +158,7 @@ public class StatusFragment extends Fragment {
         statusList.clear();
         if(phHueSDK.getAllBridges().size() > 0) {
 
-//            List<PHLight> allLights = bridge.getResourceCache().getAllLights();
-//            List<Light> lights = new ArrayList<Light>();
-
             List<Room> rooms = DatabaseUtility.getAllRooms();
-
-//            for (int i = 0; i < allLights.size(); i++) {
-//                Light tempLight = new Light(allLights.get(i).getName(), allLights.get(i), phHueSDK);
-//                lights.add(tempLight);
-//            }
 
             for (Room room : rooms) {
                 statusList.add(room);
