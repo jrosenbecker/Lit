@@ -35,12 +35,14 @@ public class CustomizeFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private CustomizeAdapter listViewAdapter;
-    //
+
+    boolean displayListItems;
+
     private PHHueSDK phHueSDK;
-    //
-//    //TODO: private List<Light> lights;
+
+    //TODO: private List<Light> lights;
     private List<Room> customizeList;
-    //
+
     private ExpandableListView customizeListView;
 
     public CustomizeFragment() {
@@ -67,8 +69,18 @@ public class CustomizeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
+        phHueSDK = PHHueSDK.create();
+
+        displayListItems = !(phHueSDK.getAllBridges().isEmpty());
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_customize, container, false);
+        if (displayListItems) {
+            return inflater.inflate(R.layout.fragment_customize, container, false);
+        } else {
+            return inflater.inflate(R.layout.fragment_empty_customize, container, false);
+        }
     }
 
     public void onButtonPressed(Uri uri) {
@@ -98,17 +110,19 @@ public class CustomizeFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        customizeListView = (ExpandableListView) getActivity().findViewById(R.id.customize_list_view);
 
-        List<PHBridge> savedBridges = new ArrayList<PHBridge>();
+        if (displayListItems) {
+            customizeListView = (ExpandableListView) getActivity().findViewById(R.id.customize_list_view);
 
-        customizeList = new ArrayList<Room>();
-        listViewAdapter = new CustomizeAdapter(getContext(), customizeList);
+            List<PHBridge> savedBridges = new ArrayList<PHBridge>();
 
-        customizeListView.setAdapter(listViewAdapter);
-        updateList();
+            customizeList = new ArrayList<Room>();
+            listViewAdapter = new CustomizeAdapter(getContext(), customizeList);
 
-        listViewAdapter.notifyDataSetChanged();
+            customizeListView.setAdapter(listViewAdapter);
+            updateList();
+
+            listViewAdapter.notifyDataSetChanged();
 //        for (PHBridge bridge : bridges) {
 //            savedBridges.add(bridge);
 //        }
@@ -118,7 +132,7 @@ public class CustomizeFragment extends Fragment {
 //        lights.add(new Light(3, "Living Room", false, true, Effect.COLOR_CYCLE));
 //        lights.add(new Light(4, "Family Room", false, true));
 //        listViewAdapter.notifyDataSetChanged();
-
+        }
     }
 
     /**
