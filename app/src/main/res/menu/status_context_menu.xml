@@ -2,6 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id = "@+id/rename_light_option"
         android:title="@string/rename_light" />
+    <item android:id = "@+id/change_room_option"
+        android:title="@string/change_room" />
     <item android:id = "@+id/brightness_option"
         android:title="@string/change_brightness" />
     <item android:id = "@+id/change_color"

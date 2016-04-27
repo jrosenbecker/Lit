@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -162,11 +163,13 @@ public class StatusFragment extends Fragment {
 
             for (Room room : rooms) {
                 statusList.add(room);
+                for (Light light : room.getLights()) {
+                    Log.v("updateList","Room: " + room.getName() + " Light: " + light.getLightName());
+                }
             }
 
-            Room unassigned = new Room("Unassigned",DatabaseUtility.getUnassignedLights());
+            Room unassigned = new Room("Unassigned",DatabaseUtility.getRoomLights(0));
             statusList.add(unassigned);
-            //Room room = new Room("Bedroom", lights);
 
             //statusList.add(room);
             adapter.notifyDataSetChanged();
@@ -176,7 +179,4 @@ public class StatusFragment extends Fragment {
             Toast.makeText(getActivity(), R.string.could_not_find_bridge, Toast.LENGTH_LONG);
         }
     }
-
-
-
 }

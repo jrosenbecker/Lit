@@ -14,8 +14,11 @@
         set the color to white
     </string>
     <string name="rename_light">Rename Light</string>
+    <string name="change_room">Change Room</string>
     <string name="change_brightness">Change Brightness</string>
     <string name="change_color">Change Color</string>
+
+    <string name="unnassigned_room">Unassigned</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -35,7 +38,7 @@
     <string name="btn_cancel">Cancel</string>
     <string name="txt_could_not_connect">No connection</string>
     <string name="txt_click_random_button">Click the Random Lights Button to set your lamps to random colours.</string>
-    <string name="could_not_find_bridge">Hue cannot find your bridge. Please check that it is connected to the same Wi-Fi router as your app and press</string>
+    <string name="could_not_find_bridge">Unable to find your bridge. Please check that it is connected to the same Wi-Fi router as your app and try again.</string>
     <string name="btn_more">More</string>
     <string name="btn_reconnect">Reconnect</string>
     <string name="enter_light_name">Enter light name</string>

@@ -4,6 +4,8 @@ package com.lit.database;
         import android.database.sqlite.SQLiteDatabase;
         import android.util.Log;
 
+        import com.lit.R;
+        import com.lit.activities.MainActivity;
         import com.lit.daogenerator.DaoMaster;
         import com.lit.daogenerator.DaoSession;
         import com.lit.daogenerator.LightTable;
@@ -47,7 +49,10 @@ public class DatabaseUtility {
 
     private static PHHueSDK phHueSDK;
 
-    private static List<Light> unassignedLights;
+    //private static List<Light> unassignedLights;
+
+    //TODO: Light HueId =  LIGHT_NAME + "_" + LIGHT_ROOM
+    //    Ex: Light1_0
 
     public static void initDatabase(Context context)
     {
@@ -75,9 +80,8 @@ public class DatabaseUtility {
         roomTableRows = roomQueryBuilder.list();
 
         // Add all of the unassigned lights initially
-        unassignedLights = new ArrayList<Light>();
         if (!addUnassignedLights()) {
-            Log.v(myTag, "Error: Couldn't initialize the 'unassignedLights' list.");
+            Log.v(myTag, "Error: Couldn't initialize the database.");
         }
 
         if(lightTableRows == null || roomTableRows == null)
@@ -104,64 +108,106 @@ public class DatabaseUtility {
         dbHelper.close();
     }
 
-    public static boolean saveRoom(Context context, Room room) {
+    public static long saveRoom(Context context, Room room) {
 
-        Random rand = new Random();
-
-        QueryBuilder<RoomTable> qb = roomDao.queryBuilder();
-        qb.where(RoomTableDao.Properties.Name.eq(room.getName()));
-
-        boolean returnValue = false;
-
-        if (qb.list().isEmpty()) {
-            RoomTable roomTableRow = new RoomTable(rand.nextLong(), room.getName());
-            roomDao.insert(roomTableRow);
-            returnValue = true;
-        }
+        long roomId = saveRoom(room);
 
         closeReopenDatabase(context);
 
-        return returnValue;
+        return roomId;
     }
 
-    public static Room getRoom(String name) {
+    private static long saveRoom(Room room) {
+
+        Random rand = new Random();
+
+        // This checks that the room was added successfully
+        long roomId = -1;
 
         QueryBuilder<RoomTable> qb = roomDao.queryBuilder();
-        qb.where(RoomTableDao.Properties.Name.eq(name));
-        qb.limit(1); // TODO: Make sure this is right
+        RoomTable table = qb.where(RoomTableDao.Properties.Name.eq(room.getName())).unique();
 
-        RoomTable tableRow = qb.unique();
+        if (table == null) {
 
-        Room room = new Room(tableRow.getName(), getRoomLights(tableRow.getId()));
+            if (!room.getName().equalsIgnoreCase("unassigned")) {
+                roomId = rand.nextLong();
+            } else {
+                roomId = 0;
+            }
+
+            RoomTable roomTableRow = new RoomTable(roomId, room.getName());
+            roomDao.insert(roomTableRow);
+        }
+
+        return roomId;
+    }
+
+    public static Room getRoom(Context context, String name) {
+
+        Room room = getRoom(name);
+
+        closeReopenDatabase(context);
 
         return room;
     }
 
-    public static List<Room> getAllRooms() {
-        // TODO: use getRoom() for this
+    private static Room getRoom(String name) {
 
         QueryBuilder<RoomTable> qb = roomDao.queryBuilder();
-        qb.where(RoomTableDao.Properties.Id.isNotNull());
 
-        List<RoomTable> roomRows = qb.list();
+        RoomTable tableRow = qb.where(RoomTableDao.Properties.Name.eq(name)).unique();
+
+        Room room;
+
+        if (tableRow != null) {
+            room = new Room(tableRow.getName(), getRoomLights(tableRow.getId()));
+        } else {
+            room = new Room("Unknown", new ArrayList<Light>());
+        }
+        return room;
+    }
+
+    public static List<Room> getAllRooms() {
+
+        QueryBuilder<RoomTable> qb = roomDao.queryBuilder();
+        List<RoomTable> table = qb.where(RoomTableDao.Properties.Id.isNotNull()).list();
 
         List<Room> rooms = new ArrayList<Room>();
 
-        for (RoomTable room : roomRows) {
-            rooms.add(getRoom(room.getName()));
+        Room testRoom;
+
+        for (RoomTable room : table) {
+
+            // Don't add unknown rooms
+            testRoom = getRoom(room.getName());
+
+            if (!testRoom.getName().equalsIgnoreCase("unknown")) {
+                rooms.add(testRoom);
+            }
         }
 
         return rooms;
     }
 
-    public static boolean deleteRoom(Room room) {
+    public static boolean deleteRoom(Context context, Room room) {
+
+        boolean value = deleteRoom(room);
+
+        closeReopenDatabase(context);
+
+        return value;
+
+    }
+
+    private static boolean deleteRoom(Room room) {
 
         QueryBuilder<RoomTable> qb = roomDao.queryBuilder();
-        qb.where(RoomTableDao.Properties.Name.eq(room.getName()));
+
+        RoomTable tableRow = qb.where(RoomTableDao.Properties.Name.eq(room.getName())).unique();
 
         boolean returnValue = false;
 
-        if (!qb.list().isEmpty()) {
+        if (tableRow != null) {
 
             for (RoomTable roomTableRow : qb.list()) {
                 roomDao.delete(roomTableRow);
@@ -172,23 +218,28 @@ public class DatabaseUtility {
         return returnValue;
     }
 
-//    public static boolean saveLight(Context context, String name,
-//                                 int red, int green, int blue,
-//                                 long roomId, String hueId,
-//                                 boolean effectOn) {
-
-
     public static boolean saveLight(Context context, Light light) {
+
+        boolean value = saveLight(light);
+
+        closeReopenDatabase(context);
+
+        return value;
+    }
+
+    private static boolean saveLight(Light light) {
+
         Random rand = new Random();
 
         QueryBuilder<LightTable> qb = lightDao.queryBuilder();
-        qb.where(LightTableDao.Properties.Name.eq(light.getLightName()),
+        List<LightTable> table = qb.where(LightTableDao.Properties.Name.eq(light.getLightName()),
                 LightTableDao.Properties.RoomId.eq(light.getRoomId()),
-                LightTableDao.Properties.HueId.eq(light.getHueId()));
+                LightTableDao.Properties.HueId.eq(light.getHueId())).list();
 
         boolean returnValue = false;
 
-        if (qb.list().isEmpty()) {
+        if (table.isEmpty()) {
+
             LightTable lightTableRow = new LightTable(rand.nextLong(),
                                         light.getLightName(),
                                         light.getRed(),
@@ -202,50 +253,109 @@ public class DatabaseUtility {
             returnValue = true;
         }
 
+        return returnValue;
+    }
+
+    public static boolean updateLightName(Context context,
+                                          /*Update paramter*/ String lightName,
+                                          /*Query parameters*/ long roomId, String hueId) {
+
+        boolean value = updateLightName(lightName, roomId, hueId);
+
         closeReopenDatabase(context);
+
+        return value;
+    }
+
+    private static boolean updateLightName(
+                                          /*Update paramter*/ String lightName,
+                                          /*Query parameters*/ long roomId, String hueId) {
+
+        QueryBuilder<LightTable> qb = lightDao.queryBuilder();
+        LightTable tableRow = qb.where(LightTableDao.Properties.RoomId.eq(roomId),
+                LightTableDao.Properties.HueId.eq(hueId)).unique();
+
+        boolean returnValue = false;
+
+        if (tableRow != null) {
+
+            // Delete old entry
+            LightTable lightTableRow = qb.unique();
+            //lightDao.delete(lightTableRow);
+
+            // Add new entry
+            lightTableRow.setName(lightName);
+            lightTableRow.setHueId(lightName + "_" + roomId);
+            lightDao.update(lightTableRow);
+            //lightDao.insert(lightTableRow);
+            returnValue = true;
+        }
 
         return returnValue;
     }
-//
-//    public static List<Light> getAllLights() {
-//        // TODO: use getRoom() for this
-//
-//        QueryBuilder<LightTable> qb = lightDao.queryBuilder();
-//        qb.where(RoomTableDao.Properties.Id.isNotNull());
-//
-//        List<LightTable> lightRows = qb.list();
-//
-//        List<Light> lights = new ArrayList<Light>();
-//
-//        for (RoomTable room : lightRows) {
-//            lights.add((room.getName()));
-//        }
-//
-//        return rooms;
-//    }
 
-    public static List<Light> getRoomLights(long roomId) {
-        // TODO: use getRoom() for this
+    public static boolean updateLightRoom(Context context,
+                                          /*Update paramter*/ long roomId,
+                                          /*Query parameters*/ String lightName, String hueId) {
+
+        boolean value = updateLightRoom(roomId, lightName, hueId);
+
+        closeReopenDatabase(context);
+
+        return value;
+
+    }
+
+    private static boolean updateLightRoom(
+                                          /*Update paramter*/ long roomId,
+                                          /*Query parameters*/ String lightName, String hueId) {
 
         QueryBuilder<LightTable> qb = lightDao.queryBuilder();
-        qb.where(LightTableDao.Properties.RoomId.eq(roomId));
+        LightTable tableRow = qb.where(LightTableDao.Properties.Name.eq(lightName),
+                LightTableDao.Properties.HueId.eq(hueId)).unique();
+
+        boolean returnValue = false;
+
+        if (tableRow != null) {
+
+            // Delete old entry
+            lightDao.deleteByKey(tableRow.getId());
+
+            // Add new entry
+            tableRow.setRoomId(roomId);
+            tableRow.setHueId(lightName + "_" + roomId);
+            //lightDao.update(tableRow);
+            lightDao.insert(tableRow);
+            returnValue = true;
+
+        }
+
+        return returnValue;
+    }
+
+    public static List<Light> getRoomLights(long roomId) {
+
+        QueryBuilder<LightTable> qb = lightDao.queryBuilder();
+        List<LightTable> table = qb.where(LightTableDao.Properties.RoomId.eq(roomId)).list();
 
         List<String> roomLights = new ArrayList<String>();
 
-        for (LightTable lightTableRow : qb.list()) {
-            roomLights.add(lightTableRow.getHueId());
+        for (LightTable lightTableRow : table) {
+            roomLights.add(lightTableRow.getName());
+            Log.v("getRoomLight", "Found light " + lightTableRow.getName() + " in room " + roomId);
         }
 
         PHBridge bridge = phHueSDK.getSelectedBridge();
         List<PHLight> allLights = bridge.getResourceCache().getAllLights();
         List<Light> lights = new ArrayList<Light>();
 
-        if (!qb.list().isEmpty()) {
+        if (!table.isEmpty()) {
 
             for (PHLight light : allLights) {
 
-                if (!roomLights.contains(light.getUniqueId())) {
+                if (roomLights.contains(light.getName())) {
                     Light tempLight = new Light(light.getName(), light, phHueSDK);
+                    Log.v("getRoomLight", "Found: " + light.getName());
                     lights.add(tempLight);
                 }
             }
@@ -253,18 +363,36 @@ public class DatabaseUtility {
         return lights;
     }
 
-    public static boolean deleteLight(Light light) {
+    public static boolean deleteLight(Context context, Light light) {
+
+        boolean value = deleteLight(light);
+
+        closeReopenDatabase(context);
+
+        return value;
+    }
+
+    private static boolean deleteLight(Light light) {
 
         QueryBuilder<LightTable> qb = lightDao.queryBuilder();
-        qb.where(RoomTableDao.Properties.Name.eq(light.getLightName()));
+        LightTable tableRow = qb.where(LightTableDao.Properties.Name.eq(light.getLightName()),
+                LightTableDao.Properties.RoomId.eq(light.getRoomId())).unique();
+
+        Log.v("deleteLight", "Name: " + light.getLightName());
+        Log.v("deleteLight", "RoomId: " + light.getRoomId());
 
         boolean returnValue = false;
 
-        if (!qb.list().isEmpty()) {
+        if (tableRow != null) {
 
-            for (LightTable lightTableRow : qb.list()) {
-                lightDao.delete(lightTableRow);
-            }
+            lightDao.deleteByKey(tableRow.getId());
+
+            LightTable test = qb.where(LightTableDao.Properties.Name.eq(light.getLightName()),
+                    LightTableDao.Properties.RoomId.eq(light.getRoomId())).unique();
+
+            Log.v("deleteLight", "Deleting: " + tableRow.getName());
+            Log.v("deleteLight", "Deleting: " + (test == null));
+
             returnValue = true;
         }
 
@@ -282,10 +410,12 @@ public class DatabaseUtility {
             for (PHLight light : lights) {
 
                 Light newLight = new Light(light.getName(),light,phHueSDK);
-                newLight.setRoomId(0); // Room ID 0 is the 'unassigned room'
-                newLight.setHueId(light.getUniqueId() + "_" + newLight.getRoomId() + "_" + newLight.getLightName());
+                newLight.setLightName(light.getName());
+                newLight.setRoomId(0); // Room ID 0 is the 'Unassigned' room
+                newLight.setHueId(newLight.getLightName() + "_" + newLight.getRoomId());
 
-                unassignedLights.add(newLight);
+                saveLight(newLight);
+                //unassignedLights.add(newLight);
             }
 
             returnValue = true;
@@ -294,14 +424,6 @@ public class DatabaseUtility {
             Log.v(myTag, e.getMessage());
         }
         return returnValue;
-    }
-
-    public static List<Light> getUnassignedLights() {
-        return unassignedLights;
-    }
-
-    private static void assignLight(Light light) {
-        unassignedLights.remove(light);
     }
 
     public static void clean() {

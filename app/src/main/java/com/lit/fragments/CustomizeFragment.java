@@ -162,7 +162,7 @@ public class CustomizeFragment extends Fragment {
                 customizeList.add(room);
             }
 
-            Room unassigned = new Room("Unassigned",DatabaseUtility.getUnassignedLights());
+            Room unassigned = new Room("Unassigned",DatabaseUtility.getRoomLights(0));
             customizeList.add(unassigned);
             //Room room = new Room("Bedroom", lights);
 

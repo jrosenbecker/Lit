@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,18 +18,21 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lit.R;
+import com.lit.database.DatabaseUtility;
 import com.lit.models.Light;
 import com.lit.models.Room;
 import com.philips.lighting.hue.sdk.utilities.PHUtilities;
 import com.philips.lighting.hue.sdk.utilities.impl.PHUtilitiesHelper;
 import com.philips.lighting.model.PHLightState;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.Inflater;
 
@@ -173,7 +178,12 @@ public class StatusAdapter extends BaseExpandableListAdapter {
 
     @Override
     public long getChildId(int roomIndex, int childIndex) {
-        return rooms.get(roomIndex).getLights().get(childIndex).getId();
+        try {
+            return rooms.get(roomIndex).getLights().get(childIndex).getId();
+        } catch (Exception e) {
+            Log.v(e.getLocalizedMessage(),"roomIndex: " + roomIndex + " childIndex: " + childIndex);
+            return 0;
+        }
     }
 
     @Override
@@ -220,6 +230,9 @@ public class StatusAdapter extends BaseExpandableListAdapter {
                         {
                             case R.id.rename_light_option:
                                 renameLightDialog(constRoomIndex, constChildIndex);
+                                return true;
+                            case R.id.change_room_option:
+                                changeRoomDialog(constRoomIndex, constChildIndex);
                                 return true;
                             case R.id.change_color:
                                 changeColorDialog(constRoomIndex, constChildIndex);
@@ -275,7 +288,7 @@ public class StatusAdapter extends BaseExpandableListAdapter {
     private void renameLightDialog(final int roomIndex, final int childIndex)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Rename " + ((Light) getChild(roomIndex, childIndex)).getLightName());
+        builder.setTitle("Rename: " + ((Light) getChild(roomIndex, childIndex)).getLightName());
         final EditText newNameInput = new EditText(context);
         int padding = 20;
         newNameInput.setPadding(padding, padding, padding, padding);
@@ -285,7 +298,52 @@ public class StatusAdapter extends BaseExpandableListAdapter {
         builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                ((Light) getChild(roomIndex, childIndex)).setLightName(newNameInput.getText().toString());
+                Light savedLight = ((Light) getChild(roomIndex, childIndex));
+                savedLight.setLightName(newNameInput.getText().toString());
+                DatabaseUtility.updateLightName(context, savedLight.getLightName(), savedLight.getRoomId(), savedLight.getHueId());
+                //savedLight.setRoomId(0);
+                //DatabaseUtility.saveLight(context, savedLight);
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    private void changeRoomDialog(final int roomIndex, final int childIndex)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Assign Room: " + ((Light) getChild(roomIndex, childIndex)).getLightName());
+
+        List<Room> savedRooms = DatabaseUtility.getAllRooms();
+
+        int padding = 20;
+
+        for (Room room : savedRooms) {
+            final RadioButton roomButton = new RadioButton(context);
+            roomButton.setText(room.getName());
+            builder.setView(roomButton);
+        }
+
+        final RadioButton newRoom = new RadioButton(context);
+        newRoom.setText("Create New Room");
+        newRoom.setPadding(padding,padding,padding,padding);
+        builder.setView(newRoom);
+
+        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                if (newRoom.isChecked()) {
+                    saveRoomDialog(roomIndex, childIndex);
+                    //DatabaseUtility.deleteLight(context,(Light) getChild(roomIndex, childIndex));
+                }
             }
         });
 
@@ -326,6 +384,7 @@ public class StatusAdapter extends BaseExpandableListAdapter {
                 Toast.makeText(context, "" + seekBar.getProgress(), Toast.LENGTH_SHORT).show();
             }
         });
+
         int padding = 20;
 
         builder.setView(slider);
@@ -336,7 +395,6 @@ public class StatusAdapter extends BaseExpandableListAdapter {
                 // Do nothing, brightness changes during the slider movement
             }
         });
-
 
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
@@ -362,8 +420,6 @@ public class StatusAdapter extends BaseExpandableListAdapter {
         final SeekBar redSlider = (SeekBar) view.findViewById(R.id.red_seekbar);
         final SeekBar greenSlider = (SeekBar) view.findViewById(R.id.green_seekbar);
         final SeekBar blueSlider = (SeekBar) view.findViewById(R.id.blue_seekbar);
-
-
 
         redSlider.setMax(Light.MAX_COLOR_VALUE);
         greenSlider.setMax(Light.MAX_COLOR_VALUE);
@@ -410,6 +466,58 @@ public class StatusAdapter extends BaseExpandableListAdapter {
             public void onClick(DialogInterface dialogInterface, int i) {
                 // Go back to the original brightness
                 ((Light) getChild(roomIndex, lightIndex)).setLightState(initialState);
+            }
+        });
+
+        builder.show();
+    }
+
+    private void saveRoomDialog(final int roomIndex, final int childIndex)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Create New Room");
+
+        final List<Light> roomLights = new ArrayList<Light>();
+
+        final EditText newNameInput = new EditText(context);
+        int padding = 20;
+        newNameInput.setPadding(padding, padding, padding, padding);
+        newNameInput.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(newNameInput);
+
+        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                Light light = ((Light) getChild(roomIndex, childIndex));
+                roomLights.add(light);
+
+                Room newRoom = new Room(newNameInput.getText().toString(), roomLights);
+
+                long roomId = DatabaseUtility.saveRoom(context, newRoom);
+
+                Log.v("saveRoom", "Saving room return: " + roomId);
+
+                if (roomId != -1) {
+
+                    if (!DatabaseUtility.updateLightRoom(context, roomId, light.getLightName(), light.getHueId())) {
+                        Log.v("updateLightRoom", "ERROR: Couldn't update light's room");
+                    } else {
+                        Log.v("updateLightRoom", "SUCCESS: Light has been updated with id: " + roomId);
+                    }
+
+                } else {
+                    Toast.makeText(context, "ERROR: This room already exists.", Toast.LENGTH_SHORT);
+                }
+            }
+        });
+
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
             }
         });
 

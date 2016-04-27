@@ -69,6 +69,7 @@ public class ConfigureAdapter extends BaseAdapter {
      */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
         LayoutInflater inflater = ((Activity) context).getLayoutInflater();
         convertView =  inflater.inflate(R.layout.configure_single_line, parent, false);
         //Switch lightSwitch = (Switch) convertView.findViewById(R.id.configure_light_switch);
