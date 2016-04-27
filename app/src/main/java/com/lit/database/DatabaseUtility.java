@@ -19,7 +19,9 @@ package com.lit.database;
         import com.philips.lighting.model.PHLight;
 
         import java.util.ArrayList;
+        import java.util.HashMap;
         import java.util.List;
+        import java.util.Map;
         import java.util.Random;
 
         import de.greenrobot.dao.query.DeleteQuery;
@@ -240,6 +242,8 @@ public class DatabaseUtility {
 
         if (table.isEmpty()) {
 
+            Log.v("saveLight","Name: " + light.getLightName() + " RoomId: " + light.getRoomId() + " HueId: " + light.getHueId());
+
             LightTable lightTableRow = new LightTable(rand.nextLong(),
                                         light.getLightName(),
                                         light.getRed(),
@@ -275,19 +279,21 @@ public class DatabaseUtility {
         LightTable tableRow = qb.where(LightTableDao.Properties.RoomId.eq(roomId),
                 LightTableDao.Properties.HueId.eq(hueId)).unique();
 
+        Log.v("updateLightName","RoomId: " + roomId + " HueId: " + hueId);
+
         boolean returnValue = false;
 
         if (tableRow != null) {
 
             // Delete old entry
-            LightTable lightTableRow = qb.unique();
-            //lightDao.delete(lightTableRow);
+            lightDao.deleteByKey(tableRow.getId());
+
+            Log.v("updateLightName", "LightName: " + lightName);
 
             // Add new entry
-            lightTableRow.setName(lightName);
-            lightTableRow.setHueId(lightName + "_" + roomId);
-            lightDao.update(lightTableRow);
-            //lightDao.insert(lightTableRow);
+            tableRow.setName(lightName);
+            lightDao.insert(tableRow);
+
             returnValue = true;
         }
 
@@ -323,9 +329,8 @@ public class DatabaseUtility {
 
             // Add new entry
             tableRow.setRoomId(roomId);
-            tableRow.setHueId(lightName + "_" + roomId);
-            //lightDao.update(tableRow);
             lightDao.insert(tableRow);
+
             returnValue = true;
 
         }
@@ -340,8 +345,11 @@ public class DatabaseUtility {
 
         List<String> roomLights = new ArrayList<String>();
 
+        Map<String, String> uniqueIdToName = new HashMap<String, String>();
+
         for (LightTable lightTableRow : table) {
-            roomLights.add(lightTableRow.getName());
+            roomLights.add(lightTableRow.getHueId());
+            uniqueIdToName.put(lightTableRow.getHueId(),lightTableRow.getName());
             Log.v("getRoomLight", "Found light " + lightTableRow.getName() + " in room " + roomId);
         }
 
@@ -353,11 +361,17 @@ public class DatabaseUtility {
 
             for (PHLight light : allLights) {
 
-                if (roomLights.contains(light.getName())) {
+                Log.v("getRoomLights", "PHLight: " + light.getName() + " Unique id: " + light.getUniqueId());
+
+                if (roomLights.contains(light.getUniqueId())) {
                     Light tempLight = new Light(light.getName(), light, phHueSDK);
+                    tempLight.setLightName(uniqueIdToName.get(light.getUniqueId()));
+                    tempLight.setRoomId(roomId);
+
                     Log.v("getRoomLight", "Found: " + light.getName());
                     lights.add(tempLight);
                 }
+
             }
         }
         return lights;
@@ -412,7 +426,6 @@ public class DatabaseUtility {
                 Light newLight = new Light(light.getName(),light,phHueSDK);
                 newLight.setLightName(light.getName());
                 newLight.setRoomId(0); // Room ID 0 is the 'Unassigned' room
-                newLight.setHueId(newLight.getLightName() + "_" + newLight.getRoomId());
 
                 saveLight(newLight);
                 //unassignedLights.add(newLight);

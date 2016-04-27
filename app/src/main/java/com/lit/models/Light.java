@@ -57,10 +57,6 @@ public class Light {
         return this.phLight.getUniqueId();
     }
 
-    public void setHueId(String hue_id) {
-        this.phLight.setUniqueId(hue_id);
-    }
-
     public long getId() {
         return id;
     }

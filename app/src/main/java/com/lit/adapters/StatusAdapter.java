@@ -289,6 +289,7 @@ public class StatusAdapter extends BaseExpandableListAdapter {
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Rename: " + ((Light) getChild(roomIndex, childIndex)).getLightName());
+
         final EditText newNameInput = new EditText(context);
         int padding = 20;
         newNameInput.setPadding(padding, padding, padding, padding);
@@ -298,11 +299,15 @@ public class StatusAdapter extends BaseExpandableListAdapter {
         builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Light savedLight = ((Light) getChild(roomIndex, childIndex));
-                savedLight.setLightName(newNameInput.getText().toString());
-                DatabaseUtility.updateLightName(context, savedLight.getLightName(), savedLight.getRoomId(), savedLight.getHueId());
-                //savedLight.setRoomId(0);
-                //DatabaseUtility.saveLight(context, savedLight);
+                Light light = ((Light) getChild(roomIndex, childIndex));
+
+                light.setLightName(newNameInput.getText().toString());
+
+                if (!DatabaseUtility.updateLightName(context, light.getLightName(), light.getRoomId(), light.getHueId())) {
+                    Log.v("updateLightName", "ERROR: Couldn't update light's name");
+                } else {
+                    Log.v("updateLightName", "SUCCESS: Light has been updated with name: " + light.getLightName());
+                }
             }
         });
 
@@ -504,7 +509,8 @@ public class StatusAdapter extends BaseExpandableListAdapter {
                     if (!DatabaseUtility.updateLightRoom(context, roomId, light.getLightName(), light.getHueId())) {
                         Log.v("updateLightRoom", "ERROR: Couldn't update light's room");
                     } else {
-                        Log.v("updateLightRoom", "SUCCESS: Light has been updated with id: " + roomId);
+                        Log.v("updateLightRoom", "SUCCESS: Light has been updated with roomId: " + roomId);
+                        light.setRoomId(roomId);
                     }
 
                 } else {
