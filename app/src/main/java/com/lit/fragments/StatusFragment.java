@@ -37,7 +37,6 @@ import java.util.TimerTask;
  */
 public class StatusFragment extends Fragment {
 
-
     private OnFragmentInteractionListener fragmentInteractionListener;
     private PHHueSDK phHueSDK;
     private ExpandableListView statusListView;
@@ -93,7 +92,6 @@ public class StatusFragment extends Fragment {
         super.onStart();
 
         if (displayListItems) {
-
             statusListView = (ExpandableListView) getActivity().findViewById(R.id.status_expandable_list_view);
             statusList = new ArrayList<Room>();
             adapter = new StatusAdapter(getContext(), statusList);
@@ -117,8 +115,6 @@ public class StatusFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-
-
     }
 
 
@@ -149,15 +145,25 @@ public class StatusFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        Log.v("onResume","displayListItems: " + displayListItems);
+
         if (displayListItems) {
             updateList();
         }
     }
 
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        Log.v("onPause", "displayListItems: " + displayListItems);
+//    }
+
     private void updateList() {
-        PHBridge bridge = phHueSDK.getSelectedBridge();
+
         statusList.clear();
-        if(phHueSDK.getAllBridges().size() > 0) {
+
+        if (phHueSDK.getAllBridges().size() > 0) {
 
             List<Room> rooms = DatabaseUtility.getAllRooms();
 

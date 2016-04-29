@@ -164,7 +164,6 @@ public class CustomizeFragment extends Fragment {
 
             Room unassigned = new Room("Unassigned",DatabaseUtility.getRoomLights(0));
             customizeList.add(unassigned);
-            //Room room = new Room("Bedroom", lights);
 
             //statusList.add(room);
             listViewAdapter.notifyDataSetChanged();

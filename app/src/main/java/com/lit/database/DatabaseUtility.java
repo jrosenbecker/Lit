@@ -260,6 +260,34 @@ public class DatabaseUtility {
         return returnValue;
     }
 
+    public static Light getLight(String name, long roomId, String hueId) {
+
+        QueryBuilder<LightTable> qb = lightDao.queryBuilder();
+
+        LightTable tableRow = qb.where(LightTableDao.Properties.Name.eq(name),
+                LightTableDao.Properties.RoomId.eq(roomId),
+                LightTableDao.Properties.HueId.eq(hueId)).unique();
+
+        Light light = null;
+        PHLight theChosenOne = null;
+
+        List<PHLight> allLights = phHueSDK.getSelectedBridge().getResourceCache().getAllLights();
+
+        for (PHLight phLight : allLights) {
+            if (phLight.getUniqueId().equals(tableRow.getHueId())) {
+                theChosenOne = phLight;
+                break;
+            }
+        }
+
+        if (tableRow != null && theChosenOne != null) {
+            light = new Light(tableRow.getName(),theChosenOne,phHueSDK);
+        }
+
+        return light;
+
+    }
+
     public static boolean updateLightName(Context context,
                                           /*Update paramter*/ String lightName,
                                           /*Query parameters*/ long roomId, String hueId) {
@@ -364,6 +392,7 @@ public class DatabaseUtility {
                 Log.v("getRoomLights", "PHLight: " + light.getName() + " Unique id: " + light.getUniqueId());
 
                 if (roomLights.contains(light.getUniqueId())) {
+
                     Light tempLight = new Light(light.getName(), light, phHueSDK);
                     tempLight.setLightName(uniqueIdToName.get(light.getUniqueId()));
                     tempLight.setRoomId(roomId);

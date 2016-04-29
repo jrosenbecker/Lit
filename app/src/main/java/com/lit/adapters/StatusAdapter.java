@@ -3,6 +3,7 @@ package com.lit.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 
 import com.lit.R;
 import com.lit.database.DatabaseUtility;
+import com.lit.fragments.StatusFragment;
 import com.lit.models.Light;
 import com.lit.models.Room;
 import com.philips.lighting.hue.sdk.utilities.PHUtilities;
@@ -210,6 +212,7 @@ public class StatusAdapter extends BaseExpandableListAdapter {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.status_single_line, viewGroup, false);
         }
+
         Light light = (Light) getChild(roomIndex, childIndex);
 
         Switch lightSwitch = (Switch) view.findViewById(R.id.status_light_switch);
@@ -217,9 +220,16 @@ public class StatusAdapter extends BaseExpandableListAdapter {
         TextView connection = (TextView) view.findViewById(R.id.status_connection_text);
         ImageButton menuButton = (ImageButton) view.findViewById(R.id.status_options_button);
 
+        if (childIndex%2 == 0) {
+            view.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
+        } else if (childIndex%2 == 1) {
+            view.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDark));
+        }
+
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 PopupMenu popup = new PopupMenu(context, view);
                 MenuInflater inflater = popup.getMenuInflater();
                 inflater.inflate(R.menu.status_context_menu, popup.getMenu());
@@ -250,8 +260,6 @@ public class StatusAdapter extends BaseExpandableListAdapter {
 
             }
         });
-
-
 
         // Need to set listener to null, otherwise setChecked will fire off the listener created below
         lightSwitch.setOnCheckedChangeListener(null);
@@ -511,6 +519,7 @@ public class StatusAdapter extends BaseExpandableListAdapter {
                     } else {
                         Log.v("updateLightRoom", "SUCCESS: Light has been updated with roomId: " + roomId);
                         light.setRoomId(roomId);
+                        // TODO: Reset ListView of StatusFragment
                     }
 
                 } else {

@@ -1,6 +1,7 @@
 package com.lit.adapters;
 
 import android.app.Activity;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -17,6 +18,7 @@ import com.lit.R;
 import com.lit.activities.ModifyEffectActivity;
 import com.lit.models.Light;
 import com.lit.models.Room;
+import com.lit.services.BreatheEffectService;
 import com.philips.lighting.hue.listener.PHLightListener;
 import com.philips.lighting.hue.sdk.PHHueSDK;
 import com.philips.lighting.model.PHBridge;
@@ -32,6 +34,17 @@ import java.util.Random;
 
 public class CustomizeAdapter extends BaseExpandableListAdapter {
 
+    // TODO: Rename actions, choose action names that describe tasks that this
+    // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
+    private static final String ACTION_BREATHE = "com.lit.services.action.BREATHE";
+    private static final String ACTION_BAZ = "com.lit.services.action.BAZ";
+
+    // TODO: Rename parameters
+    private static final String PARAM_LIGHT_NAME = "PARAM_LIGHT_NAME";
+    private static final String PARAM_ROOM_ID = "PARAM_ROOM_ID";
+    private static final String PARAM_HUE_ID = "PARAM_HUE_ID";
+    private static final String PARAM_START_STOP = "PARAM_START_STOP";
+
     /**
      * Global variable from the Philips Hue API
      */
@@ -42,6 +55,10 @@ public class CustomizeAdapter extends BaseExpandableListAdapter {
     private Context context;
     //TODO: private List<Light> roomList;
     private List<Room> roomList;
+
+    private BreatheEffectService breatheEffect;
+
+    private boolean breathe = false;
 
     //TODO: public CustomizeAdapter(Context context, List<Light> roomList)
     public CustomizeAdapter(Context context, List<Room> roomList)
@@ -81,6 +98,18 @@ public class CustomizeAdapter extends BaseExpandableListAdapter {
         phHueSDK.getSelectedBridge().updateLightState(phLight, state);
     }
 
+    // TODO: Use a service to kick off this effect to prevent an infinite loop
+    private void breatheEffect(final int roomIndex, final int lightIndex)
+    {
+        if (!breathe) {
+            Light tempLight = (Light) getChild(roomIndex, lightIndex);
+            //startService(new Intent(context, BreatheEffectService.class));
+            //BreatheEffectService.actionBreathe(context, tempLight.getLightName(), roomIndex, tempLight.getHueId(), breathe);
+        } else {
+            breatheEffect.stopSelf();
+            breatheEffect.onDestroy();
+        }
+    }
 
     private void killEffect(final int roomIndex, final int lightIndex)
     {
@@ -163,7 +192,7 @@ public class CustomizeAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int roomIndex, int lightIndex, boolean b, View view, ViewGroup viewGroup) {
+    public View getChildView(final int roomIndex, final int lightIndex, boolean b, View view, ViewGroup viewGroup) {
 
         phHueSDK = PHHueSDK.create();
 
@@ -190,18 +219,27 @@ public class CustomizeAdapter extends BaseExpandableListAdapter {
 
         Light light = (Light) getChild(roomIndex, lightIndex);
 
-
         lightName.setText(light.getLightName());
 
         Button modifyEffect = (Button) view.findViewById(R.id.modify_effect_button);
-
 
         modifyEffect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, ModifyEffectActivity.class);
-                intent.putExtra("light", ((Light)getChild(constRoomIndex, constLightIndex)).getLightName());
+//                intent.putExtra("light", ((Light)getChild(constRoomIndex, constLightIndex)).getLightName());
+
+
+                intent.setAction(ACTION_BREATHE);
+                intent.putExtra(PARAM_LIGHT_NAME, ((Light)getChild(constRoomIndex, constLightIndex)).getLightName());
+                intent.putExtra(PARAM_ROOM_ID, roomIndex);
+                intent.putExtra(PARAM_HUE_ID, ((Light)getChild(constRoomIndex, constLightIndex)).getHueId());
+                intent.putExtra(PARAM_START_STOP, true);
+
                 context.startActivity(intent);
+
+                //colorCycle(roomIndex,lightIndex);
+                //breatheEffect(roomIndex, lightIndex);
             }
         });
 

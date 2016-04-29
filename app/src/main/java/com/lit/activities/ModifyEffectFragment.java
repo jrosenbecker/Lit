@@ -1,6 +1,7 @@
 package com.lit.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.lit.R;
+import com.lit.models.Light;
+import com.lit.services.BreatheEffectService;
+import com.philips.lighting.model.PHLight;
+import com.philips.lighting.model.PHLightState;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,6 +26,8 @@ import com.lit.R;
 public class ModifyEffectFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
+
+    private boolean breathe;
 
     public ModifyEffectFragment() {
         // Required empty public constructor
@@ -92,5 +99,35 @@ public class ModifyEffectFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+//    private void colorCycle(final int roomIndex, final int lightIndex)
+//    {
+//        Light tempLight = (Light) getChild(roomIndex, lightIndex);
+//        PHLight phLight = tempLight.getPhLight();
+//        PHLightState state = phLight.getLastKnownLightState();
+//        state.setEffectMode(PHLight.PHLightEffectMode.EFFECT_COLORLOOP);
+//        phHueSDK.getSelectedBridge().updateLightState(phLight, state);
+//    }
+//
+//    // TODO: Use a service to kick off this effect to prevent an infinite loop
+//    private void breatheEffect(final int roomIndex, final int lightIndex)
+//    {
+//        if (!breathe) {
+//            Light tempLight = (Light) getChild(roomIndex, lightIndex);
+//            getActivity().startService(new Intent(getContext(), BreatheEffectService.class));
+//            BreatheEffectService.startActionBreathe(getContext(), tempLight.getLightName(), roomIndex, tempLight.getHueId(), breathe);
+//        } else {
+//            breatheEffect.stopSelf();
+//            breatheEffect.onDestroy();
+//        }
+//    }
+//
+//    private void killEffect(final int roomIndex, final int lightIndex)
+//    {
+//        Light tempLight = (Light) getChild(roomIndex, lightIndex);
+//        PHLight phLight = tempLight.getPhLight();
+//        PHLightState state = phLight.getLastKnownLightState();
+//        state.setEffectMode(PHLight.PHLightEffectMode.EFFECT_NONE);
+//        phHueSDK.getSelectedBridge().updateLightState(phLight, state);
+//    }
 
 }

@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/modify_effect_toolbar"
-        android:background="?attr/colorPrimary"
+        android:background="@color/colorPrimary"
         android:elevation="4dp"
         android:title="Modify Effect"
         android:minHeight="?attr/actionBarSize"
@@ -22,6 +22,13 @@
             android:orientation="vertical"
             android:padding="20dp">
 
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="EFFECT"
+                android:id="@+id/effect"
+                android:layout_gravity="right" />
 
             <TextView
                 android:layout_width="wrap_content"
