@@ -132,7 +132,9 @@ public class ModifyEffectActivity extends AppCompatActivity implements ModifyEff
             @Override
             public void onClick(View v) {
                 if (colorCycle.isChecked()) {
+                    breathe.setChecked(false);
                     colorCycleEffect(lightName, roomId, hueId);
+                    breatheEffect(lightName, roomId, hueId, false);
                     if (!DatabaseUtility.updateLightEffect(context,CYCLE_EFFECT,true,hueId)) {
                         Log.v("setColorCycle","Unable to turn on color cycle for light: " + hueId);
                     }
@@ -149,6 +151,7 @@ public class ModifyEffectActivity extends AppCompatActivity implements ModifyEff
             @Override
             public void onClick(View v) {
                 if (breathe.isChecked()) {
+                    colorCycle.setChecked(false);
                     breatheEffect(lightName, roomId, hueId, true);
                     if (!DatabaseUtility.updateLightEffect(context,BREATHE_EFFECT,true,hueId)) {
                         Log.v("setBreatheEffect","Unable to turn on breathe for light: " + hueId);
