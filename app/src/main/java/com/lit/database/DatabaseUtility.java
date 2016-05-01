@@ -533,7 +533,6 @@ public class DatabaseUtility {
                 newLight.setRoomId(0); // Room ID 0 is the 'Unassigned' room
 
                 saveLight(newLight);
-                //unassignedLights.add(newLight);
             }
 
             returnValue = true;

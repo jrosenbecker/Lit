@@ -2,6 +2,7 @@ package com.lit.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -57,7 +58,11 @@ public class ModifyEffectFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_modify_effect, container, false);
+        View view = inflater.inflate(R.layout.fragment_modify_effect, container, false);
+
+        //view.setBackgroundColor(;
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

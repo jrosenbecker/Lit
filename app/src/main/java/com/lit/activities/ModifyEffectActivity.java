@@ -2,6 +2,7 @@ package com.lit.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
@@ -25,6 +26,7 @@ import com.lit.database.DatabaseUtility;
 import com.lit.models.Light;
 import com.lit.services.BreatheEffectService;
 import com.philips.lighting.hue.sdk.PHHueSDK;
+import com.philips.lighting.hue.sdk.utilities.PHUtilities;
 import com.philips.lighting.model.PHLight;
 import com.philips.lighting.model.PHLightState;
 
@@ -69,11 +71,131 @@ public class ModifyEffectActivity extends AppCompatActivity implements ModifyEff
         TextView lightRoomText = (TextView) findViewById(R.id.modify_effect_light_room);
         lightRoomText.setText("" + DatabaseUtility.getRoom(this, roomId).getName());
 
-        setHueSliders(lightName,roomId,hueId);
-
         setEffectSwitches(lightName,roomId,hueId);
 
-        getSupportFragmentManager().beginTransaction().add(R.id.modify_effect_frame_layout, ModifyEffectFragment.newInstance()).commit();
+        setColorButtons(lightName,roomId,hueId);
+
+        setHueSliders(lightName,roomId,hueId);
+
+        //getSupportFragmentManager().beginTransaction().add(R.id.modify_effect_frame_layout, ModifyEffectFragment.newInstance()).commit();
+
+
+    }
+
+    private void setEffectSwitches(final String lightName, final long roomId, final String hueId)
+    {
+        final Switch colorCycle = (Switch) findViewById(R.id.modify_effect_colorCycle);
+        final Switch breathe = (Switch) findViewById(R.id.modify_effect_breathe);
+
+        colorCycle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (colorCycle.isChecked()) {
+                    breathe.setChecked(false);
+                    //breatheEffect(lightName, roomId, hueId, false);
+                    BreatheEffectService.on_off = false;
+                    colorCycleEffect(lightName, roomId, hueId);
+                    if (!DatabaseUtility.updateLightEffect(context,CYCLE_EFFECT,true,hueId)) {
+                        Log.v("setColorCycle","Unable to turn on color cycle for light: " + hueId);
+                    }
+                } else {
+                    killEffect(lightName, roomId, hueId);
+                    if (!DatabaseUtility.updateLightEffect(context,CYCLE_EFFECT,false,hueId)) {
+                        Log.v("setColorCycle","Unable to turn off color cycle for light: " + hueId);
+                    }
+                }
+            }
+        });
+
+        breathe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (breathe.isChecked()) {
+                    colorCycle.setChecked(false);
+                    breatheEffect(lightName, roomId, hueId, true);
+                    if (!DatabaseUtility.updateLightEffect(context,BREATHE_EFFECT,true,hueId)) {
+                        Log.v("setBreatheEffect","Unable to turn on breathe for light: " + hueId);
+                    }
+                } else {
+                    breatheEffect(lightName, roomId, hueId, false);
+                    if (!DatabaseUtility.updateLightEffect(context,BREATHE_EFFECT,false,hueId)) {
+                        Log.v("setBreatheEffect","Unable to turn off breathe for light: " + hueId);
+                    }
+                }
+            }
+        });
+
+        colorCycle.setChecked(DatabaseUtility.getLightEffect(CYCLE_EFFECT, hueId));
+        breathe.setChecked(DatabaseUtility.getLightEffect(BREATHE_EFFECT,hueId));
+    }
+
+    private void setColorButtons(final String name, final long roomId, final String hueId)
+    {
+        final Light light = DatabaseUtility.getLight(name, roomId, hueId);
+
+        final Button redButton = (Button) findViewById(R.id.setRed);
+        final Button orangeButton = (Button) findViewById(R.id.setOrange);
+        final Button yellowButton = (Button) findViewById(R.id.setYellow);
+        final Button greenButton = (Button) findViewById(R.id.setGreen);
+        final Button blueButton = (Button) findViewById(R.id.setBlue);
+        final Button purpleButton = (Button) findViewById(R.id.setPurple);
+
+        redButton.setBackgroundColor(Color.RED);
+        orangeButton.setBackgroundColor(0xffff9a00);
+        yellowButton.setBackgroundColor(Color.YELLOW);
+        greenButton.setBackgroundColor(Color.GREEN);
+        blueButton.setBackgroundColor(Color.BLUE);
+        purpleButton.setBackgroundColor(0xff9b00ff);
+
+        View.OnClickListener redSelector = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setDistinctColor(light.getPhLight(),Color.RED);
+            }
+        };
+
+        View.OnClickListener orangeSelector = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setDistinctColor(light.getPhLight(),0xff9a00);
+            }
+        };
+
+        View.OnClickListener yellowSelector = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setDistinctColor(light.getPhLight(),0xefd000);
+            }
+        };
+
+        View.OnClickListener greenSelector = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setDistinctColor(light.getPhLight(),0x00ff1b);
+            }
+        };
+
+        View.OnClickListener blueSelector = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setDistinctColor(light.getPhLight(),Color.BLUE);
+            }
+        };
+
+        View.OnClickListener purpleSelector = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setDistinctColor(light.getPhLight(),0x9b00ff);
+            }
+        };
+
+        redButton.setOnClickListener(redSelector);
+        orangeButton.setOnClickListener(orangeSelector);
+        yellowButton.setOnClickListener(yellowSelector);
+        greenButton.setOnClickListener(greenSelector);
+        blueButton.setOnClickListener(blueSelector);
+        purpleButton.setOnClickListener(purpleSelector);
+
     }
 
     private void setHueSliders(final String name, final long roomId, final String hueId)
@@ -123,52 +245,6 @@ public class ModifyEffectActivity extends AppCompatActivity implements ModifyEff
         brightnessSlider.setOnSeekBarChangeListener(seekBarListener);
     }
 
-    private void setEffectSwitches(final String lightName, final long roomId, final String hueId)
-    {
-        final Switch colorCycle = (Switch) findViewById(R.id.modify_effect_colorCycle);
-        final Switch breathe = (Switch) findViewById(R.id.modify_effect_breathe);
-
-        colorCycle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (colorCycle.isChecked()) {
-                    breathe.setChecked(false);
-                    colorCycleEffect(lightName, roomId, hueId);
-                    breatheEffect(lightName, roomId, hueId, false);
-                    if (!DatabaseUtility.updateLightEffect(context,CYCLE_EFFECT,true,hueId)) {
-                        Log.v("setColorCycle","Unable to turn on color cycle for light: " + hueId);
-                    }
-                } else {
-                    killEffect(lightName, roomId, hueId);
-                    if (!DatabaseUtility.updateLightEffect(context,CYCLE_EFFECT,false,hueId)) {
-                        Log.v("setColorCycle","Unable to turn off color cycle for light: " + hueId);
-                    }
-                }
-            }
-        });
-
-        breathe.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (breathe.isChecked()) {
-                    colorCycle.setChecked(false);
-                    breatheEffect(lightName, roomId, hueId, true);
-                    if (!DatabaseUtility.updateLightEffect(context,BREATHE_EFFECT,true,hueId)) {
-                        Log.v("setBreatheEffect","Unable to turn on breathe for light: " + hueId);
-                    }
-                } else {
-                    breatheEffect(lightName, roomId, hueId, false);
-                    if (!DatabaseUtility.updateLightEffect(context,BREATHE_EFFECT,false,hueId)) {
-                        Log.v("setBreatheEffect","Unable to turn off breathe for light: " + hueId);
-                    }
-                }
-            }
-        });
-
-        colorCycle.setChecked(DatabaseUtility.getLightEffect(CYCLE_EFFECT, hueId));
-        breathe.setChecked(DatabaseUtility.getLightEffect(BREATHE_EFFECT,hueId));
-    }
-
     private void colorCycleEffect(String name, long roomId, String hueId)
     {
         Light light = DatabaseUtility.getLight(name,roomId,hueId);
@@ -198,7 +274,6 @@ public class ModifyEffectActivity extends AppCompatActivity implements ModifyEff
         intent.putExtra(PARAM_LIGHT_NAME, name);
         intent.putExtra(PARAM_ROOM_ID, roomId);
         intent.putExtra(PARAM_HUE_ID, hueId);
-        //intent.putExtra(PARAM_START_STOP, start_stop);
 
         if (start_stop) {
             startService(intent);
@@ -213,6 +288,14 @@ public class ModifyEffectActivity extends AppCompatActivity implements ModifyEff
         PHLight phLight = light.getPhLight();
         PHLightState state = phLight.getLastKnownLightState();
         state.setEffectMode(PHLight.PHLightEffectMode.EFFECT_NONE);
+        phHueSDK.getSelectedBridge().updateLightState(phLight, state);
+    }
+
+    private void setDistinctColor(PHLight phLight, int color) {
+        float[] xy = PHUtilities.calculateXY(color, phLight.getModelNumber());
+        PHLightState state = phLight.getLastKnownLightState();
+        state.setX(xy[0]);
+        state.setY(xy[1]);
         phHueSDK.getSelectedBridge().updateLightState(phLight, state);
     }
 

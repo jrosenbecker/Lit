@@ -5,11 +5,18 @@
     tools:context="com.lit.activities.ModifyEffectFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <!--<TextView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:text="Options for changing effects\ngo here"-->
+        <!--android:gravity="center_vertical|center_horizontal"-->
+        <!--android:textSize="10pt" />-->
+
+    <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Options for changing effects\ngo here"
-        android:gravity="center_vertical|center_horizontal"
-        android:textSize="10pt" />
+        android:layout_gravity="center"
+        android:src="@drawable/bulb"
+        android:background="@color/colorGray" />
 
 </FrameLayout>

@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/colorGray"
     tools:context="com.lit.activities.ModifyEffectActivity">
 
     <android.support.v7.widget.Toolbar
@@ -27,6 +28,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="Light Name"
+                android:textColor="@color/colorWhite"
                 android:id="@+id/modify_effect_light_name"
                 android:paddingBottom="5dp" />
 
@@ -35,6 +37,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Light Room"
+                android:textColor="@color/colorWhite"
                 android:id="@+id/modify_effect_light_room" />
 
             <RelativeLayout
@@ -47,6 +50,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Color Cycle   "
+                    android:textColor="@color/colorWhite"
                     android:id="@+id/modify_effect_colorCycle"
                     android:layout_gravity="center_horizontal" />
 
@@ -54,6 +58,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Breathe       "
+                    android:textColor="@color/colorWhite"
                     android:id="@+id/modify_effect_breathe"
                     android:layout_gravity="center_horizontal"
                     android:layout_alignParentTop="true"
@@ -64,9 +69,62 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Set Color"
+                android:textColor="@color/colorWhite" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="15px"
+                android:orientation="horizontal"
+                android:layout_gravity="center" >
+
+                <Button
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="175px"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="25px"
+                    android:id="@+id/setRed" />
+                <Button
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="175px"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="25px"
+                    android:id="@+id/setOrange" />
+                <Button
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="175px"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="25px"
+                    android:id="@+id/setYellow" />
+                <Button
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="175px"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="25px"
+                    android:id="@+id/setGreen" />
+                <Button
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="175px"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="25px"
+                    android:id="@+id/setBlue" />
+                <Button
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="175px"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/setPurple" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="70px"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Brightness"
+                android:textColor="@color/colorWhite"
                 android:id="@+id/modify_effect_brightness" />
 
             <SeekBar
@@ -85,6 +143,7 @@
                 android:layout_marginTop="15px"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Red Hue"
+                android:textColor="@color/colorWhite"
                 android:id="@+id/modify_effect_red" />
 
             <SeekBar
@@ -103,6 +162,7 @@
                 android:layout_marginTop="15px"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Green Hue"
+                android:textColor="@color/colorWhite"
                 android:id="@+id/modify_effect_green" />
 
             <SeekBar
@@ -121,6 +181,7 @@
                 android:layout_marginTop="15px"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Blue Hue"
+                android:textColor="@color/colorWhite"
                 android:id="@+id/modify_effect_blue" />
 
             <SeekBar
@@ -133,10 +194,26 @@
                 android:progressTint="#0000ff"
                 android:thumbTint="#0000be" />
 
-            <FrameLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="177dp"
-                android:id="@+id/modify_effect_frame_layout" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/bulb"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/bulb"/>
+
+            </LinearLayout>
+            <!--<FrameLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="177dp"-->
+                <!--android:id="@+id/modify_effect_frame_layout" />-->
 
         </LinearLayout>
 
