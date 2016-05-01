@@ -72,8 +72,8 @@ public class BreatheEffectService extends IntentService {
                     final String lightName = intent.getStringExtra(PARAM_LIGHT_NAME);
                     final long roomId = intent.getLongExtra(PARAM_ROOM_ID, (long) 0);
                     final String hueId = intent.getStringExtra(PARAM_HUE_ID);
-                    final boolean start_stop = intent.getBooleanExtra(PARAM_START_STOP, false);
-                    handleActionBreathe(lightName, roomId, hueId, start_stop);
+                    //final boolean start_stop = intent.getBooleanExtra(PARAM_START_STOP, false);
+                    handleActionBreathe(lightName, roomId, hueId);
                 } else {
                     Log.v("onHandleIntent","Invalid action passed through Intent");
                 }
@@ -92,7 +92,7 @@ public class BreatheEffectService extends IntentService {
     /**
      * Handle Breathe effect in the background thread with the provided parameters.
      */
-    private void handleActionBreathe(String name, long roomId, String hueId, boolean start_stop) {
+    private void handleActionBreathe(String name, long roomId, String hueId) {
 
         Light light = DatabaseUtility.getLight(name, roomId, hueId);
 
@@ -105,7 +105,8 @@ public class BreatheEffectService extends IntentService {
 
             /*  These variables will be responsible for monitoring the brightness of the
                 bulb and how dramatically that intensity changes */
-            int increment = (int) Math.floor((Light.MAX_BRIGHTNESS - Light.MIN_BRIGHTNESS) / 10);
+            //int increment = (int) Math.floor((Light.MAX_BRIGHTNESS - Light.MIN_BRIGHTNESS) / 10);
+            int increment = (int) Math.floor((Light.MAX_BRIGHTNESS - Light.MIN_BRIGHTNESS) / 25);
             int intensity = Light.MIN_BRIGHTNESS;
 
             /* Initiate the light to minimum brightness for the effect */
@@ -117,10 +118,10 @@ public class BreatheEffectService extends IntentService {
 
                 /*  Make sure that the intensity is within the MIN-MAX
                     values of the PHLight brightness spectrum */
-                if (intensity > Light.MAX_BRIGHTNESS) {
+                if (intensity >= Light.MAX_BRIGHTNESS) {
                     intensity = Light.MAX_BRIGHTNESS;
                     increment = -increment;
-                } else if (intensity < Light.MIN_BRIGHTNESS) {
+                } else if (intensity <= Light.MIN_BRIGHTNESS) {
                     intensity = Light.MIN_BRIGHTNESS;
                     increment = -increment;
                 }
@@ -131,7 +132,7 @@ public class BreatheEffectService extends IntentService {
                     light.setBrightness(intensity);
 
                     /* Put the Thread to sleep as to not overload the PHLight */
-                    Thread.sleep(175);
+                    Thread.sleep(150);
 
                     /* Alter the brightness by the increment to cause the gradient effect */
                     intensity += increment;

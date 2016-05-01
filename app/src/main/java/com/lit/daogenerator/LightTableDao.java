@@ -30,7 +30,8 @@ public class LightTableDao extends AbstractDao<LightTable, Long> {
         public final static Property Blue = new Property(4, Integer.class, "blue", false, "BLUE");
         public final static Property RoomId = new Property(5, Long.class, "roomId", false, "ROOM_ID");
         public final static Property HueId = new Property(6, String.class, "hueId", false, "HUE_ID");
-        public final static Property EffectOn = new Property(7, Boolean.class, "effectOn", false, "EFFECT_ON");
+        public final static Property BreatheEffect = new Property(7, Boolean.class, "breatheEffect", false, "BREATHE_EFFECT");
+        public final static Property CycleEffect = new Property(8, Boolean.class, "cycleEffect", false, "CYCLE_EFFECT");
     };
 
 
@@ -53,7 +54,8 @@ public class LightTableDao extends AbstractDao<LightTable, Long> {
                 "'BLUE' INTEGER," + // 4: blue
                 "'ROOM_ID' INTEGER," + // 5: roomId
                 "'HUE_ID' TEXT," + // 6: hueId
-                "'EFFECT_ON' INTEGER);"); // 7: effectOn
+                "'BREATHE_EFFECT' INTEGER," + // 7: breatheEffect
+                "'CYCLE_EFFECT' INTEGER);"); // 8: cycleEffect
     }
 
     /** Drops the underlying database table. */
@@ -102,9 +104,14 @@ public class LightTableDao extends AbstractDao<LightTable, Long> {
             stmt.bindString(7, hueId);
         }
  
-        Boolean effectOn = entity.getEffectOn();
-        if (effectOn != null) {
-            stmt.bindLong(8, effectOn ? 1l: 0l);
+        Boolean breatheEffect = entity.getBreatheEffect();
+        if (breatheEffect != null) {
+            stmt.bindLong(8, breatheEffect ? 1l: 0l);
+        }
+ 
+        Boolean cycleEffect = entity.getCycleEffect();
+        if (cycleEffect != null) {
+            stmt.bindLong(9, cycleEffect ? 1l: 0l);
         }
     }
 
@@ -125,7 +132,8 @@ public class LightTableDao extends AbstractDao<LightTable, Long> {
             cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4), // blue
             cursor.isNull(offset + 5) ? null : cursor.getLong(offset + 5), // roomId
             cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // hueId
-            cursor.isNull(offset + 7) ? null : cursor.getShort(offset + 7) != 0 // effectOn
+            cursor.isNull(offset + 7) ? null : cursor.getShort(offset + 7) != 0, // breatheEffect
+            cursor.isNull(offset + 8) ? null : cursor.getShort(offset + 8) != 0 // cycleEffect
         );
         return entity;
     }
@@ -140,7 +148,8 @@ public class LightTableDao extends AbstractDao<LightTable, Long> {
         entity.setBlue(cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4));
         entity.setRoomId(cursor.isNull(offset + 5) ? null : cursor.getLong(offset + 5));
         entity.setHueId(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
-        entity.setEffectOn(cursor.isNull(offset + 7) ? null : cursor.getShort(offset + 7) != 0);
+        entity.setBreatheEffect(cursor.isNull(offset + 7) ? null : cursor.getShort(offset + 7) != 0);
+        entity.setCycleEffect(cursor.isNull(offset + 8) ? null : cursor.getShort(offset + 8) != 0);
      }
     
     /** @inheritdoc */

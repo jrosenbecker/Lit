@@ -22,35 +22,122 @@
             android:orientation="vertical"
             android:padding="20dp">
 
-
-            <Button
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="EFFECT"
-                android:id="@+id/effect"
-                android:layout_gravity="right" />
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Light Name"
+                android:id="@+id/modify_effect_light_name"
+                android:paddingBottom="5dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Light Name"
-                android:id="@+id/modify_effect_light_name"
-                android:textSize="16pt"
-                android:paddingBottom="5dp" />
+                android:text="Light Room"
+                android:id="@+id/modify_effect_light_room" />
 
-            <Spinner
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25px"
+                android:layout_marginBottom="25px" >
+
+                <Switch
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Color Cycle   "
+                    android:id="@+id/modify_effect_colorCycle"
+                    android:layout_gravity="center_horizontal" />
+
+                <Switch
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Breathe       "
+                    android:id="@+id/modify_effect_breathe"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true" />
+
+            </RelativeLayout>
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/modify_effect_spinner"
-                android:paddingTop="5dp" />
+                android:layout_marginTop="15px"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Brightness"
+                android:id="@+id/modify_effect_brightness" />
+
+            <SeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5px"
+                android:id="@+id/modify_effect_brightness_seekBar"
+                android:layout_gravity="center_horizontal"
+                android:progressBackgroundTint="#646464"
+                android:progressTint="#000000"
+                android:thumbTint="#bebebe" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15px"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Red Hue"
+                android:id="@+id/modify_effect_red" />
+
+            <SeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5px"
+                android:id="@+id/modify_effect_red_seekBar"
+                android:layout_gravity="center_horizontal"
+                android:progressTint="#ff0000"
+                android:thumbTint="#be0000"
+                android:progressBackgroundTint="#ff6464" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15px"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Green Hue"
+                android:id="@+id/modify_effect_green" />
+
+            <SeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5px"
+                android:id="@+id/modify_effect_green_seekBar"
+                android:layout_gravity="center_horizontal"
+                android:progressBackgroundTint="#64ff64"
+                android:progressTint="#00ff00"
+                android:thumbTint="#00be00" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15px"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Blue Hue"
+                android:id="@+id/modify_effect_blue" />
+
+            <SeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5px"
+                android:id="@+id/modify_effect_blue_seekBar"
+                android:layout_gravity="center_horizontal"
+                android:progressBackgroundTint="#6464ff"
+                android:progressTint="#0000ff"
+                android:thumbTint="#0000be" />
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="177dp"
                 android:id="@+id/modify_effect_frame_layout" />
+
         </LinearLayout>
-
-
 
 </LinearLayout>

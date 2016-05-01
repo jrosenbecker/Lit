@@ -31,7 +31,8 @@ public class AppDaoGenerator {
         LightTable.addIntProperty("blue");
         LightTable.addLongProperty("roomId");
         LightTable.addStringProperty("hueId");
-        LightTable.addBooleanProperty("effectOn");
+        LightTable.addBooleanProperty("breatheEffect");
+        LightTable.addBooleanProperty("cycleEffect");
 
         new DaoGenerator().generateAll(schema, "./app/src/main/java/");
     }

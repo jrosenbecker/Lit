@@ -199,6 +199,8 @@ public class CustomizeAdapter extends BaseExpandableListAdapter {
         final int constRoomIndex = roomIndex;
         final int constLightIndex = lightIndex;
 
+        Log.v("getViewChild","roomIndex: " + roomIndex + " lightIndex: " + lightIndex);
+
         LayoutInflater inflater = ((Activity) context).getLayoutInflater();
         view =  inflater.inflate(R.layout.customize_single_line, viewGroup, false);
         TextView lightName = (TextView) view.findViewById(R.id.addEffect_light_name);
@@ -217,7 +219,7 @@ public class CustomizeAdapter extends BaseExpandableListAdapter {
         });
 
 
-        Light light = (Light) getChild(roomIndex, lightIndex);
+        final Light light = (Light) getChild(roomIndex, lightIndex);
 
         lightName.setText(light.getLightName());
 
@@ -227,19 +229,13 @@ public class CustomizeAdapter extends BaseExpandableListAdapter {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, ModifyEffectActivity.class);
-//                intent.putExtra("light", ((Light)getChild(constRoomIndex, constLightIndex)).getLightName());
-
-
                 intent.setAction(ACTION_BREATHE);
                 intent.putExtra(PARAM_LIGHT_NAME, ((Light)getChild(constRoomIndex, constLightIndex)).getLightName());
-                intent.putExtra(PARAM_ROOM_ID, roomIndex);
+                intent.putExtra(PARAM_ROOM_ID, light.getRoomId());
                 intent.putExtra(PARAM_HUE_ID, ((Light)getChild(constRoomIndex, constLightIndex)).getHueId());
                 intent.putExtra(PARAM_START_STOP, true);
 
                 context.startActivity(intent);
-
-                //colorCycle(roomIndex,lightIndex);
-                //breatheEffect(roomIndex, lightIndex);
             }
         });
 
