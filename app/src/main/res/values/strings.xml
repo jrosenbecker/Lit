@@ -17,6 +17,7 @@
     <string name="change_room">Change Room</string>
     <string name="change_brightness">Change Brightness</string>
     <string name="change_color">Change Color</string>
+    <string name="unassociate">Unassociate with current room</string>
 
     <string name="unnassigned_room">Unassigned</string>
 

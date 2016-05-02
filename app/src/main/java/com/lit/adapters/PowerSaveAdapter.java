@@ -15,6 +15,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.lit.R;
+import com.lit.database.DatabaseUtility;
 import com.lit.models.Light;
 import com.lit.models.Room;
 
@@ -113,5 +114,17 @@ public class PowerSaveAdapter extends BaseExpandableListAdapter {
     @Override
     public boolean isChildSelectable(int i, int i1) {
         return true;
+    }
+
+    public void updateAdapter()
+    {
+        roomList = DatabaseUtility.getAllRooms();
+        List<Light> unassignedLights = DatabaseUtility.getRoomLights((long) 0);
+
+        if(unassignedLights.size() > 0)
+        {
+            roomList.add(new Room("Unassigned", unassignedLights));
+        }
+        this.notifyDataSetChanged();
     }
 }

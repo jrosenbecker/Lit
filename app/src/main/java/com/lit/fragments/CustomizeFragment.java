@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -120,12 +121,23 @@ public class CustomizeFragment extends Fragment {
             listViewAdapter = new CustomizeAdapter(getContext(), customizeList);
 
             customizeListView.setAdapter(listViewAdapter);
-            updateList();
 
-            listViewAdapter.notifyDataSetChanged();
+
+            listViewAdapter.updateAdapter();
 
         } else {
             Toast.makeText(getContext(),"Press 'CONFIGURE' on the Status screen to connect to your bridge...",Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Log.v("onResume","displayListItems: " + displayListItems);
+
+        if (displayListItems) {
+            listViewAdapter.updateAdapter();
         }
     }
 
@@ -144,27 +156,27 @@ public class CustomizeFragment extends Fragment {
     }
 
 
-    public void updateList()
-    {
-        PHBridge bridge = phHueSDK.getSelectedBridge();
-        customizeList.clear();
-        if(phHueSDK.getAllBridges().size() > 0) {
-
-            List<Room> rooms = DatabaseUtility.getAllRooms();
-
-            for (Room room : rooms) {
-                customizeList.add(room);
-            }
-
-            Room unassigned = new Room("Unassigned",DatabaseUtility.getRoomLights(0));
-            customizeList.add(unassigned);
-
-            //statusList.add(room);
-            listViewAdapter.notifyDataSetChanged();
-        }
-        else
-        {
-            Toast.makeText(getActivity(), R.string.could_not_find_bridge, Toast.LENGTH_LONG).show();
-        }
-    }
+//    public void updateList()
+//    {
+//        PHBridge bridge = phHueSDK.getSelectedBridge();
+//        customizeList.clear();
+//        if(phHueSDK.getAllBridges().size() > 0) {
+//
+//            List<Room> rooms = DatabaseUtility.getAllRooms();
+//
+//            for (Room room : rooms) {
+//                customizeList.add(room);
+//            }
+//
+//            Room unassigned = new Room("Unassigned",DatabaseUtility.getRoomLights(0));
+//            customizeList.add(unassigned);
+//
+//            //statusList.add(room);
+//            listViewAdapter.notifyDataSetChanged();
+//        }
+//        else
+//        {
+//            Toast.makeText(getActivity(), R.string.could_not_find_bridge, Toast.LENGTH_LONG).show();
+//        }
+//    }
 }

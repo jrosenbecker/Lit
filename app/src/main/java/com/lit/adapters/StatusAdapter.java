@@ -263,6 +263,8 @@ public class StatusAdapter extends BaseExpandableListAdapter {
                             case R.id.brightness_option:
                                 changeBrightnessDialog(constRoomIndex, constChildIndex);
                                 return true;
+                            case R.id.unassociate_with_room:
+                                unassociateRoom(constRoomIndex, constChildIndex);
                             default:
                                 return false;
                         }
@@ -365,6 +367,11 @@ public class StatusAdapter extends BaseExpandableListAdapter {
                 Room room = (Room) adapter.getItem(position);
                 Light light = (Light) getChild(roomIndex, childIndex);
                 DatabaseUtility.updateLightRoom(context, room.getId(), light.getLightName(), light.getHueId());
+                if(DatabaseUtility.getRoomLights(room.getId()).size() <= 0)
+                {
+                    DatabaseUtility.deleteRoom(context, room);
+                }
+                updateAdapter();
                 dialog.dismiss();
             }
         });
@@ -561,6 +568,7 @@ public class StatusAdapter extends BaseExpandableListAdapter {
                         Log.v("updateLightRoom", "SUCCESS: Light has been updated with roomId: " + roomId);
                         light.setRoomId(roomId);
                         // TODO: Reset ListView of StatusFragment
+                        updateAdapter();
                     }
 
                 } else {
@@ -578,5 +586,30 @@ public class StatusAdapter extends BaseExpandableListAdapter {
         });
 
         builder.show();
+    }
+
+
+    private void unassociateRoom(final int roomIndex, final int lightIndex)
+    {
+        Room oldRoom = (Room) getGroup(roomIndex);
+        Light light = (Light) getChild(roomIndex, lightIndex);
+        DatabaseUtility.updateLightRoom(context, 0, light.getLightName(), light.getHueId());
+        if(DatabaseUtility.getRoomLights(oldRoom.getId()).size() == 0)
+        {
+            DatabaseUtility.deleteRoom(context, oldRoom);
+        }
+        updateAdapter();
+    }
+
+    public void updateAdapter()
+    {
+        rooms = DatabaseUtility.getAllRooms();
+        List<Light> unassignedLights = DatabaseUtility.getRoomLights((long) 0);
+
+        if(unassignedLights.size() > 0)
+        {
+            rooms.add(new Room("Unassigned", unassignedLights));
+        }
+        this.notifyDataSetChanged();
     }
 }

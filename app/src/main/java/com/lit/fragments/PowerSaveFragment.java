@@ -115,32 +115,32 @@ public class PowerSaveFragment extends Fragment {
         Log.v("onResume","displayListItems: " + displayListItems);
 
         if (displayListItems) {
-            updateList();
+            listAdapter.updateAdapter();
         }
     }
 
-    private void updateList() {
-
-        powerSaveList.clear();
-        List<Room> rooms = DatabaseUtility.getAllRooms();
-        if (phHueSDK.getAllBridges().size() > 0) {
-            for (Room room : rooms) {
-                powerSaveList.add(room);
-                for (Light light : room.getLights()) {
-                    Log.v("updateList", "Room: " + room.getName() + " Light: " + light.getLightName());
-                }
-            }
-
-
-            Room unassigned = new Room("Unassigned", DatabaseUtility.getRoomLights(0));
-            powerSaveList.add(unassigned);
-            listAdapter.notifyDataSetChanged();
-        }
-        else
-        {
-            Toast.makeText(getActivity(), R.string.could_not_find_bridge, Toast.LENGTH_LONG).show();
-        }
-    }
+//    private void updateList() {
+//
+//        powerSaveList.clear();
+//        List<Room> rooms = DatabaseUtility.getAllRooms();
+//        if (phHueSDK.getAllBridges().size() > 0) {
+//            for (Room room : rooms) {
+//                powerSaveList.add(room);
+//                for (Light light : room.getLights()) {
+//                    Log.v("updateList", "Room: " + room.getName() + " Light: " + light.getLightName());
+//                }
+//            }
+//
+//
+//            Room unassigned = new Room("Unassigned", DatabaseUtility.getRoomLights(0));
+//            powerSaveList.add(unassigned);
+//            listAdapter.notifyDataSetChanged();
+//        }
+//        else
+//        {
+//            Toast.makeText(getActivity(), R.string.could_not_find_bridge, Toast.LENGTH_LONG).show();
+//        }
+//    }
 
     /**
      * This interface must be implemented by activities that contain this

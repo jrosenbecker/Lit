@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.lit.R;
 import com.lit.activities.ModifyEffectActivity;
+import com.lit.database.DatabaseUtility;
 import com.lit.models.Light;
 import com.lit.models.Room;
 import com.lit.services.BreatheEffectService;
@@ -260,5 +261,17 @@ public class CustomizeAdapter extends BaseExpandableListAdapter {
     @Override
     public boolean isChildSelectable(int i, int i1) {
         return false;
+    }
+
+    public void updateAdapter()
+    {
+        roomList = DatabaseUtility.getAllRooms();
+        List<Light> unassignedLights = DatabaseUtility.getRoomLights((long) 0);
+
+        if(unassignedLights.size() > 0)
+        {
+            roomList.add(new Room("Unassigned", unassignedLights));
+        }
+        this.notifyDataSetChanged();
     }
 }
