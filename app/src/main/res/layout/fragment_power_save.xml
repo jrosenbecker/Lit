@@ -20,7 +20,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="@string/power_save_explanation"
-                android:textColor="@color/colorPrimaryDark"
+                android:textColor="@color/primaryTextColor"
                 android:id="@+id/power_save_text"
                 android:layout_weight="1"
                 android:layout_margin="20dp"

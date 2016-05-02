@@ -4,14 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/colorGray"
+    android:background="@color/colorBackground"
     tools:context="com.lit.activities.ModifyEffectActivity">
 
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/modify_effect_toolbar"
-        android:background="@color/colorPrimary"
+        android:background="@color/toolbarColor"
         android:elevation="4dp"
         android:title="Modify Effect"
         android:minHeight="?attr/actionBarSize"
@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="Light Name"
-                android:textColor="@color/colorWhite"
+                android:textColor="@color/primaryTextColor"
                 android:id="@+id/modify_effect_light_name"
                 android:paddingBottom="5dp" />
 
@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Light Room"
-                android:textColor="@color/colorWhite"
+                android:textColor="@color/primaryTextColor"
                 android:id="@+id/modify_effect_light_room" />
 
             <RelativeLayout
@@ -50,7 +50,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Color Cycle   "
-                    android:textColor="@color/colorWhite"
+                    android:textColor="@color/primaryTextColor"
                     android:id="@+id/modify_effect_colorCycle"
                     android:layout_gravity="center_horizontal" />
 
@@ -58,7 +58,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Breathe       "
-                    android:textColor="@color/colorWhite"
+                    android:textColor="@color/primaryTextColor"
                     android:id="@+id/modify_effect_breathe"
                     android:layout_gravity="center_horizontal"
                     android:layout_alignParentTop="true"
@@ -71,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Set Color"
-                android:textColor="@color/colorWhite" />
+                android:textColor="@color/primaryTextColor" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -124,7 +124,7 @@
                 android:layout_marginTop="70px"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Brightness"
-                android:textColor="@color/colorWhite"
+                android:textColor="@color/primaryTextColor"
                 android:id="@+id/modify_effect_brightness" />
 
             <SeekBar
@@ -143,7 +143,7 @@
                 android:layout_marginTop="15px"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Red Hue"
-                android:textColor="@color/colorWhite"
+                android:textColor="@color/primaryTextColor"
                 android:id="@+id/modify_effect_red" />
 
             <SeekBar
@@ -162,7 +162,7 @@
                 android:layout_marginTop="15px"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Green Hue"
-                android:textColor="@color/colorWhite"
+                android:textColor="@color/primaryTextColor"
                 android:id="@+id/modify_effect_green" />
 
             <SeekBar
@@ -181,7 +181,7 @@
                 android:layout_marginTop="15px"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Blue Hue"
-                android:textColor="@color/colorWhite"
+                android:textColor="@color/primaryTextColor"
                 android:id="@+id/modify_effect_blue" />
 
             <SeekBar

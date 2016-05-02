@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#00ffff</color>
-    <color name="colorPrimaryDark">#00ccff</color>
+    <color name="colorPrimary">#cccccc</color>
+    <color name="colorPrimaryDark">#c0c0c0</color>
     <color name="colorAccent">#aeff00</color>
     <color name="colorBlack">#000000</color>
+    <color name="colorBackground">#dcdcdc</color>
+    <color name="primaryTextColor">#1d1d1d</color>
+    <color name="toolbarColor">#d58e00</color>
+    <color name="tabIndicatorColor">#0079d5</color>
+    <color name="roomPrimary">#828282</color>
+    <color name="roomPrimaryDark">#787878</color>
     <color name="colorGray">#505050</color>
     <color name="colorWhite">#ffffff</color>
-    <color name="background_material_light">#0d256f</color>
-    <color name="foreground_material_light">#26d3bf</color>
 </resources>

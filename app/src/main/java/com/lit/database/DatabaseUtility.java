@@ -169,6 +169,7 @@ public class DatabaseUtility {
         } else {
             room = new Room("Unknown", new ArrayList<Light>());
         }
+        room.setId(roomId);
         return room;
     }
 
@@ -185,7 +186,7 @@ public class DatabaseUtility {
 
             // Don't add unknown rooms
             testRoom = getRoom(room.getId());
-
+            testRoom.setId(room.getId());
             if (!testRoom.getName().equalsIgnoreCase("unknown")) {
                 rooms.add(testRoom);
             }

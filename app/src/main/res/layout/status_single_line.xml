@@ -49,6 +49,5 @@
         android:id="@+id/status_options_button"
         android:layout_weight="0"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/ic_action_navigation_more_vert"
-        android:background="@android:color/background_light" />
+        android:src="@drawable/ic_action_navigation_more_vert" />
 </LinearLayout>

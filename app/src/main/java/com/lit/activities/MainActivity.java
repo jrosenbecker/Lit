@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity
         tabLayout.addTab(tabLayout.newTab().setText("Power Save").setTag(TabConstants.POWER_SAVE_TAB));
         tabLayout.addTab(tabLayout.newTab().setText("Customize").setTag(TabConstants.CUSTOMIZE_TAB));
         tabLayout.setSelectedTabIndicatorHeight(20);
+        tabLayout.setSelectedTabIndicatorColor(getApplicationContext().getResources().getColor(R.color.tabIndicatorColor));
 
         tabLayout.setOnTabSelectedListener(onTabSelected);
 
@@ -184,6 +185,10 @@ public class MainActivity extends AppCompatActivity
                 intent = new Intent(getApplicationContext(), PH_ConfigureBridge.class);
                 startActivity(intent);
                 return true;
+            case R.id.clean_database:
+                DatabaseUtility.clean();
+                DatabaseUtility.initDatabase(getApplicationContext());
+
             default:
                 return super.onOptionsItemSelected(item);
         }

@@ -13,4 +13,8 @@
         android:visible="false"
         app:showAsAction="ifRoom" />
 
+    <item android:id="@+id/clean_database"
+        android:title="Clean Database"
+        app:showAsAction="never" />
+
 </menu>

@@ -15,10 +15,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -200,6 +203,14 @@ public class StatusAdapter extends BaseExpandableListAdapter {
         view = inflater.inflate(R.layout.room_layout, null);
         TextView roomName = (TextView) view.findViewById(R.id.room_name);
         roomName.setText(room.getName());
+        if(roomIndex%2 == 1)
+        {
+            view.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
+        }
+        else
+        {
+            view.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDark));
+        }
         return view;
     }
 
@@ -220,10 +231,12 @@ public class StatusAdapter extends BaseExpandableListAdapter {
         TextView connection = (TextView) view.findViewById(R.id.status_connection_text);
         ImageButton menuButton = (ImageButton) view.findViewById(R.id.status_options_button);
 
-        if (childIndex%2 == 0) {
+        if (childIndex%2 == 1) {
             view.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
-        } else if (childIndex%2 == 1) {
+            menuButton.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
+        } else {
             view.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDark));
+            menuButton.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDark));
         }
 
         menuButton.setOnClickListener(new View.OnClickListener() {
@@ -335,40 +348,68 @@ public class StatusAdapter extends BaseExpandableListAdapter {
         builder.setTitle("Assign Room: " + ((Light) getChild(roomIndex, childIndex)).getLightName());
 
         List<Room> savedRooms = DatabaseUtility.getAllRooms();
+        LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+        View view = inflater.inflate(R.layout.change_room_dialog, null);
+        ListView listView = (ListView) view.findViewById(R.id.change_room_list_view);
+        Button changeRoomButton = (Button) view.findViewById(R.id.create_new_room_button);
 
-        int padding = 20;
+        final ChangeRoomAdapter adapter = new ChangeRoomAdapter(context, savedRooms);
+        listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        builder.setView(view);
+        final AlertDialog dialog = builder.show();
 
-        for (Room room : savedRooms) {
-            final RadioButton roomButton = new RadioButton(context);
-            roomButton.setText(room.getName());
-            builder.setView(roomButton);
-        }
-
-        final RadioButton newRoom = new RadioButton(context);
-        newRoom.setText("Create New Room");
-        newRoom.setPadding(padding,padding,padding,padding);
-        builder.setView(newRoom);
-
-        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-                if (newRoom.isChecked()) {
-                    saveRoomDialog(roomIndex, childIndex);
-                    //DatabaseUtility.deleteLight(context,(Light) getChild(roomIndex, childIndex));
-                }
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Room room = (Room) adapter.getItem(position);
+                Light light = (Light) getChild(roomIndex, childIndex);
+                DatabaseUtility.updateLightRoom(context, room.getId(), light.getLightName(), light.getHueId());
+                dialog.dismiss();
             }
         });
 
-
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        changeRoomButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
+            public void onClick(View v) {
+                dialog.dismiss();
+                saveRoomDialog(roomIndex, childIndex);
             }
         });
 
-        builder.show();
+//        int padding = 20;
+//
+//        for (Room room : savedRooms) {
+//            final RadioButton roomButton = new RadioButton(context);
+//            roomButton.setText(room.getName());
+//            builder.setView(roomButton);
+//        }
+//
+//        final RadioButton newRoom = new RadioButton(context);
+//        newRoom.setText("Create New Room");
+//        newRoom.setPadding(padding,padding,padding,padding);
+//        builder.setView(newRoom);
+//
+//        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                if (newRoom.isChecked()) {
+//                    saveRoomDialog(roomIndex, childIndex);
+//                    //DatabaseUtility.deleteLight(context,(Light) getChild(roomIndex, childIndex));
+//                }
+//            }
+//        });
+//
+//
+//        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialogInterface, int i) {
+//                dialogInterface.cancel();
+//            }
+//        });
+//
+//        builder.show();
     }
 
     public void changeBrightnessDialog(final int roomIndex, final int lightIndex)
