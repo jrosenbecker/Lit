@@ -181,12 +181,20 @@ public class CustomizeAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
+    public View getGroupView(int roomIndex, boolean b, View view, ViewGroup viewGroup) {
         LayoutInflater inflater = ((Activity) context).getLayoutInflater();
         view = inflater.inflate(R.layout.room_layout, null);
 
         TextView roomText = (TextView) view.findViewById(R.id.room_name);
-        roomText.setText(((Room) getGroup(i)).getName());
+        roomText.setText(((Room) getGroup(roomIndex)).getName());
+        if(roomIndex%2 == 1)
+        {
+            view.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
+        }
+        else
+        {
+            view.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDark));
+        }
 
         return view;
     }
@@ -238,6 +246,12 @@ public class CustomizeAdapter extends BaseExpandableListAdapter {
                 context.startActivity(intent);
             }
         });
+
+        if (lightIndex%2 == 1) {
+            view.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
+        } else {
+            view.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDark));.
+        }
 
 
         return view;
