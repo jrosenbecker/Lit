@@ -171,10 +171,12 @@ public class DatabaseUtility {
 
         if (tableRow != null) {
             room = new Room(tableRow.getName(), getRoomLights(tableRow.getId()));
+            room.setId(tableRow.getId());
         } else {
             room = new Room("Unknown", new ArrayList<Light>());
+            room.setId((long) 0);
         }
-        room.setId(roomId);
+
         return room;
     }
 
