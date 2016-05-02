@@ -16,7 +16,7 @@
         <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/status_light_switch"
+            android:id="@+id/power_save_enabled_switch"
             android:layout_weight="0"
             android:textSize="16pt" />
 
@@ -33,10 +33,10 @@
                 android:layout_weight="1"
                 android:text="Medium Text"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/primaryTextColor"
                 android:textSize="16pt" />
 
-            <TextView
+            <!--<TextView
                 android:id="@+id/power_save_active_sensor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
                 android:text="Medium Text"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/colorPrimary"
-                android:textSize="8pt" />
+                android:textSize="8pt" />-->
         </LinearLayout>
 
     </LinearLayout>

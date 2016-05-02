@@ -28,7 +28,7 @@
                 android:textSize="7pt" />
         </LinearLayout>
 
-        <ListView
+        <ExpandableListView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/power_save_list_view"

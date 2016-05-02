@@ -179,7 +179,7 @@ public class StatusFragment extends Fragment {
         }
         else
         {
-            Toast.makeText(getActivity(), R.string.could_not_find_bridge, Toast.LENGTH_LONG);
+            Toast.makeText(getActivity(), R.string.could_not_find_bridge, Toast.LENGTH_LONG).show();
         }
     }
 }

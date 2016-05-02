@@ -4,21 +4,20 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import android.widget.ExpandableListView;
+import android.widget.Toast;
 
 import com.lit.R;
 import com.lit.adapters.PowerSaveAdapter;
-import com.lit.models.Effect;
+import com.lit.database.DatabaseUtility;
 import com.lit.models.Light;
+import com.lit.models.Room;
+import com.philips.lighting.hue.sdk.PHHueSDK;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,9 +31,11 @@ import java.util.List;
 public class PowerSaveFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
+    private PHHueSDK phHueSDK;
     private PowerSaveAdapter listAdapter;
-    private List<Light> lights;
-    private ListView powerSaveListView;
+    private List<Room> powerSaveList;
+    private ExpandableListView powerSaveListView;
+    private boolean displayListItems;
 
     public PowerSaveFragment() {
         // Required empty public constructor
@@ -59,7 +60,16 @@ public class PowerSaveFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_power_save, container, false);
+        phHueSDK = PHHueSDK.create();
+
+        displayListItems = !(phHueSDK.getAllBridges().isEmpty());
+
+        // Inflate the layout for this fragment
+        if (displayListItems) {
+            return inflater.inflate(R.layout.fragment_power_save, container, false);
+        } else {
+            return inflater.inflate(R.layout.fragment_empty_status, container, false);
+        }
     }
 
 
@@ -89,15 +99,47 @@ public class PowerSaveFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        powerSaveListView = (ListView) getActivity().findViewById(R.id.power_save_list_view);
-        lights = new ArrayList<Light>();
-        listAdapter = new PowerSaveAdapter(getContext(), lights);
-        powerSaveListView.setAdapter(listAdapter);
-//        lights.add(new Light(1, "Kitchen Bulb", false, true, Effect.STROBE));
-//        lights.add(new Light(2, "Bathroom bulb", false, true, Effect.BREATHE));
-//        lights.add(new Light(3, "Living Room", false, true, Effect.COLOR_CYCLE, "Living Room Sensor"));
-//        lights.add(new Light(4, "Family Room", false, true, Effect.NONE,  "Family Room Sensor"));
-        listAdapter.notifyDataSetChanged();
+        if(displayListItems) {
+            powerSaveListView = (ExpandableListView) getActivity().findViewById(R.id.power_save_list_view);
+            powerSaveList = DatabaseUtility.getAllRooms();
+            listAdapter = new PowerSaveAdapter(getContext(), powerSaveList);
+            powerSaveListView.setAdapter(listAdapter);
+            listAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Log.v("onResume","displayListItems: " + displayListItems);
+
+        if (displayListItems) {
+            updateList();
+        }
+    }
+
+    private void updateList() {
+
+        powerSaveList.clear();
+        List<Room> rooms = DatabaseUtility.getAllRooms();
+        if (phHueSDK.getAllBridges().size() > 0) {
+            for (Room room : rooms) {
+                powerSaveList.add(room);
+                for (Light light : room.getLights()) {
+                    Log.v("updateList", "Room: " + room.getName() + " Light: " + light.getLightName());
+                }
+            }
+
+
+            Room unassigned = new Room("Unassigned", DatabaseUtility.getRoomLights(0));
+            powerSaveList.add(unassigned);
+            listAdapter.notifyDataSetChanged();
+        }
+        else
+        {
+            Toast.makeText(getActivity(), R.string.could_not_find_bridge, Toast.LENGTH_LONG).show();
+        }
     }
 
     /**
