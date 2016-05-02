@@ -98,6 +98,9 @@ public class StatusFragment extends Fragment {
             statusListView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }
+//        else {
+//            Toast.makeText(getContext(),"Press 'CONFIGURE' to connect to your bridge...",Toast.LENGTH_LONG).show();
+//        }
     }
 
 
@@ -152,12 +155,6 @@ public class StatusFragment extends Fragment {
             updateList();
         }
     }
-
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        Log.v("onPause", "displayListItems: " + displayListItems);
-//    }
 
     private void updateList() {
 

@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.lit.R;
 import com.lit.activities.MainActivity;
@@ -39,9 +40,9 @@ public class PH_ConfigureBridge extends Activity implements OnItemClickListener 
     public static final String TAG = "Lit";
     private HueSharedPreferences prefs;
     private AccessPointListAdapter adapter;
-    
+
     private boolean lastSearchWasIPScan = false;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,20 +51,20 @@ public class PH_ConfigureBridge extends Activity implements OnItemClickListener 
 
         // Gets an instance of the Hue SDK.
         phHueSDK = PHHueSDK.create();
-        
+
         // Set the Device Name (name of your app). This will be stored in your bridge whitelist entry.
         phHueSDK.setAppName("Lit");
         phHueSDK.setDeviceName(android.os.Build.MODEL);
-        
+
         // Register the PHSDKListener to receive callbacks from the bridge.
         phHueSDK.getNotificationManager().registerSDKListener(listener);
-        
+
         adapter = new AccessPointListAdapter(getApplicationContext(), phHueSDK.getAccessPointsFound());
-        
+
         ListView accessPointList = (ListView) findViewById(R.id.bridge_list);
         accessPointList.setOnItemClickListener(this);
         accessPointList.setAdapter(adapter);
-        
+
         // Try to automatically connect to the last known bridge.  For first time use this will be empty so a bridge search is automatically started.
         prefs = HueSharedPreferences.getInstance(getApplicationContext());
         String lastIpAddress   = prefs.getLastConnectedIPAddress();
@@ -74,10 +75,10 @@ public class PH_ConfigureBridge extends Activity implements OnItemClickListener 
             PHAccessPoint lastAccessPoint = new PHAccessPoint();
             lastAccessPoint.setIpAddress(lastIpAddress);
             lastAccessPoint.setUsername(lastUsername);
-           
+
             if (!phHueSDK.isAccessPointConnected(lastAccessPoint)) {
-               PH_AlertDialog.getInstance().showProgressDialog(R.string.connecting, PH_ConfigureBridge.this);
-               phHueSDK.connect(lastAccessPoint);
+                PH_AlertDialog.getInstance().showProgressDialog(R.string.connecting, PH_ConfigureBridge.this);
+                phHueSDK.connect(lastAccessPoint);
             }
         }
         else {  // First time use, so perform a bridge search.
@@ -103,20 +104,20 @@ public class PH_ConfigureBridge extends Activity implements OnItemClickListener 
 
             PH_AlertDialog.getInstance().closeProgressDialog();
             if (accessPoint != null && accessPoint.size() > 0) {
-                    phHueSDK.getAccessPointsFound().clear();
-                    phHueSDK.getAccessPointsFound().addAll(accessPoint);
+                phHueSDK.getAccessPointsFound().clear();
+                phHueSDK.getAccessPointsFound().addAll(accessPoint);
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            adapter.updateData(phHueSDK.getAccessPointsFound());
-                       }
-                   });
-                   
-            } 
-            
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.updateData(phHueSDK.getAccessPointsFound());
+                    }
+                });
+
+            }
+
         }
-        
+
         @Override
         public void onCacheUpdated(List<Integer> arg0, PHBridge bridge) {
             Log.w(TAG, "On CacheUpdated");
@@ -139,14 +140,14 @@ public class PH_ConfigureBridge extends Activity implements OnItemClickListener 
             Log.w(TAG, "Authentication Required.");
             phHueSDK.startPushlinkAuthentication(accessPoint);
             startActivity(new Intent(PH_ConfigureBridge.this, PH_Pushlink.class));
-           
+
         }
 
         @Override
         public void onConnectionResumed(PHBridge bridge) {
             if (PH_ConfigureBridge.this.isFinishing())
                 return;
-            
+
             Log.v(TAG, "onConnectionResumed" + bridge.getResourceCache().getBridgeConfiguration().getIpAddress());
             phHueSDK.getLastHeartbeat().put(bridge.getResourceCache().getBridgeConfiguration().getIpAddress(),  System.currentTimeMillis());
             for (int i = 0; i < phHueSDK.getDisconnectedAccessPoint().size(); i++) {
@@ -165,34 +166,35 @@ public class PH_ConfigureBridge extends Activity implements OnItemClickListener 
                 phHueSDK.getDisconnectedAccessPoint().add(accessPoint);
             }
         }
-        
+
         @Override
         public void onError(int code, final String message) {
             Log.e(TAG, "on Error Called : " + code + ":" + message);
 
             if (code == PHHueError.NO_CONNECTION) {
                 Log.w(TAG, "On No Connection");
-            } 
-            else if (code == PHHueError.AUTHENTICATION_FAILED || code==PHMessageType.PUSHLINK_AUTHENTICATION_FAILED) {  
+            }
+            else if (code == PHHueError.AUTHENTICATION_FAILED || code==PHMessageType.PUSHLINK_AUTHENTICATION_FAILED) {
                 PH_AlertDialog.getInstance().closeProgressDialog();
-            } 
+                Toast.makeText(PH_ConfigureBridge.this, "ERROR: Authentication failure...", Toast.LENGTH_LONG).show();
+            }
             else if (code == PHHueError.BRIDGE_NOT_RESPONDING) {
                 Log.w(TAG, "Bridge Not Responding . . . ");
                 PH_AlertDialog.getInstance().closeProgressDialog();
                 PH_ConfigureBridge.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        PH_AlertDialog.showErrorDialog(PH_ConfigureBridge.this, message + ":\n" + "Please check your bridge's internet connection and try again.", R.string.btn_ok);
+                        PH_AlertDialog.showErrorDialog(PH_ConfigureBridge.this, message + "\nPlease check that your application and the bridge are connected to the same Wi-Fi and try again.", R.string.btn_ok);
                     }
-                }); 
+                });
 
-            } 
+            }
             else if (code == PHMessageType.BRIDGE_NOT_FOUND) {
 
                 if (!lastSearchWasIPScan) {  // Perform an IP Scan (backup mechanism) if UPNP and Portal Search fails.
                     phHueSDK = PHHueSDK.getInstance();
                     PHBridgeSearchManager sm = (PHBridgeSearchManager) phHueSDK.getSDKService(PHHueSDK.SEARCH_BRIDGE);
-                    sm.search(false, false, true);               
+                    sm.search(false, false, true);
                     lastSearchWasIPScan=true;
                 }
                 else {
@@ -200,12 +202,10 @@ public class PH_ConfigureBridge extends Activity implements OnItemClickListener 
                     PH_ConfigureBridge.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            PH_AlertDialog.showErrorDialog(PH_ConfigureBridge.this, message, R.string.btn_ok);
+                            PH_AlertDialog.showErrorDialog(PH_ConfigureBridge.this, message + "\nPlease check that your application and the bridge are connected to the same Wi-Fi and try again.", R.string.btn_ok);
                         }
-                    });  
+                    });
                 }
-                
-               
             }
         }
 
@@ -213,27 +213,27 @@ public class PH_ConfigureBridge extends Activity implements OnItemClickListener 
         public void onParsingErrors(List<PHHueParsingError> parsingErrorsList) {
             for (PHHueParsingError parsingError: parsingErrorsList) {
                 Log.e(TAG, "ParsingError : " + parsingError.getMessage());
-            }      
+            }
         }
     };
 
     /**
      * Called when option is selected.
-     * 
+     *
      * @param item the MenuItem object.
      * @return boolean Return false to allow normal menu processing to proceed,  true to consume it here.
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.find_new_bridge:
-            doBridgeSearch();
-            break;
+            case R.id.find_new_bridge:
+                doBridgeSearch();
+                break;
         }
         return true;
     }
 
-    
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -242,13 +242,13 @@ public class PH_ConfigureBridge extends Activity implements OnItemClickListener 
         }
         phHueSDK.disableAllHeartbeat();
     }
-        
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
         PHAccessPoint accessPoint = (PHAccessPoint) adapter.getItem(position);
-        
-        PHBridge connectedBridge = phHueSDK.getSelectedBridge();       
+
+        PHBridge connectedBridge = phHueSDK.getSelectedBridge();
 
         if (connectedBridge != null) {
             String connectedIP = connectedBridge.getResourceCache().getBridgeConfiguration().getIpAddress();
@@ -258,18 +258,18 @@ public class PH_ConfigureBridge extends Activity implements OnItemClickListener 
             }
         }
         PH_AlertDialog.getInstance().showProgressDialog(R.string.connecting, PH_ConfigureBridge.this);
-        phHueSDK.connect(accessPoint);  
+        phHueSDK.connect(accessPoint);
     }
-    
+
     public void doBridgeSearch() {
         PH_AlertDialog.getInstance().showProgressDialog(R.string.search_progress, PH_ConfigureBridge.this);
         PHBridgeSearchManager sm = (PHBridgeSearchManager) phHueSDK.getSDKService(PHHueSDK.SEARCH_BRIDGE);
         // Start the UPNP Searching of local bridges.
         sm.search(true, true);
     }
-    
+
     // Starting the main activity this way, prevents the PushLink Activity being shown when pressing the back button.
-    public void startMainActivity() {   
+    public void startMainActivity() {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -277,5 +277,5 @@ public class PH_ConfigureBridge extends Activity implements OnItemClickListener 
             intent.addFlags(0x8000); // equal to Intent.FLAG_ACTIVITY_CLEAR_TASK which is only available from API level 11
         startActivity(intent);
     }
-    
+
 }
