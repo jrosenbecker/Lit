@@ -102,7 +102,6 @@ public class Light {
         PHLightState lastState = phLight.getLastKnownLightState();
         lastState.setBrightness(brightness);
         phHueSDK.getSelectedBridge().updateLightState(phLight, lastState);
-
     }
 
     public int getBrightness()

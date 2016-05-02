@@ -3,25 +3,30 @@ package com.lit.services;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 
 import com.lit.database.DatabaseUtility;
 import com.lit.models.Light;
 import com.philips.lighting.hue.sdk.PHHueSDK;
+import com.philips.lighting.hue.sdk.utilities.PHUtilities;
 import com.philips.lighting.model.PHLight;
 import com.philips.lighting.model.PHLightState;
 
+import java.util.Random;
+
 /**
- * The BreatheEffectService is an IntentService subclass for handling asynchronous
- * updates tp the PHLight for gradually brightening and dimming the light's intensity.
- *
- * Created by Graham Nygard on 4/29/2016
- *
+ * An {@link IntentService} subclass for handling asynchronous task requests in
+ * a service on a separate handler thread.
+ * <p/>
+ * TODO: Customize class - update intent actions, extra parameters and static
+ * helper methods.
  */
-public class BreatheEffectService extends IntentService {
+public class EpilepticService extends IntentService {
+
 
     /* Background actions to perform */
-    private static final String ACTION_BREATHE = "com.lit.services.action.BREATHE";
+    private static final String ACTION_SEIZURE = "com.lit.services.action.SEIZURE";
 
     /* Background service parameters */
     private static final String PARAM_LIGHT_NAME = "com.lit.services.PARAM_LIGHT_NAME";
@@ -31,6 +36,7 @@ public class BreatheEffectService extends IntentService {
 
     //*This boolean will control if the effect is on or off */
     public static volatile boolean on_off = false;
+    public static volatile int color = 0;
 
     /* The Context of the service */
     private static Context context;
@@ -39,8 +45,8 @@ public class BreatheEffectService extends IntentService {
     private PHHueSDK phHueSDK;
 
     /* Public constructor for creating our service and phHueSDK object */
-    public BreatheEffectService() {
-        super("BreatheEffectService");
+    public EpilepticService() {
+        super("EpilepticService");
         phHueSDK = PHHueSDK.create();
     }
 
@@ -62,16 +68,17 @@ public class BreatheEffectService extends IntentService {
 
             if (on_off) {
 
-                Log.v("onHandleIntent","Attempting to start service");
+                Log.v("onHandleIntent", "Attempting to start service");
 
                 context.startService(intent);
 
                 final String action = intent.getAction();
 
-                if (ACTION_BREATHE.equals(action)) {
+                if (ACTION_SEIZURE.equals(action)) {
                     final String lightName = intent.getStringExtra(PARAM_LIGHT_NAME);
                     final long roomId = intent.getLongExtra(PARAM_ROOM_ID, (long) 0);
                     final String hueId = intent.getStringExtra(PARAM_HUE_ID);
+                    //final boolean start_stop = intent.getBooleanExtra(PARAM_START_STOP, false);
                     handleActionBreathe(lightName, roomId, hueId);
                 } else {
                     Log.v("onHandleIntent","Invalid action passed through Intent");
@@ -100,48 +107,58 @@ public class BreatheEffectService extends IntentService {
 
             PHLight phLight = light.getPhLight();
             PHLightState state = phLight.getLastKnownLightState();
-            state.setTransitionTime(20);
+            state.setTransitionTime(1);
             state.setEffectMode(PHLight.PHLightEffectMode.EFFECT_UNKNOWN);
-
-            /*  This variables will be responsible for monitoring the brightness of the
-                bulb and how dramatically that intensity changes */
-            int intensity = Light.MIN_BRIGHTNESS;
-
-            /* Initiate the light to minimum brightness for the effect */
-            light.setBrightness(Light.MIN_BRIGHTNESS);
 
             /*  Cause an infinite loop so that the effect continues until
                 start_stop is set to false */
             while (on_off) {
 
-                if (intensity >= Light.MAX_BRIGHTNESS) {
-                    intensity = Light.MIN_BRIGHTNESS;
-                } else if (intensity <= Light.MIN_BRIGHTNESS) {
-                    intensity = Light.MAX_BRIGHTNESS;
-                }
-
                 try {
 
                     /* Set the brightness of the PHLight */
-                    light.setBrightness(intensity);
+                    light.setBrightness(Light.MAX_BRIGHTNESS);
+
+                    switch (color) {
+                        case 0 : setDistinctColor(light.getPhLight(), Color.RED);
+                        case 1 : setDistinctColor(light.getPhLight(), 0xff7a00);
+                        case 2 : setDistinctColor(light.getPhLight(), 0xefd000);
+                        case 3 : setDistinctColor(light.getPhLight(), 0x00ff1b);
+                        case 4 : setDistinctColor(light.getPhLight(), Color.BLUE);
+                        case 5 : setDistinctColor(light.getPhLight(), 0x9b00ff);
+
+                    }
 
                     /* Put the Thread to sleep as to not overload the PHLight */
-                    Thread.sleep(2500);
+                    Thread.sleep(500);
+
+                    light.setBrightness(Light.MIN_BRIGHTNESS);
+
+                    /* Put the Thread to sleep as to not overload the PHLight */
+                    Thread.sleep(500);
 
                 } catch (InterruptedException e) {
                     /* Must have in order to handle a Thread interruption without crashing */
                     Thread.currentThread().interrupt();
-                    Log.v("BreatheEffectService", "The background service has been terminated");
+                    Log.v("EpilepticService", "The background service has been terminated");
                     e.printStackTrace();
                 }
             }
 
-            Log.v("handleActionBreathe","Stopping service");
+            Log.v("handleActionBreathe", "Stopping service");
             light.setBrightness(Light.MIN_BRIGHTNESS);
             stopSelf();
 
         } else {
             Log.v("handleActionBreathe","Unable to find Light(" + name + ", " + roomId + ", " + hueId +")");
         }
+    }
+
+    private void setDistinctColor(PHLight phLight, int color) {
+        float[] xy = PHUtilities.calculateXY(color, phLight.getModelNumber());
+        PHLightState state = phLight.getLastKnownLightState();
+        state.setX(xy[0]);
+        state.setY(xy[1]);
+        phHueSDK.getSelectedBridge().updateLightState(phLight, state);
     }
 }

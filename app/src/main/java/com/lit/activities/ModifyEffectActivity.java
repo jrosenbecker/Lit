@@ -25,15 +25,17 @@ import com.lit.R;
 import com.lit.database.DatabaseUtility;
 import com.lit.models.Light;
 import com.lit.services.BreatheEffectService;
+import com.lit.services.EpilepticService;
 import com.philips.lighting.hue.sdk.PHHueSDK;
 import com.philips.lighting.hue.sdk.utilities.PHUtilities;
 import com.philips.lighting.model.PHLight;
 import com.philips.lighting.model.PHLightState;
 
-public class ModifyEffectActivity extends AppCompatActivity implements ModifyEffectFragment.OnFragmentInteractionListener {
+public class ModifyEffectActivity extends AppCompatActivity {
 
     // Background actions to perform
     private static final String ACTION_BREATHE = "com.lit.services.action.BREATHE";
+    private static final String ACTION_SEIZURE = "com.lit.services.action.SEIZURE";
 
     // Background service parameters
     private static final String PARAM_LIGHT_NAME = "com.lit.services.PARAM_LIGHT_NAME";
@@ -43,6 +45,7 @@ public class ModifyEffectActivity extends AppCompatActivity implements ModifyEff
 
     private static final String BREATHE_EFFECT = "BREATHE";
     private static final String CYCLE_EFFECT = "COLOR_CYCLE";
+    private static final String EPILEPTIC_EFFECT = "SEIZURE";
 
     private PHHueSDK phHueSDK;
 
@@ -77,24 +80,27 @@ public class ModifyEffectActivity extends AppCompatActivity implements ModifyEff
 
         setHueSliders(lightName, roomId, hueId);
 
-        //getSupportFragmentManager().beginTransaction().add(R.id.modify_effect_frame_layout, ModifyEffectFragment.newInstance()).commit();
-
-
     }
 
     private void setEffectSwitches(final String lightName, final long roomId, final String hueId)
     {
         final Switch colorCycle = (Switch) findViewById(R.id.modify_effect_colorCycle);
         final Switch breathe = (Switch) findViewById(R.id.modify_effect_breathe);
+        final Switch seizure = (Switch) findViewById(R.id.modify_effect_seizure);
 
         colorCycle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (colorCycle.isChecked()) {
+
                     breathe.setChecked(false);
-                    //breatheEffect(lightName, roomId, hueId, false);
+                    seizure.setChecked(false);
+
                     BreatheEffectService.on_off = false;
+                    EpilepticService.on_off = false;
+
                     colorCycleEffect(lightName, roomId, hueId);
+
                     if (!DatabaseUtility.updateLightEffect(context,CYCLE_EFFECT,true,hueId)) {
                         Log.v("setColorCycle","Unable to turn on color cycle for light: " + hueId);
                     }
@@ -111,8 +117,14 @@ public class ModifyEffectActivity extends AppCompatActivity implements ModifyEff
             @Override
             public void onClick(View v) {
                 if (breathe.isChecked()) {
+
                     colorCycle.setChecked(false);
+                    seizure.setChecked(false);
+
+                    EpilepticService.on_off = false;
+
                     breatheEffect(lightName, roomId, hueId, true);
+
                     if (!DatabaseUtility.updateLightEffect(context,BREATHE_EFFECT,true,hueId)) {
                         Log.v("setBreatheEffect","Unable to turn on breathe for light: " + hueId);
                     }
@@ -125,8 +137,33 @@ public class ModifyEffectActivity extends AppCompatActivity implements ModifyEff
             }
         });
 
+        seizure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (seizure.isChecked()) {
+
+                    colorCycle.setChecked(false);
+                    breathe.setChecked(false);
+
+                    BreatheEffectService.on_off = false;
+
+                    epilepticEffect(lightName, roomId, hueId, true);
+
+                    if (!DatabaseUtility.updateLightEffect(context,EPILEPTIC_EFFECT,true,hueId)) {
+                        Log.v("setBreatheEffect","Unable to turn on breathe for light: " + hueId);
+                    }
+                } else {
+                    epilepticEffect(lightName, roomId, hueId, false);
+                    if (!DatabaseUtility.updateLightEffect(context,BREATHE_EFFECT,false,hueId)) {
+                        Log.v("setBreatheEffect","Unable to turn off breathe for light: " + hueId);
+                    }
+                }
+            }
+        });
+
         colorCycle.setChecked(DatabaseUtility.getLightEffect(CYCLE_EFFECT, hueId));
         breathe.setChecked(DatabaseUtility.getLightEffect(BREATHE_EFFECT,hueId));
+        seizure.setChecked(DatabaseUtility.getLightEffect(EPILEPTIC_EFFECT,hueId));
     }
 
     private void setColorButtons(final String name, final long roomId, final String hueId)
@@ -150,42 +187,54 @@ public class ModifyEffectActivity extends AppCompatActivity implements ModifyEff
         View.OnClickListener redSelector = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setDistinctColor(light.getPhLight(),Color.RED);
+                killEffect(name,roomId,hueId);
+                setDistinctColor(light.getPhLight(), Color.RED);
+                EpilepticService.color = 0;
             }
         };
 
         View.OnClickListener orangeSelector = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setDistinctColor(light.getPhLight(),0xff7a00);
+                killEffect(name, roomId, hueId);
+                setDistinctColor(light.getPhLight(), 0xff7a00);
+                EpilepticService.color = 1;
             }
         };
 
         View.OnClickListener yellowSelector = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setDistinctColor(light.getPhLight(),0xefd000);
+                killEffect(name, roomId, hueId);
+                setDistinctColor(light.getPhLight(), 0xefd000);
+                EpilepticService.color = 2;
             }
         };
 
         View.OnClickListener greenSelector = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setDistinctColor(light.getPhLight(),0x00ff1b);
+                killEffect(name, roomId, hueId);
+                setDistinctColor(light.getPhLight(), 0x00ff1b);
+                EpilepticService.color = 3;
             }
         };
 
         View.OnClickListener blueSelector = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setDistinctColor(light.getPhLight(),Color.BLUE);
+                killEffect(name, roomId, hueId);
+                setDistinctColor(light.getPhLight(), Color.BLUE);
+                EpilepticService.color = 4;
             }
         };
 
         View.OnClickListener purpleSelector = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setDistinctColor(light.getPhLight(),0x9b00ff);
+                killEffect(name,roomId,hueId);
+                setDistinctColor(light.getPhLight(), 0x9b00ff);
+                EpilepticService.color = 5;
             }
         };
 
@@ -276,7 +325,7 @@ public class ModifyEffectActivity extends AppCompatActivity implements ModifyEff
             state.setEffectMode(PHLight.PHLightEffectMode.EFFECT_COLORLOOP);
             phHueSDK.getSelectedBridge().updateLightState(phLight, state);
         } else {
-            Log.v("colorCycle","Could not find Light(" + name + ", " + roomId + ", " + hueId + ")");
+            Log.v("colorCycle", "Could not find Light(" + name + ", " + roomId + ", " + hueId + ")");
         }
     }
 
@@ -303,6 +352,29 @@ public class ModifyEffectActivity extends AppCompatActivity implements ModifyEff
         }
     }
 
+    private void epilepticEffect(String name, long roomId, String hueId, boolean start_stop)
+    {
+        if (EpilepticService.on_off) {
+            EpilepticService.on_off = false;
+        } else {
+            EpilepticService.on_off= true;
+        }
+
+        EpilepticService.setContext(this);
+
+        Intent intent = new Intent(this, EpilepticService.class);
+        intent.setAction(ACTION_SEIZURE);
+        intent.putExtra(PARAM_LIGHT_NAME, name);
+        intent.putExtra(PARAM_ROOM_ID, roomId);
+        intent.putExtra(PARAM_HUE_ID, hueId);
+
+        if (start_stop) {
+            startService(intent);
+        } else {
+            stopService(intent);
+        }
+    }
+
     private void killEffect(String name, long roomId, String hueId)
     {
         Light light = DatabaseUtility.getLight(name,roomId,hueId);
@@ -318,10 +390,5 @@ public class ModifyEffectActivity extends AppCompatActivity implements ModifyEff
         state.setX(xy[0]);
         state.setY(xy[1]);
         phHueSDK.getSelectedBridge().updateLightState(phLight, state);
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-        // Empty listener
     }
 }

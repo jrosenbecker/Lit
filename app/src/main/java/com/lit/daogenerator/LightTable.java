@@ -15,6 +15,7 @@ public class LightTable {
     private String hueId;
     private Boolean breatheEffect;
     private Boolean cycleEffect;
+    private Boolean epilepticEffect;
 
     public LightTable() {
     }
@@ -23,7 +24,7 @@ public class LightTable {
         this.id = id;
     }
 
-    public LightTable(Long id, String name, Integer red, Integer green, Integer blue, Long roomId, String hueId, Boolean breatheEffect, Boolean cycleEffect) {
+    public LightTable(Long id, String name, Integer red, Integer green, Integer blue, Long roomId, String hueId, Boolean breatheEffect, Boolean cycleEffect, Boolean epilepticEffect) {
         this.id = id;
         this.name = name;
         this.red = red;
@@ -33,6 +34,7 @@ public class LightTable {
         this.hueId = hueId;
         this.breatheEffect = breatheEffect;
         this.cycleEffect = cycleEffect;
+        this.epilepticEffect = epilepticEffect;
     }
 
     public Long getId() {
@@ -105,6 +107,14 @@ public class LightTable {
 
     public void setCycleEffect(Boolean cycleEffect) {
         this.cycleEffect = cycleEffect;
+    }
+
+    public Boolean getEpilepticEffect() {
+        return epilepticEffect;
+    }
+
+    public void setEpilepticEffect(Boolean epilepticEffect) {
+        this.epilepticEffect = epilepticEffect;
     }
 
 }

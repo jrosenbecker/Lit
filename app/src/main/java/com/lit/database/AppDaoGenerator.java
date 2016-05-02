@@ -33,6 +33,7 @@ public class AppDaoGenerator {
         LightTable.addStringProperty("hueId");
         LightTable.addBooleanProperty("breatheEffect");
         LightTable.addBooleanProperty("cycleEffect");
+        LightTable.addBooleanProperty("epilepticEffect");
 
         new DaoGenerator().generateAll(schema, "./app/src/main/java/");
     }

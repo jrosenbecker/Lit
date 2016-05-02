@@ -39,6 +39,7 @@ public class DatabaseUtility {
 
     private static final String BREATHE_EFFECT = "BREATHE";
     private static final String CYCLE_EFFECT = "COLOR_CYCLE";
+    private static final String EPILEPTIC_EFFECT = "SEIZURE";
 
     private static DaoMaster.DevOpenHelper dbHelper;
     private static SQLiteDatabase database;
@@ -262,7 +263,7 @@ public class DatabaseUtility {
                                         light.getBlue(),
                                         light.getRoomId(),
                                         light.getHueId(),
-                                        false,false);
+                                        false,false,false);
                                         //light.isEffectOn());
 
             lightDao.insert(lightTableRow);
@@ -431,6 +432,7 @@ public class DatabaseUtility {
                 /* If the other effect is turned on the other must be forced off */
                 if (effectOn) {
                     tableRow.setCycleEffect(false);
+                    tableRow.setEpilepticEffect(false);
                 }
             } else if (effectType.equals(CYCLE_EFFECT)) {
                 tableRow.setCycleEffect(effectOn);
@@ -438,6 +440,15 @@ public class DatabaseUtility {
                 /* If the other effect is turned on the other must be forced off */
                 if (effectOn) {
                     tableRow.setBreatheEffect(false);
+                    tableRow.setEpilepticEffect(false);
+                }
+            } else if (effectType.equals(EPILEPTIC_EFFECT)) {
+                tableRow.setEpilepticEffect(effectOn);
+
+                /* If the other effect is turned on the other must be forced off */
+                if (effectOn) {
+                    tableRow.setBreatheEffect(false);
+                    tableRow.setCycleEffect(false);
                 }
             } else {
                 Log.v("updateLightEffect","Invalid effect assignment");

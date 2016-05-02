@@ -40,16 +40,18 @@
                 android:textColor="@color/primaryTextColor"
                 android:id="@+id/modify_effect_light_room" />
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25px"
-                android:layout_marginBottom="25px" >
+                android:layout_marginBottom="25px"
+                android:orientation="horizontal">
 
                 <Switch
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Color Cycle   "
+                    android:layout_weight="1"
+                    android:text="Color Cycle"
                     android:textColor="@color/primaryTextColor"
                     android:id="@+id/modify_effect_colorCycle"
                     android:layout_gravity="center_horizontal" />
@@ -57,14 +59,20 @@
                 <Switch
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Breathe       "
+                    android:layout_weight="1"
+                    android:text="Breathe"
                     android:textColor="@color/primaryTextColor"
-                    android:id="@+id/modify_effect_breathe"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentEnd="true" />
+                    android:id="@+id/modify_effect_breathe" />
 
-            </RelativeLayout>
+                <Switch
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Party"
+                    android:textColor="@color/primaryTextColor"
+                    android:id="@+id/modify_effect_seizure" />
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
