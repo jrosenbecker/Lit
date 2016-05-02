@@ -250,7 +250,7 @@ public class CustomizeAdapter extends BaseExpandableListAdapter {
         if (lightIndex%2 == 1) {
             view.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
         } else {
-            view.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDark));.
+            view.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDark));
         }
 
 
