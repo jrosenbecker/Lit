@@ -1,11 +1,14 @@
 package com.lit.database;
 
         import android.content.Context;
+        import android.content.Intent;
         import android.database.sqlite.SQLiteDatabase;
         import android.util.Log;
+        import android.widget.Toast;
 
         import com.lit.R;
         import com.lit.activities.MainActivity;
+        import com.lit.api.PH_ConfigureBridge;
         import com.lit.daogenerator.DaoMaster;
         import com.lit.daogenerator.DaoSession;
         import com.lit.daogenerator.LightTable;
@@ -87,6 +90,8 @@ public class DatabaseUtility {
         // Add all of the unassigned lights initially
         if (!addUnassignedLights()) {
             Log.v(myTag, "Error: Couldn't initialize the database.");
+            Intent intent = new Intent(context, PH_ConfigureBridge.class);
+            context.startActivity(intent);
         }
 
         if(lightTableRows == null || roomTableRows == null)

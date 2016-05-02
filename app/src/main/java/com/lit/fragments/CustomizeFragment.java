@@ -123,15 +123,9 @@ public class CustomizeFragment extends Fragment {
             updateList();
 
             listViewAdapter.notifyDataSetChanged();
-//        for (PHBridge bridge : bridges) {
-//            savedBridges.add(bridge);
-//        }
 
-//        lights.add(new Light(1, "Kitchen Bulb", false, true, Effect.STROBE));
-//        lights.add(new Light(2, "Bathroom bulb", false, true, Effect.BREATHE));
-//        lights.add(new Light(3, "Living Room", false, true, Effect.COLOR_CYCLE));
-//        lights.add(new Light(4, "Family Room", false, true));
-//        listViewAdapter.notifyDataSetChanged();
+        } else {
+            Toast.makeText(getContext(),"Press 'CONFIGURE' on the Status screen to connect to your bridge...",Toast.LENGTH_LONG).show();
         }
     }
 

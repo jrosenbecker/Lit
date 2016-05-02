@@ -71,11 +71,11 @@ public class ModifyEffectActivity extends AppCompatActivity implements ModifyEff
         TextView lightRoomText = (TextView) findViewById(R.id.modify_effect_light_room);
         lightRoomText.setText("" + DatabaseUtility.getRoom(this, roomId).getName());
 
-        setEffectSwitches(lightName,roomId,hueId);
+        setEffectSwitches(lightName, roomId, hueId);
 
-        setColorButtons(lightName,roomId,hueId);
+        setColorButtons(lightName, roomId, hueId);
 
-        setHueSliders(lightName,roomId,hueId);
+        setHueSliders(lightName, roomId, hueId);
 
         //getSupportFragmentManager().beginTransaction().add(R.id.modify_effect_frame_layout, ModifyEffectFragment.newInstance()).commit();
 
@@ -157,7 +157,7 @@ public class ModifyEffectActivity extends AppCompatActivity implements ModifyEff
         View.OnClickListener orangeSelector = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setDistinctColor(light.getPhLight(),0xff9a00);
+                setDistinctColor(light.getPhLight(),0xff7a00);
             }
         };
 
@@ -232,6 +232,27 @@ public class ModifyEffectActivity extends AppCompatActivity implements ModifyEff
                 Light light = DatabaseUtility.getLight(name,roomId,hueId);
                 if (light != null) {
                     light.setColor(redSlider.getProgress(), greenSlider.getProgress(), blueSlider.getProgress());
+                } else {
+                    Log.v("ModifyEffectActivity","Unable to find light for hue/brightness setting");
+                }
+            }
+        };
+
+        SeekBar.OnSeekBarChangeListener brightnessListener = new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Light light = DatabaseUtility.getLight(name,roomId,hueId);
+                if (light != null) {
                     light.setBrightness(brightnessSlider.getProgress());
                 } else {
                     Log.v("ModifyEffectActivity","Unable to find light for hue/brightness setting");
@@ -242,7 +263,7 @@ public class ModifyEffectActivity extends AppCompatActivity implements ModifyEff
         redSlider.setOnSeekBarChangeListener(seekBarListener);
         greenSlider.setOnSeekBarChangeListener(seekBarListener);
         blueSlider.setOnSeekBarChangeListener(seekBarListener);
-        brightnessSlider.setOnSeekBarChangeListener(seekBarListener);
+        brightnessSlider.setOnSeekBarChangeListener(brightnessListener);
     }
 
     private void colorCycleEffect(String name, long roomId, String hueId)

@@ -10,16 +10,30 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.lit.R;
+import com.lit.adapters.AccessPointListAdapter;
+import com.lit.api.HueSharedPreferences;
+import com.lit.api.PH_AlertDialog;
 import com.lit.api.PH_ConfigureBridge;
+import com.lit.api.PH_Pushlink;
 import com.lit.constants.TabConstants;
 import com.lit.database.DatabaseUtility;
 import com.lit.fragments.CustomizeFragment;
 import com.lit.fragments.PowerSaveFragment;
 import com.lit.fragments.StatusFragment;
+import com.philips.lighting.hue.sdk.PHAccessPoint;
+import com.philips.lighting.hue.sdk.PHBridgeSearchManager;
 import com.philips.lighting.hue.sdk.PHHueSDK;
+import com.philips.lighting.hue.sdk.PHMessageType;
+import com.philips.lighting.hue.sdk.PHSDKListener;
+import com.philips.lighting.model.PHBridge;
+import com.philips.lighting.model.PHHueError;
+import com.philips.lighting.model.PHHueParsingError;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements CustomizeFragment.OnFragmentInteractionListener,
@@ -30,15 +44,16 @@ public class MainActivity extends AppCompatActivity
      * Philips Hue SDK interface variables
      */
     private PHHueSDK phHueSDK;
-    private static final int MAX_HUE=65535;
+    private static final int MAX_HUE = 65535;
     public static final String TAG = "Lit";
+    private HueSharedPreferences prefs;
+    private boolean lastSearchWasIPScan = false;
 
     /**
      * Our stuff
      */
     private TabLayout tabLayout;
     private Menu menu;
-
     private String myTag = "MainAcvitity";
 
     /**
@@ -69,39 +84,22 @@ public class MainActivity extends AppCompatActivity
 
         tabLayout.setOnTabSelectedListener(onTabSelected);
 
-        // TODO: May be good to check more than just the rooms
         try {
+            // If the database has been created, then we know that a previous
+            // bridge has been connected to, so initiate access to the bridge
             if (DatabaseUtility.getAllRooms().isEmpty()) {
                 DatabaseUtility.initDatabase(this);
             }
+
         } catch (Exception e) {
             Log.v(myTag, "Error: DatabaseUtility has not be initialized");
             DatabaseUtility.initDatabase(this);
         }
 
-        /*configureButton = (Button) findViewById(R.id.configure_option);
-        configureButton.setOnClickListener(onConfigureSelected);*/
-
-     /*   findViewById(R.id.configure_option).setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                //Do something
-            }
-        });*/
-
         // Open the status fragment when first created
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_frame, StatusFragment.newInstance()).commit();
-
     }
 
- /*   private Button.OnClickListener onConfigureSelected = new Button.OnClickListener() {
-        @Override
-            public void onClick(View v) {
-                //Do something
-            }
-        };
-*/
     /**
      * Listener for when the tabs change
      */
@@ -151,8 +149,6 @@ public class MainActivity extends AppCompatActivity
         }
     };
 
-
-
     /**
      * Required blank listener
      * @param uri - uri
@@ -181,7 +177,6 @@ public class MainActivity extends AppCompatActivity
         Intent intent;
         switch (item.getItemId()) {
             case R.id.configure_option:
-                // TODO: intent = new Intent(getApplicationContext(), ConfigureActivity.class);
                 intent = new Intent(getApplicationContext(), PH_ConfigureBridge.class);
                 startActivity(intent);
                 return true;
