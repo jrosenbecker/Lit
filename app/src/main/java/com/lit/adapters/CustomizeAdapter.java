@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.lit.R;
 import com.lit.activities.ModifyEffectActivity;
+import com.lit.constants.TabConstants;
 import com.lit.database.DatabaseUtility;
 import com.lit.models.Light;
 import com.lit.models.Room;
@@ -244,7 +245,7 @@ public class CustomizeAdapter extends BaseExpandableListAdapter {
                 intent.putExtra(PARAM_HUE_ID, ((Light)getChild(constRoomIndex, constLightIndex)).getHueId());
                 intent.putExtra(PARAM_START_STOP, true);
 
-                context.startActivity(intent);
+                ((Activity) context).startActivity(intent);
             }
         });
 

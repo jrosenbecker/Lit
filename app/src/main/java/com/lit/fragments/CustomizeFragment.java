@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.lit.R;
+import com.lit.activities.MainActivity;
 import com.lit.adapters.CustomizeAdapter;
 import com.lit.database.DatabaseUtility;
 import com.lit.models.Light;
@@ -118,7 +119,7 @@ public class CustomizeFragment extends Fragment {
             List<PHBridge> savedBridges = new ArrayList<PHBridge>();
 
             customizeList = new ArrayList<Room>();
-            listViewAdapter = new CustomizeAdapter(getContext(), customizeList);
+            listViewAdapter = new CustomizeAdapter(getActivity(), customizeList);
 
             customizeListView.setAdapter(listViewAdapter);
 

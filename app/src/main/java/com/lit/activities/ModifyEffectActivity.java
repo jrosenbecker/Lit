@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -22,6 +23,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.lit.R;
+import com.lit.constants.TabConstants;
 import com.lit.database.DatabaseUtility;
 import com.lit.models.Light;
 import com.lit.services.BreatheEffectService;
@@ -50,6 +52,19 @@ public class ModifyEffectActivity extends AppCompatActivity {
     private PHHueSDK phHueSDK;
 
     private final Context context = this;
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId())
+        {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
