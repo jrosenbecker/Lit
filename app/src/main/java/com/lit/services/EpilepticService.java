@@ -98,7 +98,6 @@ public class EpilepticService extends IntentService {
 
             PHLight phLight = light.getPhLight();
             PHLightState state = phLight.getLastKnownLightState();
-            state.setTransitionTime(0);
             state.setEffectMode(PHLight.PHLightEffectMode.EFFECT_UNKNOWN);
 
             boolean test = true;
@@ -106,6 +105,9 @@ public class EpilepticService extends IntentService {
             /*  Cause an infinite loop so that the effect continues until
                 start_stop is set to false */
             while (on_off) {
+
+                /* Set the transition time for the effect */
+                state.setTransitionTime(0);
 
                 try {
 
@@ -131,6 +133,7 @@ public class EpilepticService extends IntentService {
 
             Log.v("handleActionBreathe", "Stopping service");
             light.setBrightness(Light.MIN_BRIGHTNESS);
+            state.setTransitionTime(5);
             stopSelf();
 
         } else {

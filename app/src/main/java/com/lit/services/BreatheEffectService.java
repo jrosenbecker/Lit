@@ -100,7 +100,6 @@ public class BreatheEffectService extends IntentService {
 
             PHLight phLight = light.getPhLight();
             PHLightState state = phLight.getLastKnownLightState();
-            state.setTransitionTime(20);
             state.setEffectMode(PHLight.PHLightEffectMode.EFFECT_UNKNOWN);
 
             /*  This variables will be responsible for monitoring the brightness of the
@@ -113,6 +112,9 @@ public class BreatheEffectService extends IntentService {
             /*  Cause an infinite loop so that the effect continues until
                 start_stop is set to false */
             while (on_off) {
+
+                /* Set the transition time for the effect */
+                state.setTransitionTime(20);
 
                 if (intensity >= Light.MAX_BRIGHTNESS) {
                     intensity = Light.MIN_BRIGHTNESS;
@@ -138,6 +140,7 @@ public class BreatheEffectService extends IntentService {
 
             Log.v("handleActionBreathe","Stopping Breathe service");
             light.setBrightness(Light.MIN_BRIGHTNESS);
+            state.setTransitionTime(5);
             stopSelf();
 
         } else {
