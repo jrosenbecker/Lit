@@ -189,7 +189,6 @@ public class ModifyEffectActivity extends AppCompatActivity {
             public void onClick(View v) {
                 killEffect(name,roomId,hueId);
                 setDistinctColor(light.getPhLight(), Color.RED);
-                EpilepticService.color = 0;
             }
         };
 
@@ -198,7 +197,6 @@ public class ModifyEffectActivity extends AppCompatActivity {
             public void onClick(View v) {
                 killEffect(name, roomId, hueId);
                 setDistinctColor(light.getPhLight(), 0xff7a00);
-                EpilepticService.color = 1;
             }
         };
 
@@ -207,7 +205,6 @@ public class ModifyEffectActivity extends AppCompatActivity {
             public void onClick(View v) {
                 killEffect(name, roomId, hueId);
                 setDistinctColor(light.getPhLight(), 0xefd000);
-                EpilepticService.color = 2;
             }
         };
 
@@ -216,7 +213,6 @@ public class ModifyEffectActivity extends AppCompatActivity {
             public void onClick(View v) {
                 killEffect(name, roomId, hueId);
                 setDistinctColor(light.getPhLight(), 0x00ff1b);
-                EpilepticService.color = 3;
             }
         };
 
@@ -225,7 +221,6 @@ public class ModifyEffectActivity extends AppCompatActivity {
             public void onClick(View v) {
                 killEffect(name, roomId, hueId);
                 setDistinctColor(light.getPhLight(), Color.BLUE);
-                EpilepticService.color = 4;
             }
         };
 
@@ -234,7 +229,6 @@ public class ModifyEffectActivity extends AppCompatActivity {
             public void onClick(View v) {
                 killEffect(name,roomId,hueId);
                 setDistinctColor(light.getPhLight(), 0x9b00ff);
-                EpilepticService.color = 5;
             }
         };
 

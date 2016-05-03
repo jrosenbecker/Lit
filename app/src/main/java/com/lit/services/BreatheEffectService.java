@@ -136,7 +136,7 @@ public class BreatheEffectService extends IntentService {
                 }
             }
 
-            Log.v("handleActionBreathe","Stopping service");
+            Log.v("handleActionBreathe","Stopping Breathe service");
             light.setBrightness(Light.MIN_BRIGHTNESS);
             stopSelf();
 
