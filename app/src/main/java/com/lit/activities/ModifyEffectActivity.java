@@ -71,8 +71,14 @@ public class ModifyEffectActivity extends AppCompatActivity {
         TextView lightNameText = (TextView) findViewById(R.id.modify_effect_light_name);
         lightNameText.setText(lightName);
 
-        TextView lightRoomText = (TextView) findViewById(R.id.modify_effect_light_room);
-        lightRoomText.setText("" + DatabaseUtility.getRoom(this, roomId).getName());
+        try {
+            TextView lightRoomText = (TextView) findViewById(R.id.modify_effect_light_room);
+            lightRoomText.setText("" + DatabaseUtility.getRoom(this, roomId).getName());
+        } catch (Exception e) {
+            Log.v("onCreate","Rerouting back to MainActivity");
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+        }
 
         setEffectSwitches(lightName, roomId, hueId);
 
@@ -177,17 +183,17 @@ public class ModifyEffectActivity extends AppCompatActivity {
         final Button blueButton = (Button) findViewById(R.id.setBlue);
         final Button purpleButton = (Button) findViewById(R.id.setPurple);
 
-        redButton.setBackgroundColor(Color.RED);
-        orangeButton.setBackgroundColor(0xffff9a00);
-        yellowButton.setBackgroundColor(Color.YELLOW);
-        greenButton.setBackgroundColor(Color.GREEN);
-        blueButton.setBackgroundColor(Color.BLUE);
-        purpleButton.setBackgroundColor(0xff9b00ff);
+//        redButton.setBackgroundColor(Color.RED);
+//        orangeButton.setBackgroundColor(0xffff9a00);
+//        yellowButton.setBackgroundColor(Color.YELLOW);
+//        greenButton.setBackgroundColor(Color.GREEN);
+//        blueButton.setBackgroundColor(Color.BLUE);
+//        purpleButton.setBackgroundColor(0xff9b00ff);
 
         View.OnClickListener redSelector = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                killEffect(name,roomId,hueId);
+                killEffect(name, roomId, hueId);
                 setDistinctColor(light.getPhLight(), Color.RED);
             }
         };
@@ -227,7 +233,7 @@ public class ModifyEffectActivity extends AppCompatActivity {
         View.OnClickListener purpleSelector = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                killEffect(name,roomId,hueId);
+                killEffect(name, roomId, hueId);
                 setDistinctColor(light.getPhLight(), 0x9b00ff);
             }
         };

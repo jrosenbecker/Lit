@@ -133,7 +133,7 @@ public class EpilepticService extends IntentService {
 
             Log.v("handleActionBreathe", "Stopping service");
             light.setBrightness(Light.MIN_BRIGHTNESS);
-            state.setTransitionTime(5);
+            state.setTransitionTime(10);
             stopSelf();
 
         } else {

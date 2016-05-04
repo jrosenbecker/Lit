@@ -140,7 +140,7 @@ public class BreatheEffectService extends IntentService {
 
             Log.v("handleActionBreathe","Stopping Breathe service");
             light.setBrightness(Light.MIN_BRIGHTNESS);
-            state.setTransitionTime(5);
+            state.setTransitionTime(10);
             stopSelf();
 
         } else {
