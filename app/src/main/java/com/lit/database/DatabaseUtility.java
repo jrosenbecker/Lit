@@ -4,10 +4,7 @@ package com.lit.database;
         import android.content.Intent;
         import android.database.sqlite.SQLiteDatabase;
         import android.util.Log;
-        import android.widget.Toast;
 
-        import com.lit.R;
-        import com.lit.activities.MainActivity;
         import com.lit.api.PH_ConfigureBridge;
         import com.lit.daogenerator.DaoMaster;
         import com.lit.daogenerator.DaoSession;
@@ -27,7 +24,6 @@ package com.lit.database;
         import java.util.Map;
         import java.util.Random;
 
-        import de.greenrobot.dao.query.DeleteQuery;
         import de.greenrobot.dao.query.QueryBuilder;
 
 /**
@@ -263,7 +259,7 @@ public class DatabaseUtility {
                                         light.getBlue(),
                                         light.getRoomId(),
                                         light.getHueId(),
-                                        false,false,false);
+                                        false,false,false,false);
                                         //light.isEffectOn());
 
             lightDao.insert(lightTableRow);
@@ -299,6 +295,7 @@ public class DatabaseUtility {
 
         if (tableRow != null && theChosenOne != null) {
             light = new Light(tableRow.getName(),theChosenOne,phHueSDK);
+            light.setPowerSaveOn(tableRow.getPowerSaveOn());
         }
 
         return light;
@@ -461,6 +458,61 @@ public class DatabaseUtility {
         return returnValue;
     }
 
+    public static boolean updatePowerSaveOn(Context context, String hueId, boolean effectOn)
+    {
+        boolean returnValue = updatePowerSaveOn(hueId, effectOn);
+
+        closeReopenDatabase(context);
+
+        return returnValue;
+    }
+
+    private static boolean updatePowerSaveOn(String hueId, boolean effectOn)
+    {
+        QueryBuilder<LightTable> qb = lightDao.queryBuilder();
+        LightTable tableRow = qb.where(LightTableDao.Properties.HueId.eq(hueId)).unique();
+        if(tableRow != null) {
+            lightDao.deleteByKey(tableRow.getId());
+
+            tableRow.setPowerSaveOn(effectOn);
+            lightDao.insert(tableRow);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+
+
+    public static List<Light> getAllPowerSaveEnabledLights()
+    {
+        QueryBuilder<LightTable> qb = lightDao.queryBuilder();
+        List<LightTable> table = qb.where(LightTableDao.Properties.PowerSaveOn.eq(true)).list();
+        List<Light> lights = new ArrayList<Light>();
+
+        Light light;
+
+        List<PHLight> allLights = phHueSDK.getSelectedBridge().getResourceCache().getAllLights();
+
+
+        if (table != null) {
+            for (PHLight phLight : allLights) {
+                for(LightTable lightTable : table)
+                {
+                    if(phLight.getUniqueId().equals(lightTable.getHueId()))
+                    {
+                        light = new Light(lightTable.getName(), phLight, phHueSDK);
+                        light.setPowerSaveOn(true);
+                        lights.add(light);
+                    }
+                }
+            }
+        }
+        return lights;
+    }
+
     public static List<Light> getRoomLights(long roomId)
     {
         QueryBuilder<LightTable> qb = lightDao.queryBuilder();
@@ -469,10 +521,12 @@ public class DatabaseUtility {
         List<String> roomLights = new ArrayList<String>();
 
         Map<String, String> uniqueIdToName = new HashMap<String, String>();
+        Map<String, Boolean> uniqueIdToPowerSave = new HashMap<String, Boolean>();
 
         for (LightTable lightTableRow : table) {
             roomLights.add(lightTableRow.getHueId());
             uniqueIdToName.put(lightTableRow.getHueId(),lightTableRow.getName());
+            uniqueIdToPowerSave.put(lightTableRow.getHueId(), lightTableRow.getPowerSaveOn());
             Log.v("getRoomLight", "Found light " + lightTableRow.getName() + " in room " + roomId);
         }
 
@@ -491,6 +545,8 @@ public class DatabaseUtility {
                     Light tempLight = new Light(light.getName(), light, phHueSDK);
                     tempLight.setLightName(uniqueIdToName.get(light.getUniqueId()));
                     tempLight.setRoomId(roomId);
+                    tempLight.setPowerSaveOn(uniqueIdToPowerSave.get(light.getUniqueId()));
+
 
                     Log.v("getRoomLight", "Found: " + light.getName());
                     lights.add(tempLight);

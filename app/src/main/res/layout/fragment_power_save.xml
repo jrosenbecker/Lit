@@ -7,15 +7,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical" >
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:elevation="3dp">
-
-            <TextView
+            <!--<TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
@@ -25,14 +19,22 @@
                 android:layout_weight="1"
                 android:layout_margin="20dp"
                 android:textAlignment="center"
-                android:textSize="7pt" />
-        </LinearLayout>
+                android:textSize="7pt" />-->
 
         <ExpandableListView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/power_save_list_view"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:nestedScrollingEnabled="false" />
+
+        <Button android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/power_save_settings_button"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_margin="20dp"
+            android:text="Power Save Settings" />
 
     </LinearLayout>
 

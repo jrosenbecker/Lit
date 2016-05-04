@@ -26,6 +26,8 @@ public class Light {
     private long id;
     private long roomId;
     private boolean isEffectOn;
+    private boolean isPowerSaveOn;
+
 
     public Light(/*int id_in, */String name, PHLight phLight, PHHueSDK phHueSDK) {
         this.phLight = phLight;
@@ -159,7 +161,15 @@ public class Light {
         this.roomId = room_id;
     }
 
-//
+    public boolean isPowerSaveOn() {
+        return isPowerSaveOn;
+    }
+
+    public void setPowerSaveOn(boolean powerSaveOn) {
+        isPowerSaveOn = powerSaveOn;
+    }
+
+    //
 //    public boolean getConnectionStatus() {
 //        return connectionStatus;
 //    }

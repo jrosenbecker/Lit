@@ -2,6 +2,7 @@ package com.lit.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ExpandableListAdapter;
 import android.widget.ImageButton;
 import android.widget.Switch;
@@ -18,6 +20,7 @@ import com.lit.R;
 import com.lit.database.DatabaseUtility;
 import com.lit.models.Light;
 import com.lit.models.Room;
+import com.lit.services.PowerSaveService;
 
 import java.util.List;
 
@@ -90,7 +93,7 @@ public class PowerSaveAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int roomIndex, int childIndex, boolean b, View view, ViewGroup viewGroup) {
+    public View getChildView(final int roomIndex, final int childIndex, boolean b, View view, ViewGroup viewGroup) {
         final int constRoomIndex = roomIndex;
         final int constChildIndex = childIndex;
         if (view == null) {
@@ -108,6 +111,34 @@ public class PowerSaveAdapter extends BaseExpandableListAdapter {
         } else {
             view.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDark));
         }
+
+        enabledSwitch.setChecked(roomList.get(roomIndex).getLights().get(childIndex).isPowerSaveOn());
+        enabledSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                Light light = (Light) getChild(roomIndex, childIndex);
+                light.setPowerSaveOn(b);
+                DatabaseUtility.updatePowerSaveOn(context, light.getHueId(), b);
+
+                if(b)
+                {
+                    if(DatabaseUtility.getAllPowerSaveEnabledLights().size() == 1) {
+                        Intent intent = new Intent(context, PowerSaveService.class);
+                        PowerSaveService.on_off = true;
+                        PowerSaveService.setContext(context);
+                        context.startService(intent);
+                    }
+                } else {
+                    if(DatabaseUtility.getAllPowerSaveEnabledLights().size() == 0)
+                    {
+                        Intent intent = new Intent(context, PowerSaveService.class);
+                        PowerSaveService.on_off = false;
+                        PowerSaveService.setContext(context);
+                        context.stopService(intent);
+                    }
+                }
+            }
+        });
         return view;
     }
 

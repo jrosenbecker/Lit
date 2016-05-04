@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Current Lux Value:"
+            android:id="@+id/textView4"
+            android:textSize="10pt"
+            android:layout_gravity="center_vertical"
+            android:layout_weight=".3"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/lux_output_text_view"
+            android:text="output"
+            android:layout_gravity="right"
+            android:gravity="right"
+            android:textSize="10pt"
+            android:layout_weight=".5" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Minimum Lux Value:"
+            android:id="@+id/min_lux_text"
+            android:textSize="10pt"
+            android:layout_gravity="center_vertical"
+            android:layout_weight=".3" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/min_lux_edit_text"
+            android:layout_gravity="right"
+            android:layout_weight=".5" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Maximum Lux Value:"
+            android:id="@+id/max_lux_text"
+            android:textSize="10pt"
+            android:layout_gravity="center_vertical"
+            android:layout_weight=".3" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/max_lux_edit_text"
+            android:layout_gravity="right"
+            android:layout_weight=".5" />
+    </LinearLayout>
+
+</LinearLayout>
