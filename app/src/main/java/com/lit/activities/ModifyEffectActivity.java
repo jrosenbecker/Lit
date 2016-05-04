@@ -30,6 +30,7 @@ import com.lit.database.DatabaseUtility;
 import com.lit.models.Light;
 import com.lit.services.BreatheEffectService;
 import com.lit.services.EpilepticService;
+import com.lit.services.PowerSaveService;
 import com.philips.lighting.hue.sdk.PHHueSDK;
 import com.philips.lighting.hue.sdk.utilities.PHUtilities;
 import com.philips.lighting.model.PHLight;
@@ -430,6 +431,7 @@ public class ModifyEffectActivity extends AppCompatActivity {
 
         BreatheEffectService.on_off = false;
         EpilepticService.on_off = false;
+        PowerSaveService.on_off = false;
 
         if (!DatabaseUtility.updateLightEffect(context,CYCLE_EFFECT,false,hueId)) {
             Log.v("setColorCycle","Unable to turn off color cycle for light: " + hueId);

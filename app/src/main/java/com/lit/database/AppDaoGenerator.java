@@ -36,6 +36,11 @@ public class AppDaoGenerator {
         LightTable.addBooleanProperty("epilepticEffect");
         LightTable.addBooleanProperty("powerSaveOn");
 
+        Entity PowerSavePreference = schema.addEntity("PowerSavePreference");
+        PowerSavePreference.addIdProperty();
+        PowerSavePreference.addIntProperty("min");
+        PowerSavePreference.addIntProperty("max");
+
         new DaoGenerator().generateAll(schema, "./app/src/main/java/");
     }
 }

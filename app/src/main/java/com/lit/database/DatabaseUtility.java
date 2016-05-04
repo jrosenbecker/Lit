@@ -10,6 +10,8 @@ package com.lit.database;
         import com.lit.daogenerator.DaoSession;
         import com.lit.daogenerator.LightTable;
         import com.lit.daogenerator.LightTableDao;
+        import com.lit.daogenerator.PowerSavePreference;
+        import com.lit.daogenerator.PowerSavePreferenceDao;
         import com.lit.daogenerator.RoomTable;
         import com.lit.daogenerator.RoomTableDao;
         import com.lit.models.Light;
@@ -53,6 +55,10 @@ public class DatabaseUtility {
     private static List<RoomTable> roomTableRows;
     private static List<Room> roomList;
 
+    private static PowerSavePreference prefs;
+    private static PowerSavePreferenceDao prefDao;
+    private static List<PowerSavePreference> prefList;
+
     private static PHHueSDK phHueSDK;
 
     //private static List<Light> unassignedLights;
@@ -75,15 +81,17 @@ public class DatabaseUtility {
 
         lightDao = daoSession.getLightTableDao();
         roomDao = daoSession.getRoomTableDao();
+        prefDao = daoSession.getPowerSavePreferenceDao();
 
         QueryBuilder<LightTable> lightQueryBuilder = lightDao.queryBuilder();
         QueryBuilder<RoomTable> roomQueryBuilder = roomDao.queryBuilder();
+        QueryBuilder<PowerSavePreference> prefQueryBuilder = prefDao.queryBuilder();
 
-        lightQueryBuilder.where(LightTableDao.Properties.Id.isNotNull());
-        lightTableRows = lightQueryBuilder.list();
+        lightTableRows = lightQueryBuilder.where(LightTableDao.Properties.Id.isNotNull()).list();
 
-        roomQueryBuilder.where(RoomTableDao.Properties.Id.isNotNull());
-        roomTableRows = roomQueryBuilder.list();
+        roomTableRows = roomQueryBuilder.where(RoomTableDao.Properties.Id.isNotNull()).list();
+
+        prefList = prefQueryBuilder.where(RoomTableDao.Properties.Id.isNotNull()).list();
 
         // Add all of the unassigned lights initially
         if (!addUnassignedLights()) {
@@ -476,32 +484,37 @@ public class DatabaseUtility {
         return returnValue;
     }
 
-//    public static boolean updatePowerSaveOn(Context context, String hueId, boolean effectOn)
-//    {
-//        boolean returnValue = updatePowerSaveOn(hueId, effectOn);
-//
-//        closeReopenDatabase(context);
-//
-//        return returnValue;
-//    }
-//
-//    private static boolean updatePowerSaveOn(String hueId, boolean effectOn)
-//    {
-//        QueryBuilder<LightTable> qb = lightDao.queryBuilder();
-//        LightTable tableRow = qb.where(LightTableDao.Properties.HueId.eq(hueId)).unique();
-//        if(tableRow != null) {
-//            lightDao.deleteByKey(tableRow.getId());
-//
-//            tableRow.setPowerSaveOn(effectOn);
-//            lightDao.insert(tableRow);
-//            return true;
-//        }
-//        else
-//        {
-//            return false;
-//        }
-//
-//    }
+    public boolean updatePowerSavePref(Context context, int min, int max)
+    {
+        boolean value = updatePowerSavePref(min, max);
+
+        closeReopenDatabase(context);
+
+        return value;
+    }
+
+    private boolean updatePowerSavePref(int min, int max)
+    {
+        QueryBuilder<PowerSavePreference> qb = prefDao.queryBuilder();
+        PowerSavePreference tableRow = qb.where(PowerSavePreferenceDao.Properties.Min.eq(min),
+                PowerSavePreferenceDao.Properties.Max.eq(max)).unique();
+
+        boolean returnValue = false;
+
+        if (tableRow != null) {
+
+            // Delete old entry
+            prefDao.deleteByKey(tableRow.getId());
+
+            tableRow.setMin(min);
+            tableRow.setMax(max);
+
+            prefDao.insert(tableRow);
+
+            returnValue = true;
+        }
+        return returnValue;
+    }
 
     public static List<Light> getAllPowerSaveEnabledLights()
     {
