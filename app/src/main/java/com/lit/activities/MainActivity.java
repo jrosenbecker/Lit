@@ -1,6 +1,11 @@
 package com.lit.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.support.design.widget.TabLayout;
@@ -24,6 +29,7 @@ import com.lit.database.DatabaseUtility;
 import com.lit.fragments.CustomizeFragment;
 import com.lit.fragments.PowerSaveFragment;
 import com.lit.fragments.StatusFragment;
+import com.lit.services.PowerSaveService;
 import com.philips.lighting.hue.sdk.PHAccessPoint;
 import com.philips.lighting.hue.sdk.PHBridgeSearchManager;
 import com.philips.lighting.hue.sdk.PHHueSDK;
@@ -56,6 +62,7 @@ public class MainActivity extends AppCompatActivity
     private Menu menu;
     private String myTag = "MainAcvitity";
 
+
     /**
      * Sets up the activity by initializing the first fragment and setting up the toolbars
      * @param savedInstanceState
@@ -65,6 +72,8 @@ public class MainActivity extends AppCompatActivity
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        startPowerSaveService();
 
         // Set up the Philips Hue interface handler
         phHueSDK = PHHueSDK.create();
@@ -211,4 +220,11 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
     }
+
+    private void startPowerSaveService()
+    {
+        Intent intent = new Intent(this, PowerSaveService.class);
+//        intent.putExtra()
+    }
+
 }

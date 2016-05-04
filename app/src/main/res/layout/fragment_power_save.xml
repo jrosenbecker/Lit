@@ -26,7 +26,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/power_save_list_view"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:nestedScrollingEnabled="false" />
 
         <Button android:layout_width="match_parent"
             android:layout_height="wrap_content"

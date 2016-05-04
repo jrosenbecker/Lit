@@ -16,6 +16,7 @@ public class LightTable {
     private Boolean breatheEffect;
     private Boolean cycleEffect;
     private Boolean epilepticEffect;
+    private Boolean powerSaveOn;
 
     public LightTable() {
     }
@@ -24,7 +25,7 @@ public class LightTable {
         this.id = id;
     }
 
-    public LightTable(Long id, String name, Integer red, Integer green, Integer blue, Long roomId, String hueId, Boolean breatheEffect, Boolean cycleEffect, Boolean epilepticEffect) {
+    public LightTable(Long id, String name, Integer red, Integer green, Integer blue, Long roomId, String hueId, Boolean breatheEffect, Boolean cycleEffect, Boolean epilepticEffect, Boolean powerSaveOn) {
         this.id = id;
         this.name = name;
         this.red = red;
@@ -35,6 +36,7 @@ public class LightTable {
         this.breatheEffect = breatheEffect;
         this.cycleEffect = cycleEffect;
         this.epilepticEffect = epilepticEffect;
+        this.powerSaveOn = powerSaveOn;
     }
 
     public Long getId() {
@@ -115,6 +117,14 @@ public class LightTable {
 
     public void setEpilepticEffect(Boolean epilepticEffect) {
         this.epilepticEffect = epilepticEffect;
+    }
+
+    public Boolean getPowerSaveOn() {
+        return powerSaveOn;
+    }
+
+    public void setPowerSaveOn(Boolean powerSaveOn) {
+        this.powerSaveOn = powerSaveOn;
     }
 
 }

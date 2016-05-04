@@ -8,10 +8,12 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.lit.database.DatabaseUtility;
 import com.lit.models.Light;
 import com.philips.lighting.hue.sdk.PHHueSDK;
+import com.philips.lighting.model.PHLightState;
 
 import java.util.ArrayList;
 //both off 24 windows closed
@@ -29,13 +31,16 @@ public class PowerSaveService extends IntentService implements SensorEventListen
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
     private static final String ACTION_POWERSAVE = "com.lit.services.action.POWERSAVE";
     /* Background service parameters */
-    private static final String PARAM_LIGHT_NAME = "com.lit.services.PARAM_LIGHT_NAME";
-    private static final String PARAM_ROOM_ID = "com.lit.services.PARAM_ROOM_ID";
-    private static final String PARAM_HUE_ID = "com.lit.services.PARAM_HUE_ID";
+//    private static final String PARAM_LIGHT_NAME = "com.lit.services.PARAM_LIGHT_NAME";
+//    private static final String PARAM_ROOM_ID = "com.lit.services.PARAM_ROOM_ID";
+//    private static final String PARAM_HUE_ID = "com.lit.services.PARAM_HUE_ID";
     private static final String PARAM_START_STOP = "com.lit.services.PARAM_START_STOP";
     private static double changeCounter = 0;
     private static double lightAverage = 0;
     private static double lightSum = 0;
+    private static int minLux = 35;
+    private static int maxLux = 50;
+    public static float currentLuxReadings;
     private Light light;
 
     private static ArrayList<Double> lightValues = new ArrayList<>();
@@ -49,8 +54,8 @@ public class PowerSaveService extends IntentService implements SensorEventListen
     /* The PHHueSDK object for interacting with the light */
     private PHHueSDK phHueSDK;
 
-    private SensorManager mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-    private Sensor lightSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+    private SensorManager mSensorManager;
+    private Sensor lightSensor;
     // private TextView textLIGHT_reading = (TextView)findViewById(R.id.LIGHT_reading);;
 
 
@@ -68,6 +73,22 @@ public class PowerSaveService extends IntentService implements SensorEventListen
 
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        lightSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        mSensorManager.registerListener(this, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        Toast.makeText(context, "Starting power save service", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDestroy() {
+        stopSelf();
+        Toast.makeText(context, "Destroying power save service", Toast.LENGTH_SHORT).show();
+        super.onDestroy();
+    }
+
+    @Override
     protected void onHandleIntent(Intent intent) {
 
         if (intent != null) {
@@ -81,11 +102,11 @@ public class PowerSaveService extends IntentService implements SensorEventListen
                 final String action = intent.getAction();
 
                 if (ACTION_POWERSAVE.equals(action)) {
-                    final String lightName = intent.getStringExtra(PARAM_LIGHT_NAME);
-                    final long roomId = intent.getLongExtra(PARAM_ROOM_ID, (long) 0);
-                    final String hueId = intent.getStringExtra(PARAM_HUE_ID);
+//                    final String lightName = intent.getStringExtra(PARAM_LIGHT_NAME);
+//                    final long roomId = intent.getLongExtra(PARAM_ROOM_ID, (long) 0);
+//                    final String hueId = intent.getStringExtra(PARAM_HUE_ID);
                     //final boolean start_stop = intent.getBooleanExtra(PARAM_START_STOP, false);
-                    light = DatabaseUtility.getLight(lightName, roomId, hueId);
+//                    light = DatabaseUtility.getLight(lightName, roomId, hueId);
                 } else {
                     Log.v("onHandleIntent","Invalid action passed through Intent");
                 }
@@ -111,28 +132,39 @@ public class PowerSaveService extends IntentService implements SensorEventListen
     public final void onSensorChanged(SensorEvent event) {
         // Do something with this sensor data.
         //textLIGHT_reading.setText("LIGHT: " + event.values[0]);
-        Log.w("myApp", "Light: " + event.values[0]);
-        changeCounter++;
-        lightSum += event.values[0];
-        lightAverage = lightSum/changeCounter;
-        if(changeCounter == 25) {
+        currentLuxReadings = event.values[0];
+        if(on_off) {
+//            Log.w("myApp", "Light: " + event.values[0]);
 
-            changeBrightness();
+            changeCounter++;
+            lightSum += event.values[0];
+            lightAverage = lightSum / changeCounter;
+            if (changeCounter == 25) {
+
+                changeBrightness();
+            }
         }
 
     }
 
+    public static void setLuxRange(int min, int max)
+    {
+        minLux = min;
+        maxLux = max;
+    }
+
     private void changeBrightness() {
-        if(lightAverage >= 0 && lightAverage < 25) {
-            light.setBrightness(Light.MAX_BRIGHTNESS);
-        }
-        else if(lightAverage >= 25 && lightAverage < 50)
-        {
-            light.setBrightness((Light.MAX_BRIGHTNESS+Light.MIN_BRIGHTNESS)/2);
-        }
-        else if(lightAverage >= 50)
-        {
-            light.setBrightness(Light.MIN_BRIGHTNESS);
+
+        for(Light light : DatabaseUtility.getAllPowerSaveEnabledLights()) {
+            if(lightAverage < minLux)
+            {
+                Log.w("myApp", "Increasing brightness, Lux = " + lightAverage);
+                light.setBrightness(light.getBrightness() + 10);
+            } else if(lightAverage > maxLux)
+            {
+                Log.w("myApp", "Decreasing brightness, Lux = " + lightAverage);
+                light.setBrightness(light.getBrightness() - 10);
+            }
         }
         changeCounter = 0;
         lightSum = 0;
