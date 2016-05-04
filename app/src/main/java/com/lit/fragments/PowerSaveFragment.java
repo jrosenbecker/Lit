@@ -43,6 +43,8 @@ public class PowerSaveFragment extends Fragment {
     private Button powerSaveSettingsButton;
     private boolean displayListItems;
 
+    private static final String POWER_SAVE = "POWER_SAVE";
+
     public PowerSaveFragment() {
         // Required empty public constructor
     }

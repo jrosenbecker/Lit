@@ -16,6 +16,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -83,6 +85,9 @@ public class ModifyEffectActivity extends AppCompatActivity {
         final long roomId = getIntent().getExtras().getLong("PARAM_ROOM_ID");
         final String hueId = getIntent().getExtras().getString("PARAM_HUE_ID");
 
+        Light test = DatabaseUtility.getLight(lightName,roomId,hueId);
+        Log.v("light colors", "Red: " + test.getRed() + " Green: " + test.getGreen() + " Blue: " + test.getBlue());
+
         TextView lightNameText = (TextView) findViewById(R.id.modify_effect_light_name);
         lightNameText.setText(lightName);
 
@@ -112,6 +117,7 @@ public class ModifyEffectActivity extends AppCompatActivity {
         colorCycle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (colorCycle.isChecked()) {
 
                     breathe.setChecked(false);
@@ -137,6 +143,7 @@ public class ModifyEffectActivity extends AppCompatActivity {
         breathe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (breathe.isChecked()) {
 
                     colorCycle.setChecked(false);
@@ -146,13 +153,13 @@ public class ModifyEffectActivity extends AppCompatActivity {
 
                     breatheEffect(lightName, roomId, hueId, true);
 
-                    if (!DatabaseUtility.updateLightEffect(context,BREATHE_EFFECT,true,hueId)) {
-                        Log.v("setBreatheEffect","Unable to turn on breathe for light: " + hueId);
+                    if (!DatabaseUtility.updateLightEffect(context, BREATHE_EFFECT, true, hueId)) {
+                        Log.v("setBreatheEffect", "Unable to turn on breathe for light: " + hueId);
                     }
                 } else {
                     breatheEffect(lightName, roomId, hueId, false);
-                    if (!DatabaseUtility.updateLightEffect(context,BREATHE_EFFECT,false,hueId)) {
-                        Log.v("setBreatheEffect","Unable to turn off breathe for light: " + hueId);
+                    if (!DatabaseUtility.updateLightEffect(context, BREATHE_EFFECT, false, hueId)) {
+                        Log.v("setBreatheEffect", "Unable to turn off breathe for light: " + hueId);
                     }
                 }
             }
@@ -161,6 +168,7 @@ public class ModifyEffectActivity extends AppCompatActivity {
         seizure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (seizure.isChecked()) {
 
                     colorCycle.setChecked(false);
@@ -170,21 +178,21 @@ public class ModifyEffectActivity extends AppCompatActivity {
 
                     epilepticEffect(lightName, roomId, hueId, true);
 
-                    if (!DatabaseUtility.updateLightEffect(context,EPILEPTIC_EFFECT,true,hueId)) {
-                        Log.v("setBreatheEffect","Unable to turn on breathe for light: " + hueId);
+                    if (!DatabaseUtility.updateLightEffect(context, EPILEPTIC_EFFECT, true, hueId)) {
+                        Log.v("setBreatheEffect", "Unable to turn on breathe for light: " + hueId);
                     }
                 } else {
                     epilepticEffect(lightName, roomId, hueId, false);
-                    if (!DatabaseUtility.updateLightEffect(context,BREATHE_EFFECT,false,hueId)) {
-                        Log.v("setBreatheEffect","Unable to turn off breathe for light: " + hueId);
+                    if (!DatabaseUtility.updateLightEffect(context, BREATHE_EFFECT, false, hueId)) {
+                        Log.v("setBreatheEffect", "Unable to turn off breathe for light: " + hueId);
                     }
                 }
             }
         });
 
         colorCycle.setChecked(DatabaseUtility.getLightEffect(CYCLE_EFFECT, hueId));
-        breathe.setChecked(DatabaseUtility.getLightEffect(BREATHE_EFFECT,hueId));
-        seizure.setChecked(DatabaseUtility.getLightEffect(EPILEPTIC_EFFECT,hueId));
+        breathe.setChecked(DatabaseUtility.getLightEffect(BREATHE_EFFECT, hueId));
+        seizure.setChecked(DatabaseUtility.getLightEffect(EPILEPTIC_EFFECT, hueId));
     }
 
     private void setColorButtons(final String name, final long roomId, final String hueId)
@@ -197,19 +205,14 @@ public class ModifyEffectActivity extends AppCompatActivity {
         final Button greenButton = (Button) findViewById(R.id.setGreen);
         final Button blueButton = (Button) findViewById(R.id.setBlue);
         final Button purpleButton = (Button) findViewById(R.id.setPurple);
-
-//        redButton.setBackgroundColor(Color.RED);
-//        orangeButton.setBackgroundColor(0xffff9a00);
-//        yellowButton.setBackgroundColor(Color.YELLOW);
-//        greenButton.setBackgroundColor(Color.GREEN);
-//        blueButton.setBackgroundColor(Color.BLUE);
-//        purpleButton.setBackgroundColor(0xff9b00ff);
+        final Button whiteButton = (Button) findViewById(R.id.resetLight);
 
         View.OnClickListener redSelector = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 killEffect(name, roomId, hueId);
                 setDistinctColor(light.getPhLight(), Color.RED);
+                setSliderValues(0xff, 0x00, 0x00);
             }
         };
 
@@ -218,6 +221,7 @@ public class ModifyEffectActivity extends AppCompatActivity {
             public void onClick(View v) {
                 killEffect(name, roomId, hueId);
                 setDistinctColor(light.getPhLight(), 0xff7a00);
+                setSliderValues(0xff, 0x7a, 0x00);
             }
         };
 
@@ -226,6 +230,7 @@ public class ModifyEffectActivity extends AppCompatActivity {
             public void onClick(View v) {
                 killEffect(name, roomId, hueId);
                 setDistinctColor(light.getPhLight(), 0xefd000);
+                setSliderValues(0xef, 0xd0, 0x00);
             }
         };
 
@@ -234,6 +239,7 @@ public class ModifyEffectActivity extends AppCompatActivity {
             public void onClick(View v) {
                 killEffect(name, roomId, hueId);
                 setDistinctColor(light.getPhLight(), 0x00ff1b);
+                setSliderValues(0x00, 0xff, 0x1b);
             }
         };
 
@@ -242,6 +248,7 @@ public class ModifyEffectActivity extends AppCompatActivity {
             public void onClick(View v) {
                 killEffect(name, roomId, hueId);
                 setDistinctColor(light.getPhLight(), Color.BLUE);
+                setSliderValues(0x00, 0x00, 0xff);
             }
         };
 
@@ -250,6 +257,17 @@ public class ModifyEffectActivity extends AppCompatActivity {
             public void onClick(View v) {
                 killEffect(name, roomId, hueId);
                 setDistinctColor(light.getPhLight(), 0x9b00ff);
+                setSliderValues(0x9b, 0x00, 0xff);
+            }
+        };
+
+        View.OnClickListener whiteSelector = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                killEffect(name, roomId, hueId);
+                resetEffect(hueId);
+                setDistinctColor(light.getPhLight(), 0xfecd75);
+                setSliderValues(0xfe, 0xcd, 0x75);
             }
         };
 
@@ -259,6 +277,7 @@ public class ModifyEffectActivity extends AppCompatActivity {
         greenButton.setOnClickListener(greenSelector);
         blueButton.setOnClickListener(blueSelector);
         purpleButton.setOnClickListener(purpleSelector);
+        whiteButton.setOnClickListener(whiteSelector);
 
     }
 
@@ -399,11 +418,44 @@ public class ModifyEffectActivity extends AppCompatActivity {
         phHueSDK.getSelectedBridge().updateLightState(phLight, state);
     }
 
+    private void resetEffect(String hueId) {
+
+        final Switch colorCycle = (Switch) findViewById(R.id.modify_effect_colorCycle);
+        final Switch breathe = (Switch) findViewById(R.id.modify_effect_breathe);
+        final Switch seizure = (Switch) findViewById(R.id.modify_effect_seizure);
+
+        colorCycle.setChecked(false);
+        breathe.setChecked(false);
+        seizure.setChecked(false);
+
+        BreatheEffectService.on_off = false;
+        EpilepticService.on_off = false;
+
+        if (!DatabaseUtility.updateLightEffect(context,CYCLE_EFFECT,false,hueId)) {
+            Log.v("setColorCycle","Unable to turn off color cycle for light: " + hueId);
+        }
+        if (!DatabaseUtility.updateLightEffect(context,BREATHE_EFFECT,false,hueId)) {
+            Log.v("setColorCycle","Unable to turn off breathe for light: " + hueId);
+        }
+        if (!DatabaseUtility.updateLightEffect(context,EPILEPTIC_EFFECT,false,hueId)) {
+            Log.v("setColorCycle","Unable to turn off party for light: " + hueId);
+        }
+    }
+
     private void setDistinctColor(PHLight phLight, int color) {
         float[] xy = PHUtilities.calculateXY(color, phLight.getModelNumber());
         PHLightState state = phLight.getLastKnownLightState();
         state.setX(xy[0]);
         state.setY(xy[1]);
         phHueSDK.getSelectedBridge().updateLightState(phLight, state);
+    }
+
+    private void setSliderValues(int red, int green, int blue) {
+        final SeekBar redSlider = (SeekBar) findViewById(R.id.modify_effect_red_seekBar);
+        redSlider.setProgress(red);
+        final SeekBar greenSlider = (SeekBar) findViewById(R.id.modify_effect_green_seekBar);
+        greenSlider.setProgress(green);
+        final SeekBar blueSlider = (SeekBar) findViewById(R.id.modify_effect_blue_seekBar);
+        blueSlider.setProgress(blue);
     }
 }

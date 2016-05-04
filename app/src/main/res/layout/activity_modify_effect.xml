@@ -236,11 +236,24 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:src="@drawable/bulb"/>
-                <ImageView
+
+                <!--<ImageButton-->
+                    <!--style="?android:attr/buttonStyleSmall"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:src="@drawable/bulb"-->
+                    <!--android:id="@+id/setWhite" />-->
+
+                <Button
+                    style="?android:attr/buttonStyleSmall"
+                    android:text="Reset"
+                    android:layout_gravity="center"
+                    android:layout_margin="10px"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:src="@drawable/bulb"/>
+                    android:id="@+id/resetLight" />
+
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

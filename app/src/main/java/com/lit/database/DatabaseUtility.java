@@ -36,6 +36,7 @@ public class DatabaseUtility {
     private static final String BREATHE_EFFECT = "BREATHE";
     private static final String CYCLE_EFFECT = "COLOR_CYCLE";
     private static final String EPILEPTIC_EFFECT = "SEIZURE";
+    private static final String POWER_SAVE = "POWER_SAVE";
 
     private static DaoMaster.DevOpenHelper dbHelper;
     private static SQLiteDatabase database;
@@ -392,6 +393,10 @@ public class DatabaseUtility {
             returnValue = tableRow.getCycleEffect();
         } else if (effectType.equals(BREATHE_EFFECT)) {
             returnValue = tableRow.getBreatheEffect();
+        } else if (effectType.equals(EPILEPTIC_EFFECT)) {
+            returnValue = tableRow.getEpilepticEffect();
+        } else if (effectType.equals(POWER_SAVE)) {
+            returnValue = tableRow.getPowerSaveOn();
         } else {
             Log.v("getLightEffect","Invalid effect query");
         }
@@ -430,6 +435,7 @@ public class DatabaseUtility {
                 if (effectOn) {
                     tableRow.setCycleEffect(false);
                     tableRow.setEpilepticEffect(false);
+                    tableRow.setPowerSaveOn(false);
                 }
             } else if (effectType.equals(CYCLE_EFFECT)) {
                 tableRow.setCycleEffect(effectOn);
@@ -438,6 +444,7 @@ public class DatabaseUtility {
                 if (effectOn) {
                     tableRow.setBreatheEffect(false);
                     tableRow.setEpilepticEffect(false);
+                    tableRow.setPowerSaveOn(false);
                 }
             } else if (effectType.equals(EPILEPTIC_EFFECT)) {
                 tableRow.setEpilepticEffect(effectOn);
@@ -446,6 +453,16 @@ public class DatabaseUtility {
                 if (effectOn) {
                     tableRow.setBreatheEffect(false);
                     tableRow.setCycleEffect(false);
+                    tableRow.setPowerSaveOn(false);
+                }
+            } else if (effectType.equals(POWER_SAVE)) {
+                tableRow.setPowerSaveOn(effectOn);
+
+                /* If the other effect is turned on the other must be forced off */
+                if (effectOn) {
+                    tableRow.setBreatheEffect(false);
+                    tableRow.setCycleEffect(false);
+                    tableRow.setEpilepticEffect(false);
                 }
             } else {
                 Log.v("updateLightEffect","Invalid effect assignment");
@@ -458,33 +475,32 @@ public class DatabaseUtility {
         return returnValue;
     }
 
-    public static boolean updatePowerSaveOn(Context context, String hueId, boolean effectOn)
-    {
-        boolean returnValue = updatePowerSaveOn(hueId, effectOn);
-
-        closeReopenDatabase(context);
-
-        return returnValue;
-    }
-
-    private static boolean updatePowerSaveOn(String hueId, boolean effectOn)
-    {
-        QueryBuilder<LightTable> qb = lightDao.queryBuilder();
-        LightTable tableRow = qb.where(LightTableDao.Properties.HueId.eq(hueId)).unique();
-        if(tableRow != null) {
-            lightDao.deleteByKey(tableRow.getId());
-
-            tableRow.setPowerSaveOn(effectOn);
-            lightDao.insert(tableRow);
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-
-    }
-
+//    public static boolean updatePowerSaveOn(Context context, String hueId, boolean effectOn)
+//    {
+//        boolean returnValue = updatePowerSaveOn(hueId, effectOn);
+//
+//        closeReopenDatabase(context);
+//
+//        return returnValue;
+//    }
+//
+//    private static boolean updatePowerSaveOn(String hueId, boolean effectOn)
+//    {
+//        QueryBuilder<LightTable> qb = lightDao.queryBuilder();
+//        LightTable tableRow = qb.where(LightTableDao.Properties.HueId.eq(hueId)).unique();
+//        if(tableRow != null) {
+//            lightDao.deleteByKey(tableRow.getId());
+//
+//            tableRow.setPowerSaveOn(effectOn);
+//            lightDao.insert(tableRow);
+//            return true;
+//        }
+//        else
+//        {
+//            return false;
+//        }
+//
+//    }
 
     public static List<Light> getAllPowerSaveEnabledLights()
     {
@@ -495,7 +511,6 @@ public class DatabaseUtility {
         Light light;
 
         List<PHLight> allLights = phHueSDK.getSelectedBridge().getResourceCache().getAllLights();
-
 
         if (table != null) {
             for (PHLight phLight : allLights) {

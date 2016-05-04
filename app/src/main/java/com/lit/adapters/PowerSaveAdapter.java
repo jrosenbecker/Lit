@@ -32,6 +32,9 @@ public class PowerSaveAdapter extends BaseExpandableListAdapter {
     private Context context;
     private List<Room> roomList;
 
+    private static final String POWER_SAVE = "POWER_SAVE";
+    private static final String ACTION_POWERSAVE = "com.lit.services.action.POWERSAVE";
+
     public PowerSaveAdapter(Context context, List<Room> roomList)
     {
         this.context = context;
@@ -112,18 +115,20 @@ public class PowerSaveAdapter extends BaseExpandableListAdapter {
             view.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDark));
         }
 
-        enabledSwitch.setChecked(roomList.get(roomIndex).getLights().get(childIndex).isPowerSaveOn());
+        enabledSwitch.setChecked(DatabaseUtility.getLightEffect(POWER_SAVE,light.getHueId()));
+
         enabledSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 Light light = (Light) getChild(roomIndex, childIndex);
                 light.setPowerSaveOn(b);
-                DatabaseUtility.updatePowerSaveOn(context, light.getHueId(), b);
-
+               // DatabaseUtility.updatePowerSaveOn(context, light.getHueId(), b);
+                DatabaseUtility.updateLightEffect(context,POWER_SAVE,b,light.getHueId());
                 if(b)
                 {
                     if(DatabaseUtility.getAllPowerSaveEnabledLights().size() == 1) {
                         Intent intent = new Intent(context, PowerSaveService.class);
+                        intent.setAction(ACTION_POWERSAVE);
                         PowerSaveService.on_off = true;
                         PowerSaveService.setContext(context);
                         context.startService(intent);

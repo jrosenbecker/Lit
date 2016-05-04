@@ -31,9 +31,7 @@ public class PowerSaveService extends IntentService implements SensorEventListen
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
     private static final String ACTION_POWERSAVE = "com.lit.services.action.POWERSAVE";
     /* Background service parameters */
-//    private static final String PARAM_LIGHT_NAME = "com.lit.services.PARAM_LIGHT_NAME";
-//    private static final String PARAM_ROOM_ID = "com.lit.services.PARAM_ROOM_ID";
-//    private static final String PARAM_HUE_ID = "com.lit.services.PARAM_HUE_ID";
+
     private static final String PARAM_START_STOP = "com.lit.services.PARAM_START_STOP";
     private static double changeCounter = 0;
     private static double lightAverage = 0;
@@ -64,8 +62,6 @@ public class PowerSaveService extends IntentService implements SensorEventListen
         phHueSDK = PHHueSDK.create();
     }
 
-
-
     /* Sets the context of the service, crucial for starting the service */
     public static void setContext(Context incomingContext) {
         context = incomingContext;
@@ -95,18 +91,12 @@ public class PowerSaveService extends IntentService implements SensorEventListen
 
             if (on_off) {
 
-                Log.v("onHandleIntent","Attempting to start service");
-
                 context.startService(intent);
 
                 final String action = intent.getAction();
 
                 if (ACTION_POWERSAVE.equals(action)) {
-//                    final String lightName = intent.getStringExtra(PARAM_LIGHT_NAME);
-//                    final long roomId = intent.getLongExtra(PARAM_ROOM_ID, (long) 0);
-//                    final String hueId = intent.getStringExtra(PARAM_HUE_ID);
-                    //final boolean start_stop = intent.getBooleanExtra(PARAM_START_STOP, false);
-//                    light = DatabaseUtility.getLight(lightName, roomId, hueId);
+
                 } else {
                     Log.v("onHandleIntent","Invalid action passed through Intent");
                 }
@@ -130,11 +120,11 @@ public class PowerSaveService extends IntentService implements SensorEventListen
 
     @Override
     public final void onSensorChanged(SensorEvent event) {
+
         // Do something with this sensor data.
-        //textLIGHT_reading.setText("LIGHT: " + event.values[0]);
         currentLuxReadings = event.values[0];
-        if(on_off) {
-//            Log.w("myApp", "Light: " + event.values[0]);
+
+        if (on_off) {
 
             changeCounter++;
             lightSum += event.values[0];
@@ -144,7 +134,6 @@ public class PowerSaveService extends IntentService implements SensorEventListen
                 changeBrightness();
             }
         }
-
     }
 
     public static void setLuxRange(int min, int max)
@@ -156,14 +145,17 @@ public class PowerSaveService extends IntentService implements SensorEventListen
     private void changeBrightness() {
 
         for(Light light : DatabaseUtility.getAllPowerSaveEnabledLights()) {
+
             if(lightAverage < minLux)
             {
                 Log.w("myApp", "Increasing brightness, Lux = " + lightAverage);
-                light.setBrightness(light.getBrightness() + 10);
+                //light.setBrightness(light.getBrightness() + 10);
+                light.setBrightness(light.getBrightness() + 75);
             } else if(lightAverage > maxLux)
             {
                 Log.w("myApp", "Decreasing brightness, Lux = " + lightAverage);
-                light.setBrightness(light.getBrightness() - 10);
+                //light.setBrightness(light.getBrightness() - 10);
+                light.setBrightness(light.getBrightness() - 75);
             }
         }
         changeCounter = 0;
