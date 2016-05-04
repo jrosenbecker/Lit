@@ -70,11 +70,18 @@ public class PowerSaveService extends IntentService implements SensorEventListen
 
     @Override
     public void onCreate() {
-        super.onCreate();
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        lightSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
-        mSensorManager.registerListener(this, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        Toast.makeText(context, "Starting power save service", Toast.LENGTH_SHORT).show();
+
+        try {
+            super.onCreate();
+            mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+            lightSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+            mSensorManager.registerListener(this, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
+            Toast.makeText(context, "Starting power save service", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Log.v("PowerSaveService", "The background service has been terminated");
+            e.printStackTrace();
+            stopSelf();
+        }
     }
 
     @Override
@@ -121,19 +128,30 @@ public class PowerSaveService extends IntentService implements SensorEventListen
     @Override
     public final void onSensorChanged(SensorEvent event) {
 
-        // Do something with this sensor data.
-        currentLuxReadings = event.values[0];
+        try {
 
-        if (on_off) {
+            // Do something with this sensor data.
+            currentLuxReadings = event.values[0];
 
-            changeCounter++;
-            lightSum += event.values[0];
-            lightAverage = lightSum / changeCounter;
-            if (changeCounter == 25) {
+            if (on_off) {
 
-                changeBrightness();
+                changeCounter++;
+                lightSum += event.values[0];
+                lightAverage = lightSum / changeCounter;
+                if (changeCounter == 25) {
+
+                    changeBrightness();
+                }
             }
+
+        } catch (Exception e) {
+            /* Must have in order to handle a Thread interruption without crashing */
+            Thread.currentThread().interrupt();
+            Log.v("PowerSaveService", "The background service has been terminated");
+            e.printStackTrace();
+            stopSelf();
         }
+
     }
 
     public static void setLuxRange(int min, int max)

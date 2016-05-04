@@ -14,6 +14,7 @@
             android:text="Current Lux Value:"
             android:id="@+id/textView4"
             android:textSize="10pt"
+            android:layout_margin="20px"
             android:layout_gravity="center_vertical"
             android:layout_weight=".3"/>
         <TextView
@@ -24,6 +25,7 @@
             android:layout_gravity="right"
             android:gravity="right"
             android:textSize="10pt"
+            android:layout_margin="20px"
             android:layout_weight=".5" />
     </LinearLayout>
 
@@ -39,6 +41,7 @@
             android:text="Minimum Lux Value:"
             android:id="@+id/min_lux_text"
             android:textSize="10pt"
+            android:layout_margin="20px"
             android:layout_gravity="center_vertical"
             android:layout_weight=".3" />
 
@@ -49,6 +52,7 @@
             android:ems="10"
             android:id="@+id/min_lux_edit_text"
             android:layout_gravity="right"
+            android:layout_margin="20px"
             android:layout_weight=".5" />
     </LinearLayout>
 
@@ -64,6 +68,7 @@
             android:text="Maximum Lux Value:"
             android:id="@+id/max_lux_text"
             android:textSize="10pt"
+            android:layout_margin="20px"
             android:layout_gravity="center_vertical"
             android:layout_weight=".3" />
 
@@ -74,6 +79,7 @@
             android:ems="10"
             android:id="@+id/max_lux_edit_text"
             android:layout_gravity="right"
+            android:layout_margin="20px"
             android:layout_weight=".5" />
     </LinearLayout>
 

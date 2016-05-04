@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.DataSetObserver;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -115,18 +116,30 @@ public class PowerSaveAdapter extends BaseExpandableListAdapter {
             view.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDark));
         }
 
-        enabledSwitch.setChecked(DatabaseUtility.getLightEffect(POWER_SAVE,light.getHueId()));
-
         enabledSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 Light light = (Light) getChild(roomIndex, childIndex);
                 light.setPowerSaveOn(b);
-               // DatabaseUtility.updatePowerSaveOn(context, light.getHueId(), b);
-                DatabaseUtility.updateLightEffect(context,POWER_SAVE,b,light.getHueId());
-                if(b)
-                {
-                    if(DatabaseUtility.getAllPowerSaveEnabledLights().size() == 1) {
+
+
+
+                if (b) {
+                    if (DatabaseUtility.updateLightEffect(context, POWER_SAVE, b, light.getHueId())) {
+                        Log.v("powerSaveAdapater", "Light " + light.getLightName() + " power save: " + b);
+                    } else {
+                        Log.v("powerSaveAdapater", "Light " + light.getLightName() + " unable to update power save: " + b);
+                    }
+                } else {
+                    if (DatabaseUtility.updateLightEffect(context, POWER_SAVE, b, light.getHueId())) {
+                        Log.v("powerSaveAdapater", "Light " + light.getLightName() + " power save: " + b);
+                    } else {
+                        Log.v("powerSaveAdapater", "Light " + light.getLightName() + " unable to update power save: " + b);
+                    }
+                }
+
+                if (b) {
+                    if (DatabaseUtility.getAllPowerSaveEnabledLights().size() == 1) {
                         Intent intent = new Intent(context, PowerSaveService.class);
                         intent.setAction(ACTION_POWERSAVE);
                         PowerSaveService.on_off = true;
@@ -134,8 +147,7 @@ public class PowerSaveAdapter extends BaseExpandableListAdapter {
                         context.startService(intent);
                     }
                 } else {
-                    if(DatabaseUtility.getAllPowerSaveEnabledLights().size() == 0)
-                    {
+                    if (DatabaseUtility.getAllPowerSaveEnabledLights().size() == 0) {
                         Intent intent = new Intent(context, PowerSaveService.class);
                         PowerSaveService.on_off = false;
                         PowerSaveService.setContext(context);
@@ -144,6 +156,9 @@ public class PowerSaveAdapter extends BaseExpandableListAdapter {
                 }
             }
         });
+
+        enabledSwitch.setChecked(DatabaseUtility.getLightEffect(POWER_SAVE, light.getHueId()));
+
         return view;
     }
 

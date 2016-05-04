@@ -397,6 +397,7 @@ public class DatabaseUtility {
             returnValue = tableRow.getEpilepticEffect();
         } else if (effectType.equals(POWER_SAVE)) {
             returnValue = tableRow.getPowerSaveOn();
+            Log.v("getLightEffect", "Power save: " + returnValue + " for light " + tableRow.getName());
         } else {
             Log.v("getLightEffect","Invalid effect query");
         }
@@ -457,7 +458,7 @@ public class DatabaseUtility {
                 }
             } else if (effectType.equals(POWER_SAVE)) {
                 tableRow.setPowerSaveOn(effectOn);
-
+                Log.v("updateLightEffect", "Power save: " + effectOn + " for light " + tableRow.getName());
                 /* If the other effect is turned on the other must be forced off */
                 if (effectOn) {
                     tableRow.setBreatheEffect(false);
