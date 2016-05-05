@@ -27,6 +27,7 @@ import com.lit.adapters.PowerSaveAdapter;
 import com.lit.database.DatabaseUtility;
 import com.lit.models.Light;
 import com.lit.models.Room;
+import com.lit.services.PowerSaveService;
 import com.philips.lighting.hue.sdk.PHHueSDK;
 
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ public class PowerSaveFragment extends Fragment {
     private List<Room> powerSaveList;
     private ExpandableListView powerSaveListView;
     private Button powerSaveSettingsButton;
+    private TextView luxOutput;
     private boolean displayListItems;
 
     private static final String POWER_SAVE = "POWER_SAVE";
@@ -179,11 +181,11 @@ public class PowerSaveFragment extends Fragment {
         @Override
         public void onClick(View v) {
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            PowerSaveDialog builder = new PowerSaveDialog(getContext());
             LayoutInflater inflater = getActivity().getLayoutInflater();
             View view = inflater.inflate(R.layout.power_save_settings_dialog, null);
 
-            TextView luxOutput = (TextView) view.findViewById(R.id.lux_output_text_view);
+            luxOutput = (TextView) view.findViewById(R.id.lux_output_text_view);
             final List<Integer> userPrefs = DatabaseUtility.getPowerSavePref();
 
             final EditText minLux = (EditText) view.findViewById(R.id.min_lux_edit_text);
@@ -204,17 +206,24 @@ public class PowerSaveFragment extends Fragment {
                     try {
                         int min = Integer.parseInt(minLux.getText().toString());
                         int max = Integer.parseInt(maxLux.getText().toString());
-
-                        if (userPrefs.isEmpty()) {
-                            DatabaseUtility.savePowerSavePref(getContext(), min, max);
-                        } else {
-                            DatabaseUtility.updatePowerSavePref(getContext(),
-                                    min, max,
-                                    userPrefs.get(0), userPrefs.get(1));
+                        if(max < min)
+                        {
+                            Toast.makeText(getContext(), "Minimum value must be smaller than the maximum", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            if (userPrefs.isEmpty()) {
+                                DatabaseUtility.savePowerSavePref(getContext(), min, max);
+                                PowerSaveService.setLuxRange(min, max);
+                            } else {
+                                DatabaseUtility.updatePowerSavePref(getContext(),
+                                        min, max,
+                                        userPrefs.get(0), userPrefs.get(1));
+                                PowerSaveService.setLuxRange(min, max);
+                            }
                         }
 
                     } catch (Exception e) {
-                        Toast.makeText(getContext(), "Please input integer values and try again.", Toast.LENGTH_LONG);
+                        Toast.makeText(getContext(), "Please input integer values and try again.", Toast.LENGTH_LONG).show();
                     }
 
 
@@ -224,23 +233,29 @@ public class PowerSaveFragment extends Fragment {
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-
+                    // Do nothing
                 }
             });
 
             builder.show();
 
-            PowerSaveDialog dialog = new PowerSaveDialog();
+
 
         }
     };
 
-    private class PowerSaveDialog implements SensorEventListener {
+    private class PowerSaveDialog extends AlertDialog.Builder implements SensorEventListener {
 
 
         SensorManager mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
         Sensor lightSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
-        TextView luxOutput = (TextView) getActivity().findViewById(R.id.lux_output_text_view);
+
+        protected PowerSaveDialog(Context context) {
+            super(context);
+            mSensorManager.registerListener(this, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
+
+        }
+
         @Override
         public final void onAccuracyChanged(Sensor sensor, int accuracy) {
             // Do something here if sensor accuracy changes.
@@ -250,8 +265,7 @@ public class PowerSaveFragment extends Fragment {
         public final void onSensorChanged(SensorEvent event) {
 
             // Do something with this sensor data.
-            luxOutput.setText("LIGHT: " + event.values[0]);
-            Log.w("myApp", "Light: " + event.values[0]);
+            luxOutput.setText(event.values[0] + " Luxes");
         }
     }
 

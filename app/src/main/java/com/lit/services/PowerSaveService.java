@@ -168,12 +168,12 @@ public class PowerSaveService extends IntentService implements SensorEventListen
             {
                 Log.w("myApp", "Increasing brightness, Lux = " + lightAverage);
                 //light.setBrightness(light.getBrightness() + 10);
-                light.setBrightness(light.getBrightness() + 75);
+                light.setBrightness(light.getBrightness() + 20);
             } else if(lightAverage > maxLux)
             {
                 Log.w("myApp", "Decreasing brightness, Lux = " + lightAverage);
                 //light.setBrightness(light.getBrightness() - 10);
-                light.setBrightness(light.getBrightness() - 75);
+                light.setBrightness(light.getBrightness() - 20);
             }
         }
         changeCounter = 0;

@@ -93,8 +93,7 @@
                     android:layout_weight="1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/circular_border"
-                    android:backgroundTint="@color/colorRed"
+                    android:background="@color/colorRed"
                     android:layout_marginRight="25px"
                     android:id="@+id/setRed" />
                 <Button
@@ -102,8 +101,7 @@
                     android:layout_weight="1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/circular_border"
-                    android:backgroundTint="@color/colorOrange"
+                    android:background="@color/colorOrange"
                     android:layout_marginRight="25px"
                     android:id="@+id/setOrange" />
                 <Button
@@ -111,8 +109,7 @@
                     android:layout_weight="1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/circular_border"
-                    android:backgroundTint="@color/colorYellow"
+                    android:background="@color/colorYellow"
                     android:layout_marginRight="25px"
                     android:id="@+id/setYellow" />
                 <Button
@@ -120,8 +117,7 @@
                     android:layout_weight="1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/circular_border"
-                    android:backgroundTint="@color/colorGreen"
+                    android:background="@color/colorGreen"
                     android:layout_marginRight="25px"
                     android:id="@+id/setGreen" />
                 <Button
@@ -129,8 +125,7 @@
                     android:layout_weight="1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/circular_border"
-                    android:backgroundTint="@color/colorBlue"
+                    android:background="@color/colorBlue"
                     android:layout_marginRight="25px"
                     android:id="@+id/setBlue" />
                 <Button
@@ -138,8 +133,7 @@
                     android:layout_weight="1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/circular_border"
-                    android:backgroundTint="@color/colorPurple"
+                    android:background="@color/colorPurple"
                     android:id="@+id/setPurple" />
 
             </LinearLayout>
