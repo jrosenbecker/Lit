@@ -26,6 +26,7 @@ import com.lit.api.PH_AlertDialog;
 import com.lit.api.PH_ConfigureBridge;
 import com.lit.api.PH_Pushlink;
 import com.lit.constants.TabConstants;
+import com.lit.daogenerator.PowerSavePreference;
 import com.lit.database.DatabaseUtility;
 import com.lit.fragments.CustomizeFragment;
 import com.lit.fragments.PowerSaveFragment;
@@ -74,8 +75,6 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        startPowerSaveService();
-
         // Set up the Philips Hue interface handler
         phHueSDK = PHHueSDK.create();
 
@@ -111,6 +110,17 @@ public class MainActivity extends AppCompatActivity
 
         // Open the status fragment when first created
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_frame, StatusFragment.newInstance()).commit();
+        List<Integer> powerSavePrefs = DatabaseUtility.getPowerSavePref();
+        if(powerSavePrefs.size() == 2)
+        {
+            PowerSaveService.setLuxRange(powerSavePrefs.get(0), powerSavePrefs.get(1));
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PowerSaveService.on_off = false;
     }
 
     /**
@@ -225,10 +235,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void startPowerSaveService()
-    {
-        Intent intent = new Intent(this, PowerSaveService.class);
-//        intent.putExtra()
-    }
+
 
 }
