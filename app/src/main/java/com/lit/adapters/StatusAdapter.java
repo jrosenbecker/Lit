@@ -292,9 +292,9 @@ public class StatusAdapter extends BaseExpandableListAdapter {
 
         if (light.isConnectedToBridge()) {
             connectionStatusString = "Connected";
-            connection.setTextColor(Color.GRAY);
+            connection.setTextColor(Color.GREEN);
         } else {
-            connectionStatusString = "Light is not reachable";
+            connectionStatusString = "Light is unreachable";
             connection.setTextColor(Color.RED);
         }
 

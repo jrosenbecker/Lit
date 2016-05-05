@@ -2,6 +2,7 @@ package com.lit.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -80,6 +81,8 @@ public class MainActivity extends AppCompatActivity
 
         // Set up the toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_activity_toolbar);
+        toolbar.setLogo(R.mipmap.ic_launcher);
+        toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
 
         // Set up the tabbed action bar at the bottom
@@ -89,6 +92,7 @@ public class MainActivity extends AppCompatActivity
         tabLayout.addTab(tabLayout.newTab().setText("Power Save").setTag(TabConstants.POWER_SAVE_TAB));
         tabLayout.addTab(tabLayout.newTab().setText("Customize").setTag(TabConstants.CUSTOMIZE_TAB));
         tabLayout.setSelectedTabIndicatorHeight(20);
+        tabLayout.setTabTextColors(Color.LTGRAY,Color.WHITE);
         tabLayout.setSelectedTabIndicatorColor(getApplicationContext().getResources().getColor(R.color.tabIndicatorColor));
 
         tabLayout.setOnTabSelectedListener(onTabSelected);

@@ -6,10 +6,12 @@
     <color name="colorBlack">#000000</color>
     <color name="colorBackground">#dcdcdc</color>
     <color name="primaryTextColor">#1d1d1d</color>
-    <color name="toolbarColor">#d58e00</color>
-    <color name="tabIndicatorColor">#0079d5</color>
-    <color name="roomPrimary">#828282</color>
-    <color name="roomPrimaryDark">#787878</color>
+    <color name="toolbarColor">#0079df</color>
+    <color name="tabIndicatorColor">#154fa1</color>
+    <color name="roomPrimary">#727272</color>
+    <color name="roomPrimaryDark">#585858</color>
+    <color name="lightPrimary">#15b2b2</color>
+    <color name="lightPrimaryDark">#15a0a0</color>
     <color name="colorGray">#505050</color>
     <color name="colorWhite">#ffffff</color>
     <color name="colorRed">#ff0000</color>
