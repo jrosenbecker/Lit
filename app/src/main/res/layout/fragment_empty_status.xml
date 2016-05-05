@@ -11,4 +11,5 @@
         android:layout_height="match_parent"
         android:id="@+id/empty_list_view"
         android:src="@drawable/logo"/>
+
 </FrameLayout>

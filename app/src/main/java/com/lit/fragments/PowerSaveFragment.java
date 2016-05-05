@@ -3,6 +3,10 @@ package com.lit.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -119,6 +123,7 @@ public class PowerSaveFragment extends Fragment {
             powerSaveListView.setAdapter(listAdapter);
             listAdapter.notifyDataSetChanged();
         }
+
         super.onStart();
     }
 
@@ -179,7 +184,6 @@ public class PowerSaveFragment extends Fragment {
             View view = inflater.inflate(R.layout.power_save_settings_dialog, null);
 
             TextView luxOutput = (TextView) view.findViewById(R.id.lux_output_text_view);
-
             final List<Integer> userPrefs = DatabaseUtility.getPowerSavePref();
 
             final EditText minLux = (EditText) view.findViewById(R.id.min_lux_edit_text);
@@ -225,6 +229,31 @@ public class PowerSaveFragment extends Fragment {
             });
 
             builder.show();
+
+            PowerSaveDialog dialog = new PowerSaveDialog();
+
         }
     };
+
+    private class PowerSaveDialog implements SensorEventListener {
+
+
+        SensorManager mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+        Sensor lightSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        TextView luxOutput = (TextView) getActivity().findViewById(R.id.lux_output_text_view);
+        @Override
+        public final void onAccuracyChanged(Sensor sensor, int accuracy) {
+            // Do something here if sensor accuracy changes.
+        }
+
+        @Override
+        public final void onSensorChanged(SensorEvent event) {
+
+            // Do something with this sensor data.
+            luxOutput.setText("LIGHT: " + event.values[0]);
+            Log.w("myApp", "Light: " + event.values[0]);
+        }
+    }
+
+
 }
