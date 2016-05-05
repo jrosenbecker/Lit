@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +25,7 @@ import com.lit.models.Light;
 import com.lit.models.Room;
 import com.philips.lighting.hue.sdk.PHHueSDK;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -167,7 +170,6 @@ public class PowerSaveFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-
     private View.OnClickListener buttonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -178,11 +180,39 @@ public class PowerSaveFragment extends Fragment {
 
             TextView luxOutput = (TextView) view.findViewById(R.id.lux_output_text_view);
 
+            final List<Integer> userPrefs = DatabaseUtility.getPowerSavePref();
+
+            final EditText minLux = (EditText) view.findViewById(R.id.min_lux_edit_text);
+
+            final EditText maxLux = (EditText) view.findViewById(R.id.max_lux_edit_text);
+
+            if (!userPrefs.isEmpty()) {
+                minLux.setText("" + userPrefs.get(0));
+                maxLux.setText("" + userPrefs.get(1));
+            }
+
             builder.setTitle("Power Save Settings");
             builder.setView(view);
             builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
+
+                    try {
+                        int min = Integer.parseInt(minLux.getText().toString());
+                        int max = Integer.parseInt(maxLux.getText().toString());
+
+                        if (userPrefs.isEmpty()) {
+                            DatabaseUtility.savePowerSavePref(getContext(), min, max);
+                        } else {
+                            DatabaseUtility.updatePowerSavePref(getContext(),
+                                    min, max,
+                                    userPrefs.get(0), userPrefs.get(1));
+                        }
+
+                    } catch (Exception e) {
+                        Toast.makeText(getContext(), "Please input integer values and try again.", Toast.LENGTH_LONG);
+                    }
+
 
                 }
             });

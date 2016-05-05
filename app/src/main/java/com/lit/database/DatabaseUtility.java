@@ -91,7 +91,7 @@ public class DatabaseUtility {
 
         roomTableRows = roomQueryBuilder.where(RoomTableDao.Properties.Id.isNotNull()).list();
 
-        prefList = prefQueryBuilder.where(RoomTableDao.Properties.Id.isNotNull()).list();
+        prefList = prefQueryBuilder.where(PowerSavePreferenceDao.Properties.Id.isNotNull()).list();
 
         // Add all of the unassigned lights initially
         if (!addUnassignedLights()) {
@@ -108,6 +108,7 @@ public class DatabaseUtility {
 
     public static void closeReopenDatabase(Context context) {
         closeDatabase();
+
         dbHelper = new DaoMaster.DevOpenHelper(context, "ORM.sqlite", null);
         database = dbHelper.getWritableDatabase();
 
@@ -116,6 +117,7 @@ public class DatabaseUtility {
 
         lightDao = daoSession.getLightTableDao();
         roomDao = daoSession.getRoomTableDao();
+        prefDao = daoSession.getPowerSavePreferenceDao();
     }
 
     public static void closeDatabase() {
@@ -484,20 +486,50 @@ public class DatabaseUtility {
         return returnValue;
     }
 
-    public boolean updatePowerSavePref(Context context, int min, int max)
+    public static boolean savePowerSavePref(Context context, /* Update parameters */ int minNew, int maxNew)
     {
-        boolean value = updatePowerSavePref(min, max);
+        boolean value = savePowerSavePref(minNew, maxNew);
 
         closeReopenDatabase(context);
 
         return value;
     }
 
-    private boolean updatePowerSavePref(int min, int max)
+    private static boolean savePowerSavePref(int min, int max){
+
+        Random rand = new Random();
+
+        QueryBuilder<PowerSavePreference> qb = prefDao.queryBuilder();
+        PowerSavePreference tableRow = qb.where(PowerSavePreferenceDao.Properties.Id.isNotNull()).unique();
+
+        boolean returnValue = false;
+
+        if (tableRow == null) {
+            PowerSavePreference newPref = new PowerSavePreference(rand.nextLong(),min,max);
+            prefDao.insert(newPref);
+            returnValue = true;
+        }
+
+        return returnValue;
+    }
+
+    public static boolean updatePowerSavePref(Context context,  /* Update parameters */ int minNew, int maxNew,
+                                                                /* Query parameters */ int minOld, int maxOld)
+    {
+        boolean value = updatePowerSavePref(minNew, maxNew, minOld, maxOld);
+
+        closeReopenDatabase(context);
+
+        return value;
+    }
+
+    private static boolean updatePowerSavePref(int minNew, int maxNew, int minOld, int maxOld)
     {
         QueryBuilder<PowerSavePreference> qb = prefDao.queryBuilder();
-        PowerSavePreference tableRow = qb.where(PowerSavePreferenceDao.Properties.Min.eq(min),
-                PowerSavePreferenceDao.Properties.Max.eq(max)).unique();
+        PowerSavePreference tableRow = qb.where(PowerSavePreferenceDao.Properties.Min.eq(minOld),
+                PowerSavePreferenceDao.Properties.Max.eq(maxOld)).unique();
+
+        Log.v("updatePowerSavePref","MinOld: " + minOld + " MaxOld: " + maxOld + " MinNew: " + minNew + " MaxNew: " + maxNew);
 
         boolean returnValue = false;
 
@@ -506,14 +538,29 @@ public class DatabaseUtility {
             // Delete old entry
             prefDao.deleteByKey(tableRow.getId());
 
-            tableRow.setMin(min);
-            tableRow.setMax(max);
+            tableRow.setMin(minNew);
+            tableRow.setMax(maxNew);
 
             prefDao.insert(tableRow);
 
             returnValue = true;
         }
         return returnValue;
+    }
+
+    public static List<Integer> getPowerSavePref()
+    {
+        QueryBuilder<PowerSavePreference> qb = prefDao.queryBuilder();
+        PowerSavePreference tableRow = qb.where(PowerSavePreferenceDao.Properties.Id.isNotNull()).unique();
+
+        List<Integer> preferences = new ArrayList<Integer>();
+
+        if (tableRow != null) {
+            preferences.add(tableRow.getMin());
+            preferences.add(tableRow.getMax());
+        }
+
+        return preferences;
     }
 
     public static List<Light> getAllPowerSaveEnabledLights()
